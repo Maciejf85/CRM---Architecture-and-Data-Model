@@ -3,7 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ClientOps CRM — Architektura i Model Danych</title>
+<title>ClientOps CRM — Architektura i Model Danych v2.0.0</title>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({ startOnLoad: true, theme: 'neutral', er: { diagramPadding: 20, layoutDirection: 'TB', minEntityWidth: 100, minEntityHeight: 75, entityPadding: 15 } });</script>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
 
@@ -40,564 +42,254 @@
     line-height: 1.6;
   }
 
+  @page { margin: 14mm 0 10mm; size: A4; }
+  @page :first { margin: 0; }
+
   /* COVER */
   .cover {
     min-height: 100vh;
     background: linear-gradient(135deg, #0f172a 0%, #1a2f4e 50%, #0f172a 100%);
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-    padding: 60px 40px;
+    display: flex; flex-direction: column;
+    justify-content: center; align-items: center;
+    text-align: center; padding: 60px 40px;
     page-break-after: always;
-    position: relative;
-    overflow: hidden;
+    position: relative; overflow: hidden;
   }
-
   .cover::before {
-    content: '';
-    position: absolute;
+    content: ''; position: absolute;
     width: 500px; height: 500px;
     background: radial-gradient(circle, rgba(13,148,136,0.12) 0%, transparent 70%);
-    top: -80px; right: -80px;
-    border-radius: 50%;
+    top: -80px; right: -80px; border-radius: 50%;
   }
-
   .cover::after {
-    content: '';
-    position: absolute;
+    content: ''; position: absolute;
     width: 400px; height: 400px;
     background: radial-gradient(circle, rgba(30,64,175,0.15) 0%, transparent 70%);
-    bottom: -60px; left: -60px;
-    border-radius: 50%;
+    bottom: -60px; left: -60px; border-radius: 50%;
   }
-
   .cover-badge {
-    background: rgba(13,148,136,0.2);
-    border: 1px solid rgba(13,148,136,0.4);
-    color: #5eead4;
-    padding: 6px 18px;
-    border-radius: 20px;
-    font-size: 11px;
-    font-weight: 500;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    margin-bottom: 24px;
-    position: relative; z-index: 1;
+    background: rgba(13,148,136,0.2); border: 1px solid rgba(13,148,136,0.4);
+    color: #5eead4; padding: 6px 18px; border-radius: 20px;
+    font-size: 11px; font-weight: 500; letter-spacing: 1.5px;
+    text-transform: uppercase; margin-bottom: 24px; position: relative; z-index: 1;
   }
-
-  .draft-badge {
-    position: relative; z-index: 1;
-    margin-bottom: 20px;
-  }
-
-  .draft-badge span {
-    background: rgba(220,38,38,0.25);
-    border: 2px solid rgba(220,38,38,0.6);
-    color: #fca5a5;
-    padding: 8px 28px;
-    border-radius: 6px;
-    font-size: 13px;
-    font-weight: 700;
-    letter-spacing: 3px;
-    text-transform: uppercase;
-  }
-
   .cover-logo {
-    font-size: 48px;
-    font-weight: 700;
-    color: white;
-    letter-spacing: -2px;
-    margin-bottom: 6px;
-    position: relative; z-index: 1;
+    font-size: 48px; font-weight: 700; color: white;
+    letter-spacing: -2px; margin-bottom: 6px; position: relative; z-index: 1;
   }
-
   .cover-logo span { color: #2dd4bf; }
-
-  .cover-subtitle {
-    font-size: 16px;
-    color: #64748b;
-    font-weight: 300;
-    margin-bottom: 40px;
-    position: relative; z-index: 1;
-  }
-
-  .cover-divider {
-    width: 60px;
-    height: 2px;
-    background: linear-gradient(90deg, #0d9488, #1e40af);
-    margin: 0 auto 40px;
-    position: relative; z-index: 1;
-  }
-
-  .cover-title {
-    font-size: 28px;
-    font-weight: 700;
-    color: white;
-    margin-bottom: 14px;
-    line-height: 1.2;
-    position: relative; z-index: 1;
-  }
-
-  .cover-desc {
-    font-size: 14px;
-    color: #475569;
-    max-width: 500px;
-    margin-bottom: 56px;
-    position: relative; z-index: 1;
-    line-height: 1.7;
-  }
-
-  .cover-meta {
-    display: flex;
-    gap: 48px;
-    justify-content: center;
-    position: relative; z-index: 1;
-  }
-
+  .cover-subtitle { font-size: 16px; color: #64748b; font-weight: 300; margin-bottom: 40px; position: relative; z-index: 1; }
+  .cover-divider { width: 60px; height: 2px; background: linear-gradient(90deg, #0d9488, #1e40af); margin: 0 auto 40px; position: relative; z-index: 1; }
+  .cover-title { font-size: 28px; font-weight: 700; color: white; margin-bottom: 14px; line-height: 1.2; position: relative; z-index: 1; }
+  .cover-desc { font-size: 14px; color: #475569; max-width: 540px; margin-bottom: 56px; position: relative; z-index: 1; line-height: 1.7; }
+  .cover-meta { display: flex; gap: 48px; justify-content: center; position: relative; z-index: 1; }
   .cover-meta-item { text-align: center; }
   .cover-meta-label { font-size: 10px; text-transform: uppercase; letter-spacing: 1px; color: #334155; margin-bottom: 4px; }
   .cover-meta-value { font-size: 13px; color: #cbd5e1; font-weight: 500; }
 
   /* TOC */
-  .toc-page {
-    padding: 60px;
-    page-break-after: always;
-    min-height: 100vh;
-  }
-
+  .toc-page { padding: 60px; page-break-after: always; }
   .toc-title { font-size: 26px; font-weight: 700; color: var(--dark); margin-bottom: 6px; }
   .toc-subtitle { color: var(--gray-400); font-size: 12px; margin-bottom: 36px; }
-
   .toc-list { list-style: none; }
-
-  .toc-item {
-    display: flex;
-    align-items: center;
-    padding: 10px 14px;
-    border-radius: 8px;
-    margin-bottom: 4px;
-  }
-
-  .toc-num {
-    width: 28px; height: 28px;
-    background: var(--primary);
-    color: white;
-    border-radius: 6px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 11px; font-weight: 700;
-    margin-right: 14px; flex-shrink: 0;
-  }
-
+  .toc-item { display: flex; align-items: center; padding: 9px 14px; border-radius: 8px; margin-bottom: 3px; }
+  .toc-num { width: 26px; height: 26px; background: var(--primary); color: white; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; margin-right: 14px; flex-shrink: 0; }
   .toc-text { font-size: 13px; font-weight: 500; color: var(--gray-800); flex: 1; }
   .toc-dots { flex: 1; border-bottom: 1px dashed var(--gray-200); margin: 0 12px; height: 1px; align-self: flex-end; margin-bottom: 5px; }
 
   /* PAGES */
-  .page { padding: 52px 60px; }
+  .page { padding: 48px 60px; }
   .page-break { page-break-after: always; }
 
-  .section-header {
-    display: flex;
-    align-items: flex-start;
-    gap: 16px;
-    margin-bottom: 28px;
-    padding-bottom: 18px;
-    border-bottom: 2px solid var(--gray-200);
-  }
-
-  .section-num {
-    width: 44px; height: 44px;
-    background: var(--primary);
-    color: white;
-    border-radius: 10px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 17px; font-weight: 700;
-    flex-shrink: 0;
-  }
-
+  .section-header { display: flex; align-items: flex-start; gap: 16px; margin-bottom: 28px; padding-bottom: 16px; border-bottom: 2px solid var(--gray-200); }
+  .section-num { width: 44px; height: 44px; background: var(--primary); color: white; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 17px; font-weight: 700; flex-shrink: 0; }
+  .section-title-wrap { }
   .section-label { font-size: 10px; text-transform: uppercase; letter-spacing: 1.5px; color: var(--primary); font-weight: 600; margin-bottom: 2px; }
   .section-title { font-size: 22px; font-weight: 700; color: var(--dark); line-height: 1.2; }
 
-  h3 {
-    font-size: 14px; font-weight: 600; color: var(--dark);
-    margin: 24px 0 10px;
-    display: flex; align-items: center; gap: 8px;
-  }
+  h3 { font-size: 14px; font-weight: 600; color: var(--dark); margin: 28px 0 10px; display: flex; align-items: center; gap: 8px; }
+  h3::before { content: ''; display: inline-block; width: 3px; height: 14px; background: var(--primary); border-radius: 2px; }
 
-  h3::before {
-    content: '';
-    display: inline-block;
-    width: 3px; height: 14px;
-    background: var(--primary);
-    border-radius: 2px;
-  }
+  p { color: var(--gray-600); margin-bottom: 12px; line-height: 1.7; font-size: 13px; }
 
-  p { color: var(--gray-600); margin-bottom: 10px; line-height: 1.7; }
+  /* TABLES */
+  table { width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 12px; }
+  thead tr { background: var(--primary); color: white; }
+  thead th { padding: 9px 12px; text-align: left; font-weight: 600; font-size: 11px; letter-spacing: 0.3px; }
+  tbody tr { border-bottom: 1px solid var(--gray-200); }
+  tbody tr:nth-child(even) { background: var(--gray-50); }
+  td { padding: 8px 12px; vertical-align: top; color: var(--gray-600); line-height: 1.5; }
+  td:first-child { font-weight: 500; color: var(--dark); }
+  td strong { font-weight: 600; color: var(--dark); }
 
+  /* CODE */
   pre {
-    background: var(--gray-800);
-    border-radius: 10px;
-    padding: 16px 18px;
-    margin: 10px 0 18px;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11px;
-    line-height: 1.7;
-    color: #e2e8f0;
-    overflow: hidden;
+    background: var(--gray-800); border-radius: 8px; padding: 16px 18px;
+    margin: 10px 0 18px; overflow: hidden;
+    font-family: 'JetBrains Mono', 'Courier New', monospace;
+    font-size: 10.5px; line-height: 1.75; color: #e2e8f0;
   }
+  code { font-family: 'JetBrains Mono', 'Courier New', monospace; font-size: 11px; background: var(--gray-100); color: var(--primary); padding: 1px 5px; border-radius: 3px; }
+  pre code { background: none; color: #e2e8f0; padding: 0; font-size: 10.5px; }
+  .c { color: #6e7681; }   /* comment */
+  .k { color: #ff7b72; }   /* keyword */
+  .s { color: #a5d6ff; }   /* string */
+  .t { color: #79c0ff; }   /* type */
+  .f { color: #ffa657; }   /* field name */
+  .pk { color: #f78166; font-weight: 700; } /* PK */
+  .fk { color: #ffa657; }  /* FK */
 
-  code {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11px;
-    background: var(--gray-100);
-    padding: 2px 6px;
-    border-radius: 4px;
-    color: var(--primary);
-  }
+  /* BADGES */
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: 600; }
+  .badge-blue { background: var(--primary-light); color: var(--primary); }
+  .badge-orange { background: var(--orange-light); color: var(--orange); }
+  .badge-green { background: var(--green-light); color: var(--green); }
+  .badge-purple { background: var(--purple-light); color: var(--purple); }
+  .badge-teal { background: var(--teal-light); color: var(--teal); }
+  .badge-red { background: var(--red-light); color: var(--red); }
 
-  pre code { background: none; padding: 0; color: inherit; }
+  /* INFO BOXES */
+  .info-box { border-radius: 8px; padding: 14px 16px; margin: 14px 0; font-size: 12px; color: var(--gray-600); line-height: 1.6; }
+  .info-box strong { display: block; margin-bottom: 4px; }
+  .info-box.blue { background: var(--primary-light); border-left: 3px solid var(--primary); }
+  .info-box.blue strong { color: var(--primary); }
+  .info-box.green { background: var(--green-light); border-left: 3px solid var(--green); }
+  .info-box.green strong { color: var(--green); }
+  .info-box.orange { background: var(--orange-light); border-left: 3px solid var(--orange); }
+  .info-box.orange strong { color: var(--orange); }
+  .info-box.teal { background: var(--teal-light); border-left: 3px solid var(--teal); }
+  .info-box.teal strong { color: var(--teal); }
 
-  .c  { color: #475569; }
-  .k  { color: #93c5fd; }
-  .s  { color: #6ee7b7; }
-  .t  { color: #fca5a5; }
-  .y  { color: #fbbf24; }
-  .p  { color: #c084fc; }
-
-  table { width: 100%; border-collapse: collapse; margin: 10px 0 18px; font-size: 12px; }
-  th { background: var(--primary); color: white; padding: 9px 13px; text-align: left; font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; }
-  th:first-child { border-radius: 8px 0 0 0; }
-  th:last-child { border-radius: 0 8px 0 0; }
-  td { padding: 9px 13px; border-bottom: 1px solid var(--gray-200); color: var(--gray-600); vertical-align: top; }
-  tr:nth-child(even) td { background: var(--gray-50); }
-  tr:last-child td { border-bottom: none; }
-
-  .badge {
-    display: inline-flex; align-items: center;
-    padding: 2px 9px; border-radius: 20px;
-    font-size: 10px; font-weight: 600; margin: 2px;
-  }
-  .badge-blue   { background: var(--primary-light); color: var(--primary); }
-  .badge-green  { background: var(--green-light);   color: var(--green); }
-  .badge-orange { background: var(--orange-light);  color: var(--orange); }
-  .badge-red    { background: var(--red-light);     color: var(--red); }
-  .badge-purple { background: var(--purple-light);  color: var(--purple); }
-  .badge-teal   { background: var(--teal-light);    color: var(--teal); }
-  .badge-gray   { background: var(--gray-100);      color: var(--gray-600); }
-
-  .info-box {
-    border-left: 4px solid;
-    padding: 12px 16px;
-    border-radius: 0 8px 8px 0;
-    margin: 14px 0;
-    font-size: 12px;
-  }
-  .info-box.blue   { border-color: var(--accent);  background: #f0f9ff; color: #0c4a6e; }
-  .info-box.green  { border-color: var(--green);   background: var(--green-light); color: #064e3b; }
-  .info-box.orange { border-color: var(--orange);  background: var(--orange-light); color: #78350f; }
-  .info-box.teal   { border-color: var(--teal);    background: var(--teal-light); color: #134e4a; }
-  .info-box strong { display: block; font-weight: 600; margin-bottom: 3px; }
-
-  .card-grid   { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin: 12px 0; }
-  .card-grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 12px 0; }
-
-  .card {
-    background: var(--gray-50);
-    border: 1px solid var(--gray-200);
-    border-radius: 10px;
-    padding: 16px;
-  }
-
-  .card-title { font-size: 12px; font-weight: 600; color: var(--dark); margin-bottom: 6px; }
-  .card-body  { font-size: 11.5px; color: var(--gray-600); line-height: 1.6; }
-
-  /* LAYER DIAGRAM */
-  .layers { margin: 16px 0; }
-
-  .layer {
-    border-radius: 10px;
-    padding: 14px 18px;
-    margin-bottom: 10px;
-    border: 1px solid;
-  }
-
-  .layer-1 { background: #eff6ff; border-color: #bfdbfe; }
-  .layer-2 { background: #fff7ed; border-color: #fed7aa; }
-  .layer-3 { background: #f0fdf4; border-color: #bbf7d0; }
-
-  .layer-title {
-    font-size: 11px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    margin-bottom: 10px;
-  }
-
+  /* LAYERS */
+  .layers { display: flex; flex-direction: column; gap: 10px; margin: 16px 0; }
+  .layer { border-radius: 10px; padding: 14px 18px; }
+  .layer-1 { background: #eff6ff; border: 1px solid #bfdbfe; }
+  .layer-2 { background: var(--orange-light); border: 1px solid #fde68a; }
+  .layer-3 { background: var(--green-light); border: 1px solid #a7f3d0; }
+  .layer-title { font-weight: 700; font-size: 12px; margin-bottom: 8px; }
   .layer-1 .layer-title { color: var(--primary); }
   .layer-2 .layer-title { color: var(--orange); }
   .layer-3 .layer-title { color: var(--green); }
+  .layer-tables { display: flex; flex-wrap: wrap; gap: 6px; }
+  .layer-table { background: white; border-radius: 5px; padding: 3px 10px; font-size: 11px; font-family: 'JetBrains Mono', monospace; font-weight: 500; border: 1px solid rgba(0,0,0,0.08); }
 
-  .layer-tables { display: flex; flex-wrap: wrap; gap: 8px; }
+  /* MERMAID */
+  .mermaid { margin: 16px 0; text-align: center; }
+  .mermaid svg { max-width: 100%; height: auto; }
 
-  .layer-table {
-    background: white;
-    border: 1px solid;
-    border-radius: 6px;
-    padding: 5px 12px;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11px;
-    font-weight: 500;
-  }
-
-  .layer-1 .layer-table { border-color: #bfdbfe; color: var(--primary); }
-  .layer-2 .layer-table { border-color: #fed7aa; color: var(--orange); }
-  .layer-3 .layer-table { border-color: #bbf7d0; color: var(--green); }
+  /* SCHEMA GRID */
+  .schema-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 12px 0; }
+  .schema-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin: 12px 0; }
+  .schema-box { background: var(--gray-800); border-radius: 8px; padding: 14px 16px; font-family: 'JetBrains Mono', monospace; font-size: 10px; line-height: 1.8; color: #e2e8f0; }
+  .schema-box-title { font-weight: 700; color: #79c0ff; font-size: 11px; border-bottom: 1px solid #30363d; padding-bottom: 6px; margin-bottom: 8px; }
 
   /* FLOW */
-  .flow {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    flex-wrap: wrap;
-    margin: 12px 0;
-    padding: 14px 16px;
-    background: var(--gray-50);
-    border-radius: 10px;
-    border: 1px solid var(--gray-200);
-  }
+  .flow { display: flex; align-items: center; flex-wrap: wrap; gap: 6px; margin: 12px 0; }
+  .flow-step { background: white; border: 1.5px solid var(--gray-200); border-radius: 8px; padding: 7px 14px; font-size: 12px; font-weight: 500; color: var(--dark); }
+  .flow-step.highlight { background: var(--primary); color: white; border-color: var(--primary); }
+  .flow-step.new { background: var(--green-light); border-color: var(--green); color: var(--green); }
+  .flow-step.warn { background: var(--orange-light); border-color: var(--orange); color: var(--orange); }
+  .flow-arrow { color: var(--gray-400); font-size: 16px; }
 
-  .flow-step {
-    background: white;
-    border: 1px solid var(--gray-200);
-    border-radius: 8px;
-    padding: 7px 13px;
-    font-size: 12px;
-    font-weight: 500;
-    color: var(--dark);
-    white-space: nowrap;
-  }
+  /* KANBAN MOCK */
+  .kanban { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; margin: 14px 0; }
+  .kanban-col { border-radius: 8px; padding: 10px 8px; }
+  .kanban-col-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
+  .kanban-card-mock { background: white; border-radius: 5px; padding: 6px 8px; font-size: 10px; margin-bottom: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+  .kb-new { background: #f1f5f9; }  .kb-new .kanban-col-label { color: #64748b; }
+  .kb-contact { background: #eff6ff; } .kb-contact .kanban-col-label { color: var(--primary); }
+  .kb-noresp { background: #fef2f2; } .kb-noresp .kanban-col-label { color: var(--red); }
+  .kb-talk { background: var(--orange-light); } .kb-talk .kanban-col-label { color: var(--orange); }
+  .kb-offer { background: var(--purple-light); } .kb-offer .kanban-col-label { color: var(--purple); }
+  .kb-won { background: var(--green-light); } .kb-won .kanban-col-label { color: var(--green); }
+  .kb-lost { background: #f8fafc; } .kb-lost .kanban-col-label { color: var(--gray-400); }
 
-  .flow-step.highlight {
-    background: var(--primary-light);
-    border-color: #bfdbfe;
-    color: var(--primary);
-    font-weight: 600;
-  }
-
-  .flow-step.new {
-    background: var(--green-light);
-    border-color: #bbf7d0;
-    color: var(--green);
-    font-weight: 600;
-  }
-
-  .flow-arrow { color: var(--gray-400); font-size: 14px; flex-shrink: 0; }
-
-  /* KANBAN */
-  .kanban {
-    display: flex;
-    gap: 8px;
-    margin: 14px 0;
-    overflow: hidden;
-  }
-
-  .kanban-col {
-    flex: 1;
-    border-radius: 8px;
-    padding: 10px 8px;
-    text-align: center;
-    font-size: 11px;
-    font-weight: 600;
-    border: 1px solid;
-  }
-
-  .kb-new      { background: #f8fafc; border-color: var(--gray-200); color: var(--gray-600); }
-  .kb-contact  { background: #eff6ff; border-color: #bfdbfe; color: var(--primary); }
-  .kb-noresp   { background: #fff7ed; border-color: #fed7aa; color: var(--orange); }
-  .kb-talk     { background: #f0f9ff; border-color: #bae6fd; color: #0369a1; }
-  .kb-offer    { background: var(--purple-light); border-color: #ddd6fe; color: var(--purple); }
-  .kb-won      { background: var(--green-light); border-color: #bbf7d0; color: var(--green); }
-  .kb-lost     { background: var(--red-light); border-color: #fecaca; color: var(--red); }
-
-  .kanban-col-label { margin-bottom: 8px; }
-  .kanban-card-mock {
-    background: white;
-    border-radius: 6px;
-    padding: 6px 8px;
-    margin: 4px 0;
-    font-size: 10px;
-    font-weight: 400;
-    color: var(--gray-600);
-    border: 1px solid var(--gray-200);
-    text-align: left;
-  }
-
-  /* RELATION DIAGRAM */
-  .rel-diagram {
-    background: var(--gray-50);
-    border: 1px solid var(--gray-200);
-    border-radius: 10px;
-    padding: 24px;
-    margin: 14px 0;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11.5px;
-    line-height: 2;
-    color: var(--gray-600);
-  }
-
-  .rel-entity {
-    display: inline-block;
-    background: white;
-    border: 1.5px solid var(--primary);
-    color: var(--primary);
-    border-radius: 6px;
-    padding: 2px 10px;
-    font-weight: 600;
-    font-size: 11px;
-  }
-
-  .rel-entity.orange { border-color: var(--orange); color: var(--orange); }
-  .rel-entity.green  { border-color: var(--green);  color: var(--green); }
-  .rel-entity.purple { border-color: var(--purple); color: var(--purple); }
-  .rel-entity.teal   { border-color: var(--teal);   color: var(--teal); }
-  .rel-entity.gray   { border-color: var(--gray-400); color: var(--gray-600); }
-
-  /* UI MENU */
-  .ui-panels { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 14px 0; }
-
-  .ui-panel {
-    border: 1px solid var(--gray-200);
-    border-radius: 10px;
-    overflow: hidden;
-  }
-
-  .ui-panel-header {
-    padding: 12px 16px;
-    font-size: 12px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-  }
-
-  .ui-panel-header.admin  { background: var(--primary); color: white; }
-  .ui-panel-header.client { background: var(--teal); color: white; }
-
-  .ui-menu-item {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 9px 16px;
-    border-bottom: 1px solid var(--gray-100);
-    font-size: 12px;
-    color: var(--gray-600);
-  }
-
-  .ui-menu-item:last-child { border-bottom: none; }
-
-  .ui-menu-dot {
-    width: 6px; height: 6px;
-    border-radius: 50%;
-    flex-shrink: 0;
-  }
-
-  .admin  .ui-menu-dot { background: var(--primary); }
-  .client .ui-menu-dot { background: var(--teal); }
-
-  /* SLA vs TICKETS */
-  .comparison {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 16px;
-    margin: 14px 0;
-  }
-
-  .comparison-box {
-    border-radius: 10px;
-    padding: 16px;
-    border: 1px solid;
-  }
-
-  .comparison-box.human  { background: #eff6ff; border-color: #bfdbfe; }
-  .comparison-box.system { background: var(--teal-light); border-color: #99f6e4; }
-
-  .comparison-box-title {
-    font-size: 12px;
-    font-weight: 700;
-    margin-bottom: 10px;
-  }
-
-  .comparison-box.human  .comparison-box-title { color: var(--primary); }
+  /* COMPARISON */
+  .comparison { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 14px 0; }
+  .comparison-box { border-radius: 10px; padding: 16px; }
+  .comparison-box.human { background: #eff6ff; border: 1px solid #bfdbfe; }
+  .comparison-box.system { background: var(--teal-light); border: 1px solid #99f6e4; }
+  .comparison-box-title { font-weight: 700; font-size: 12px; margin-bottom: 10px; }
+  .comparison-box.human .comparison-box-title { color: var(--primary); }
   .comparison-box.system .comparison-box-title { color: var(--teal); }
+  .comparison-item { display: flex; gap: 8px; margin-bottom: 5px; font-size: 11px; }
+  .comparison-item-label { font-weight: 600; color: var(--gray-600); min-width: 80px; }
 
-  .comparison-item {
-    font-size: 11.5px;
-    color: var(--gray-600);
-    padding: 3px 0;
-    border-bottom: 1px solid rgba(0,0,0,0.05);
-    display: flex;
-    gap: 8px;
-  }
+  /* RELATIONS DIAGRAM */
+  .rel-diagram { background: var(--gray-800); border-radius: 10px; padding: 20px 24px; font-family: 'JetBrains Mono', monospace; font-size: 11px; line-height: 2; color: #e2e8f0; margin: 12px 0 20px; }
+  .rel-entity { background: #1d3a6b; color: #79c0ff; border-radius: 4px; padding: 2px 8px; font-weight: 600; }
+  .rel-entity.orange { background: #3d2a0a; color: #ffa657; }
+  .rel-entity.green { background: #0a2e1a; color: #7ee787; }
+  .rel-entity.purple { background: #2d1d4d; color: #c084fc; }
+  .rel-entity.teal { background: #0a2d2a; color: #5eead4; }
+  .rel-entity.red { background: #3d0a0a; color: #f87171; }
 
-  .comparison-item:last-child { border-bottom: none; }
-  .comparison-item-label { font-weight: 600; color: var(--dark); min-width: 90px; }
+  /* UI PANELS */
+  .ui-panels { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 14px 0; }
+  .ui-panel { border-radius: 10px; overflow: hidden; border: 1px solid var(--gray-200); }
+  .ui-panel-header { padding: 12px 16px; font-weight: 700; font-size: 12px; }
+  .ui-panel-header.admin { background: var(--primary); color: white; }
+  .ui-panel-header.client { background: var(--teal); color: white; }
+  .ui-menu-item { display: flex; align-items: center; padding: 8px 16px; font-size: 12px; border-bottom: 1px solid var(--gray-100); }
+  .ui-menu-item.admin:hover { background: var(--primary-light); }
+  .ui-menu-item.client:hover { background: var(--teal-light); }
+  .ui-menu-dot { width: 6px; height: 6px; border-radius: 50%; margin-right: 10px; flex-shrink: 0; }
+  .ui-menu-item.admin .ui-menu-dot { background: var(--primary); }
+  .ui-menu-item.client .ui-menu-dot { background: var(--teal); }
 
-  @media print {
-    body { font-size: 12px; }
-    .page { padding: 38px 48px; }
-    pre { font-size: 10px; }
-  }
+  /* FOOTER */
+  .doc-footer { margin-top: 48px; padding-top: 20px; border-top: 1px solid var(--gray-200); text-align: center; color: var(--gray-400); font-size: 11px; }
 
-  @page { margin: 0; size: A4; }
+  /* POLYMORPHIC TAG */
+  .poly-tag { display: inline-block; background: var(--purple-light); color: var(--purple); border: 1px solid #ddd6fe; border-radius: 4px; padding: 1px 6px; font-size: 10px; font-weight: 600; font-family: monospace; }
+
+  /* NULL TAG */
+  .null-tag { color: var(--gray-400); font-style: italic; font-size: 10px; }
+
+  /* SECTION DIVIDER */
+  hr.divider { border: none; border-top: 1px solid var(--gray-200); margin: 24px 0; }
 </style>
 </head>
 <body>
 
 <!-- COVER -->
 <div class="cover">
-  <div class="cover-badge">Architektura i Model Danych v1.0</div>
-  <div class="draft-badge"><span>DRAFT</span></div>
+  <div class="cover-badge">ClientOps CRM</div>
   <div class="cover-logo">Client<span>Ops</span></div>
-  <div class="cover-subtitle">Platforma CRM nowej generacji</div>
+  <div class="cover-subtitle">Multi-tenant CRM SaaS — Laravel 12 + React 19</div>
   <div class="cover-divider"></div>
-  <div class="cover-title">Diagram logiczny, modele danych i UI</div>
+  <div class="cover-title">Architektura i Model Danych</div>
   <div class="cover-desc">
-    Szczegółowa architektura systemu: warstwy danych, relacje między bytami,
-    flow sprzedaży, Kanban leadów, podział tickets/sla_incidents
-    oraz struktura UI panelu admina i klienta.
+    Kompletna dokumentacja techniczna: warstwy danych, diagram ERD, pełne schematy
+    wszystkich tabel, relacje, przepływy biznesowe i struktura UI.
+    Główne źródło prawdy dla developera.
   </div>
   <div class="cover-meta">
-    <div class="cover-meta-item">
-      <div class="cover-meta-label">Data</div>
-      <div class="cover-meta-value">Marzec 2026</div>
-    </div>
-    <div class="cover-meta-item">
-      <div class="cover-meta-label">Wersja</div>
-      <div class="cover-meta-value">1.0.0</div>
-    </div>
-    <div class="cover-meta-item">
-      <div class="cover-meta-label">Dokument</div>
-      <div class="cover-meta-value">Architektura</div>
-    </div>
-    <div class="cover-meta-item">
-      <div class="cover-meta-label">Powiązany z</div>
-      <div class="cover-meta-value">Spec v1.0.0</div>
-    </div>
+    <div class="cover-meta-item"><div class="cover-meta-label">Wersja</div><div class="cover-meta-value">2.0.0</div></div>
+    <div class="cover-meta-item"><div class="cover-meta-label">Data</div><div class="cover-meta-value">Marzec 2026</div></div>
+    <div class="cover-meta-item"><div class="cover-meta-label">Tabele</div><div class="cover-meta-value">27</div></div>
+    <div class="cover-meta-item"><div class="cover-meta-label">Sekcje</div><div class="cover-meta-value">13</div></div>
   </div>
 </div>
 
 <!-- TOC -->
 <div class="toc-page">
   <div class="toc-title">Spis treści</div>
-  <div class="toc-subtitle">Dokument zawiera 7 sekcji</div>
+  <div class="toc-subtitle">Dokument zawiera 13 sekcji — od warstw danych po schematy tabel i przepływy biznesowe</div>
   <ul class="toc-list">
-    <li><div class="toc-item"><div class="toc-num">1</div><span class="toc-text">Podział systemu na warstwy</span><div class="toc-dots"></div></div></li>
-    <li><div class="toc-item"><div class="toc-num">2</div><span class="toc-text">Diagram relacji między bytami</span><div class="toc-dots"></div></div></li>
-    <li><div class="toc-item"><div class="toc-num">3</div><span class="toc-text">Flow sprzedaży</span><div class="toc-dots"></div></div></li>
-    <li><div class="toc-item"><div class="toc-num">4</div><span class="toc-text">Kanban leadów — kolumny i statusy</span><div class="toc-dots"></div></div></li>
-    <li><div class="toc-item"><div class="toc-num">5</div><span class="toc-text">Tickets vs SLA Incidents</span><div class="toc-dots"></div></div></li>
-    <li><div class="toc-item"><div class="toc-num">6</div><span class="toc-text">Audyty i analizy SEO — relacja</span><div class="toc-dots"></div></div></li>
-    <li><div class="toc-item"><div class="toc-num">7</div><span class="toc-text">UI — struktura menu</span><div class="toc-dots"></div></div></li>
+    <li><div class="toc-item"><div class="toc-num">1</div><span class="toc-text">Podział systemu na warstwy — 27 tabel</span><div class="toc-dots"></div></div></li>
+    <li><div class="toc-item"><div class="toc-num">2</div><span class="toc-text">ERD — diagram relacji (Mermaid)</span><div class="toc-dots"></div></div></li>
+    <li><div class="toc-item"><div class="toc-num">3</div><span class="toc-text">Schematy tabel — Warstwa 1: Tożsamość</span><div class="toc-dots"></div></div></li>
+    <li><div class="toc-item"><div class="toc-num">4</div><span class="toc-text">Schematy tabel — Warstwa 2: Sprzedaż</span><div class="toc-dots"></div></div></li>
+    <li><div class="toc-item"><div class="toc-num">5</div><span class="toc-text">Schematy tabel — Warstwa 3: Projekty i dokumenty</span><div class="toc-dots"></div></div></li>
+    <li><div class="toc-item"><div class="toc-num">6</div><span class="toc-text">Schematy tabel — Warstwa 3: SLA, tickety, Kanban</span><div class="toc-dots"></div></div></li>
+    <li><div class="toc-item"><div class="toc-num">7</div><span class="toc-text">Schematy tabel — Warstwa 3: Inbox, audit log, SEO</span><div class="toc-dots"></div></div></li>
+    <li><div class="toc-item"><div class="toc-num">8</div><span class="toc-text">Flow sprzedaży — od leadu do projektu</span><div class="toc-dots"></div></div></li>
+    <li><div class="toc-item"><div class="toc-num">9</div><span class="toc-text">Kanban — statusy, kolumny, ujednolicony model</span><div class="toc-dots"></div></div></li>
+    <li><div class="toc-item"><div class="toc-num">10</div><span class="toc-text">Tickets vs SLA Incidents — dwie sfery</span><div class="toc-dots"></div></div></li>
+    <li><div class="toc-item"><div class="toc-num">11</div><span class="toc-text">Inbox i wiadomości wewnętrzne — flow</span><div class="toc-dots"></div></div></li>
+    <li><div class="toc-item"><div class="toc-num">12</div><span class="toc-text">Audyty i analizy SEO — pipeline</span><div class="toc-dots"></div></div></li>
+    <li><div class="toc-item"><div class="toc-num">13</div><span class="toc-text">Struktura menu — panel admina i klienta</span><div class="toc-dots"></div></div></li>
   </ul>
 </div>
 
@@ -607,15 +299,15 @@
     <div class="section-num">1</div>
     <div class="section-title-wrap">
       <div class="section-label">Architecture</div>
-      <div class="section-title">Podział systemu na warstwy</div>
+      <div class="section-title">Podział systemu na warstwy — 27 tabel</div>
     </div>
   </div>
 
-  <p>System podzielony na trzy warstwy logiczne. Każda warstwa obsługuje inny obszar biznesowy i zależy od warstwy poprzedniej — nie można mieć projektu bez klienta, nie można mieć klienta bez kontaktu.</p>
+  <p>System podzielony na trzy warstwy logiczne. Każda warstwa obsługuje inny obszar biznesowy i zależy od warstwy poprzedniej — nie można mieć projektu bez klienta, klienta bez kontaktu.</p>
 
   <div class="layers">
     <div class="layer layer-1">
-      <div class="layer-title">Warstwa 1 — Tożsamość</div>
+      <div class="layer-title">Warstwa 1 — Tożsamość (3 tabele)</div>
       <div class="layer-tables">
         <div class="layer-table">users</div>
         <div class="layer-table">clients</div>
@@ -623,7 +315,7 @@
       </div>
     </div>
     <div class="layer layer-2">
-      <div class="layer-title">Warstwa 2 — Sprzedaż</div>
+      <div class="layer-title">Warstwa 2 — Sprzedaż (3 tabele)</div>
       <div class="layer-tables">
         <div class="layer-table">leads</div>
         <div class="layer-table">lead_activities</div>
@@ -631,149 +323,690 @@
       </div>
     </div>
     <div class="layer layer-3">
-      <div class="layer-title">Warstwa 3 — Realizacja</div>
+      <div class="layer-title">Warstwa 3 — Realizacja (21 tabel)</div>
       <div class="layer-tables">
         <div class="layer-table">projects</div>
         <div class="layer-table">documents</div>
-        <div class="layer-table">seo_analyses</div>
-        <div class="layer-table">audits</div>
-        <div class="layer-table">notifications</div>
-        <div class="layer-table">tickets</div>
+        <div class="layer-table">document_versions</div>
+        <div class="layer-table">kanban_boards</div>
+        <div class="layer-table">kanban_columns</div>
+        <div class="layer-table">kanban_cards</div>
         <div class="layer-table">sla_policies</div>
+        <div class="layer-table">tickets</div>
+        <div class="layer-table">ticket_comments</div>
         <div class="layer-table">sla_incidents</div>
+        <div class="layer-table">notifications</div>
+        <div class="layer-table">notification_preferences</div>
+        <div class="layer-table">conversations</div>
+        <div class="layer-table">conversation_participants</div>
+        <div class="layer-table">messages</div>
+        <div class="layer-table">mentions</div>
+        <div class="layer-table">activity_log</div>
+        <div class="layer-table">audits</div>
+        <div class="layer-table">seo_analyses</div>
+        <div class="layer-table">seo_issues</div>
+        <div class="layer-table">seo_keyword_ranks</div>
       </div>
     </div>
   </div>
 
-  <h3>Minimalny zestaw tabel na start</h3>
-  <p>Kolejność wdrożenia odpowiada warstwom — nie można tworzyć tabeli wyższej warstwy bez fundament niższej.</p>
-
-  <table>
-    <thead><tr><th>Tabela</th><th>Warstwa</th><th>Opis</th></tr></thead>
-    <tbody>
-      <tr><td><code>users</code></td><td><span class="badge badge-blue">1</span></td><td>Użytkownicy systemu — admini, managerowie, pracownicy, klienci</td></tr>
-      <tr><td><code>clients</code></td><td><span class="badge badge-blue">1</span></td><td>Firmy / organizacje — główny byt systemu CRM</td></tr>
-      <tr><td><code>contacts</code></td><td><span class="badge badge-blue">1</span></td><td>Osoby kontaktowe w firmach klientów (wiele per klient)</td></tr>
-      <tr><td><code>leads</code></td><td><span class="badge badge-orange">2</span></td><td>Szanse sprzedażowe powiązane z firmą lub kontaktem</td></tr>
-      <tr><td><code>lead_activities</code></td><td><span class="badge badge-orange">2</span></td><td>Log aktywności na leadzie: telefon, email, spotkanie, notatka</td></tr>
-      <tr><td><code>offers</code></td><td><span class="badge badge-orange">2</span></td><td>Oferty handlowe — krok między leadem a klientem</td></tr>
-      <tr><td><code>projects</code></td><td><span class="badge badge-green">3</span></td><td>Realizacje dla klientów — agregują wszystkie zasoby operacyjne</td></tr>
-      <tr><td><code>documents</code></td><td><span class="badge badge-green">3</span></td><td>Dokumenty powiązane z projektami / klientami</td></tr>
-      <tr><td><code>seo_analyses</code></td><td><span class="badge badge-green">3</span></td><td>Analizy SEO — samodzielne lub jako składowa audytu</td></tr>
-      <tr><td><code>audits</code></td><td><span class="badge badge-green">3</span></td><td>Audyty (SEO, techniczne, UX) — byt nadrzędny grupujący analizy</td></tr>
-      <tr><td><code>notifications</code></td><td><span class="badge badge-green">3</span></td><td>Powiadomienia systemowe dla użytkowników</td></tr>
-      <tr><td><code>tickets</code></td><td><span class="badge badge-green">3</span></td><td>Zgłoszenia tworzone przez klientów (sfera ludzka)</td></tr>
-      <tr><td><code>sla_policies</code></td><td><span class="badge badge-green">3</span></td><td>Polityki SLA — czasy odpowiedzi i rozwiązania per priorytet</td></tr>
-      <tr><td><code>sla_incidents</code></td><td><span class="badge badge-green">3</span></td><td>Naruszenia SLA wykryte automatycznie przez system</td></tr>
-    </tbody>
-  </table>
-
   <div class="info-box teal">
     <strong>Kluczowa zasada architektury</strong>
-    Nie łącz wszystkiego w jeden byt. Lead, klient i projekt to trzy oddzielne stany relacji biznesowej.
-    Lead staje się klientem przez konwersję — projekt jest tworzony dla klienta, nigdy dla leadu.
+    Lead → Klient → Projekt to trzy osobne stany relacji biznesowej. Lead staje się klientem przez
+    eksplicytną konwersję (event + listener). Projekt jest tworzony dla klienta — nigdy bezpośrednio dla leadu.
+    Nie skracaj tej ścieżki.
   </div>
+
+  <h3>Multi-tenancy — single database + Global Scopes</h3>
+  <p>Każda tabela w warstwie 2 i 3 zawiera <code>client_id</code>. Middleware identyfikuje tenant po subdomenie i wstrzykuje go do kontenera. Trait <code>BelongsToTenant</code> dodaje Global Scope automatycznie — zapytania są zawsze filtrowane bez potrzeby jawnego <code>where('client_id', ...)</code>.</p>
+
+  <pre><span class="c">// Middleware — identyfikacja tenanta po subdomenie</span>
+$slug   = explode('.', $request->getHost())[0]; <span class="c">// "acme" z acme.clientops.pl</span>
+$tenant = Client::where('slug', $slug)->firstOrFail();
+app()->instance('tenant', $tenant);
+
+<span class="c">// Trait BelongsToTenant — dodaje Global Scope + auto-fill client_id</span>
+<span class="k">static</span>::addGlobalScope(<span class="k">new</span> TenantScope);
+<span class="k">static</span>::creating(<span class="k">fn</span>($model) => $model->client_id = app('tenant')->id);</pre>
 </div>
 
-<!-- SECTION 2: RELATIONS -->
+<!-- SECTION 2: ERD -->
 <div class="page page-break">
   <div class="section-header">
     <div class="section-num">2</div>
     <div class="section-title-wrap">
       <div class="section-label">Data Model</div>
-      <div class="section-title">Diagram relacji między bytami</div>
+      <div class="section-title">ERD — diagram relacji</div>
     </div>
   </div>
 
-  <h3>Relacje główne</h3>
+  <p>Diagram pokazuje klucze główne (PK), klucze obce (FK) i typy relacji. Tabele polymorphic (<code>kanban_cards</code>, <code>activity_log</code>, <code>mentions</code>) obsługują wiele typów podmiotów przez <code>*_type</code> + <code>*_id</code>.</p>
 
-  <table>
-    <thead><tr><th>Relacja</th><th>Typ</th><th>Opis</th></tr></thead>
-    <tbody>
-      <tr><td><code>clients</code> → <code>contacts</code></td><td><span class="badge badge-blue">1:N</span></td><td>Jedna firma ma wiele osób kontaktowych</td></tr>
-      <tr><td><code>clients</code> → <code>projects</code></td><td><span class="badge badge-blue">1:N</span></td><td>Jeden klient ma wiele projektów</td></tr>
-      <tr><td><code>clients</code> → <code>leads</code></td><td><span class="badge badge-blue">1:N</span></td><td>Firma może mieć wiele szans sprzedażowych</td></tr>
-      <tr><td><code>contacts</code> → <code>leads</code></td><td><span class="badge badge-blue">1:N</span></td><td>Konkretna osoba może być powiązana z leadem</td></tr>
-      <tr><td><code>leads</code> → <code>lead_activities</code></td><td><span class="badge badge-blue">1:N</span></td><td>Historia aktywności na leadzie</td></tr>
-      <tr><td><code>leads</code> → <code>offers</code></td><td><span class="badge badge-blue">1:N</span></td><td>Lead może mieć wiele wersji oferty</td></tr>
-      <tr><td><code>leads</code> → <code>clients</code></td><td><span class="badge badge-orange">konwersja</span></td><td>Wygrany lead przekształca się w klienta</td></tr>
-      <tr><td><code>projects</code> → <code>documents</code></td><td><span class="badge badge-blue">1:N</span></td><td>Projekt agreguje dokumenty</td></tr>
-      <tr><td><code>projects</code> → <code>seo_analyses</code></td><td><span class="badge badge-blue">1:N</span></td><td>Projekt agreguje analizy SEO</td></tr>
-      <tr><td><code>projects</code> → <code>audits</code></td><td><span class="badge badge-blue">1:N</span></td><td>Projekt agreguje audyty</td></tr>
-      <tr><td><code>audits</code> → <code>seo_analyses</code></td><td><span class="badge badge-blue">1:N (opcja)</span></td><td>Audyt może grupować wiele analiz SEO</td></tr>
-      <tr><td><code>projects</code> → <code>tickets</code></td><td><span class="badge badge-blue">1:N</span></td><td>Zgłoszenia dotyczą konkretnych projektów</td></tr>
-      <tr><td><code>tickets</code> → <code>sla_incidents</code></td><td><span class="badge badge-blue">1:N</span></td><td>Ticket może wygenerować wiele naruszeń SLA</td></tr>
-      <tr><td><code>projects</code> → <code>sla_incidents</code></td><td><span class="badge badge-blue">1:N</span></td><td>Naruszenie deadline projektu też tworzy incydent</td></tr>
-    </tbody>
-  </table>
+  <div class="mermaid">
+erDiagram
+    users {
+        bigint id PK
+        string name
+        string email
+    }
+    clients {
+        bigint id PK
+        string name
+        string slug
+        bigint sla_policy_id FK
+    }
+    contacts {
+        bigint id PK
+        bigint client_id FK
+        string first_name
+        string last_name
+        boolean is_primary
+    }
+    leads {
+        bigint id PK
+        bigint client_id FK
+        bigint contact_id FK
+        bigint assigned_to FK
+        string status
+        bigint converted_to_client_id FK
+    }
+    lead_activities {
+        bigint id PK
+        bigint lead_id FK
+        bigint user_id FK
+        string type
+        timestamp occurred_at
+    }
+    offers {
+        bigint id PK
+        bigint lead_id FK
+        bigint client_id FK
+        bigint document_id FK
+        string status
+    }
+    projects {
+        bigint id PK
+        bigint client_id FK
+        bigint sla_policy_id FK
+        bigint assigned_to FK
+        string status
+        date deadline
+    }
+    sla_policies {
+        bigint id PK
+        bigint client_id FK
+        string priority
+        int response_time_hours
+        int resolution_time_hours
+    }
+    tickets {
+        bigint id PK
+        bigint client_id FK
+        bigint project_id FK
+        bigint sla_policy_id FK
+        string priority
+        string status
+        timestamp sla_response_due_at
+    }
+    ticket_comments {
+        bigint id PK
+        bigint ticket_id FK
+        string author_type
+        bigint author_id
+        boolean is_internal
+    }
+    sla_incidents {
+        bigint id PK
+        string subject_type
+        bigint subject_id
+        string breach_type
+        timestamp breached_at
+    }
+    documents {
+        bigint id PK
+        string documentable_type
+        bigint documentable_id
+        bigint created_by FK
+        int version
+    }
+    kanban_cards {
+        bigint id PK
+        bigint board_id FK
+        bigint column_id FK
+        string cardable_type
+        bigint cardable_id
+    }
+    conversations {
+        bigint id PK
+        bigint created_by FK
+        string subject
+    }
+    messages {
+        bigint id PK
+        bigint conversation_id FK
+        string sender_type
+        bigint sender_id
+    }
+    notifications {
+        uuid id PK
+        string type
+        string notifiable_type
+        bigint notifiable_id
+        json data
+        timestamp read_at
+    }
 
-  <h3>Schemat wizualny</h3>
-
-  <div class="rel-diagram">
-    <div style="margin-bottom:12px">
-      <span class="rel-entity">users</span>
-      <span style="margin:0 8px;color:#94a3b8">──────────────────────────────── zarządza wszystkim</span>
-    </div>
-    <div style="margin-bottom:8px">
-      <span class="rel-entity">clients</span>
-      <span style="margin:0 8px;color:#94a3b8">1:N ──→</span>
-      <span class="rel-entity">contacts</span>
-      <span style="margin:0 8px;color:#94a3b8">,</span>
-      <span class="rel-entity">projects</span>
-      <span style="margin:0 8px;color:#94a3b8">,</span>
-      <span class="rel-entity orange">leads</span>
-    </div>
-    <div style="margin-bottom:8px;padding-left:24px">
-      <span class="rel-entity orange">leads</span>
-      <span style="margin:0 8px;color:#94a3b8">1:N ──→</span>
-      <span class="rel-entity orange">lead_activities</span>
-      <span style="margin:0 8px;color:#94a3b8">,</span>
-      <span class="rel-entity orange">offers</span>
-    </div>
-    <div style="margin-bottom:8px;padding-left:24px">
-      <span class="rel-entity orange">leads</span>
-      <span style="margin:0 8px;color:#fbbf24">── konwersja ──→</span>
-      <span class="rel-entity">clients</span>
-    </div>
-    <div style="margin-bottom:8px;padding-left:24px">
-      <span class="rel-entity">projects</span>
-      <span style="margin:0 8px;color:#94a3b8">1:N ──→</span>
-      <span class="rel-entity green">documents</span>
-      <span style="margin:0 8px;color:#94a3b8">,</span>
-      <span class="rel-entity green">seo_analyses</span>
-      <span style="margin:0 8px;color:#94a3b8">,</span>
-      <span class="rel-entity green">audits</span>
-      <span style="margin:0 8px;color:#94a3b8">,</span>
-      <span class="rel-entity purple">tickets</span>
-    </div>
-    <div style="padding-left:48px">
-      <span class="rel-entity purple">tickets</span>
-      <span style="margin:0 8px;color:#94a3b8">── system ──→</span>
-      <span class="rel-entity teal">sla_incidents</span>
-    </div>
+    clients ||--o{ contacts : "1:N"
+    clients ||--o{ leads : "1:N"
+    clients ||--o{ projects : "1:N"
+    clients ||--o| sla_policies : "default SLA"
+    contacts ||--o{ leads : "1:N"
+    leads ||--o{ lead_activities : "1:N"
+    leads ||--o{ offers : "1:N"
+    leads }o--o| clients : "konwersja"
+    projects ||--o{ tickets : "1:N"
+    projects ||--o{ documents : "1:N"
+    tickets ||--o{ ticket_comments : "1:N"
+    tickets ||--o{ sla_incidents : "1:N"
+    sla_policies ||--o{ tickets : "1:N"
+    sla_policies ||--o{ projects : "1:N"
+    conversations ||--o{ messages : "1:N"
   </div>
 </div>
 
-<!-- SECTION 3: SALES FLOW -->
+<!-- SECTION 3: SCHEMAS LAYER 1 -->
 <div class="page page-break">
   <div class="section-header">
     <div class="section-num">3</div>
     <div class="section-title-wrap">
-      <div class="section-label">Process</div>
-      <div class="section-title">Flow sprzedaży</div>
+      <div class="section-label">Schemas</div>
+      <div class="section-title">Schematy tabel — Warstwa 1: Tożsamość</div>
     </div>
   </div>
 
-  <p>Kompletny proces od pierwszego kontaktu do aktywnej realizacji projektu. Każdy krok to osobny byt w systemie — nie skróty, nie aliasy.</p>
+  <h3>users</h3>
+  <pre><span class="t">users</span>
+  <span class="pk">id</span>                bigint PK auto_increment
+  <span class="f">name</span>              varchar(255)
+  <span class="f">email</span>             varchar(255) unique
+  <span class="f">email_verified_at</span> timestamp nullable
+  <span class="f">password</span>          varchar(255)               <span class="c">-- bcrypt hash</span>
+  <span class="f">remember_token</span>    varchar(100) nullable
+  <span class="f">avatar_path</span>       varchar(255) nullable       <span class="c">-- Spatie Media Library lub null</span>
+  <span class="f">phone</span>             varchar(20) nullable
+  <span class="f">is_active</span>         boolean default true
+  <span class="f">last_login_at</span>     timestamp nullable
+  <span class="f">created_at</span>        timestamp
+  <span class="f">updated_at</span>        timestamp
+
+<span class="c">  -- Role zarządzane przez Spatie Permission (tabela model_has_roles)</span>
+<span class="c">  -- Dostępne role: super-admin | admin | manager | employee | client-admin | client-user</span></pre>
+
+  <h3>clients</h3>
+  <pre><span class="t">clients</span>
+  <span class="pk">id</span>                    bigint PK auto_increment
+  <span class="f">name</span>                  varchar(255)               <span class="c">-- nazwa firmy</span>
+  <span class="f">slug</span>                  varchar(100) unique        <span class="c">-- subdomena: acme → acme.clientops.pl</span>
+  <span class="f">nip</span>                   varchar(20) nullable
+  <span class="f">address</span>               varchar(255) nullable
+  <span class="f">city</span>                  varchar(100) nullable
+  <span class="f">postal_code</span>           varchar(10) nullable
+  <span class="f">country</span>               varchar(2) default 'PL'
+  <span class="f">website</span>               varchar(255) nullable
+  <span class="f">status</span>                enum('active','inactive','archived') default 'active'
+  <span class="fk">sla_policy_id</span>         bigint nullable FK → sla_policies.id  <span class="c">-- domyślna polityka SLA</span>
+  <span class="fk">converted_from_lead_id</span> bigint nullable FK → leads.id       <span class="c">-- skąd pochodzi</span>
+  <span class="f">notes</span>                 text nullable
+  <span class="fk">created_by</span>            bigint FK → users.id
+  <span class="f">created_at</span>            timestamp
+  <span class="f">updated_at</span>            timestamp</pre>
+
+  <h3>contacts</h3>
+  <pre><span class="t">contacts</span>
+  <span class="pk">id</span>              bigint PK auto_increment
+  <span class="fk">client_id</span>       bigint FK → clients.id
+  <span class="f">first_name</span>      varchar(100)
+  <span class="f">last_name</span>       varchar(100)
+  <span class="f">email</span>           varchar(255) nullable
+  <span class="f">phone</span>           varchar(20) nullable
+  <span class="f">position</span>        varchar(100) nullable       <span class="c">-- stanowisko w firmie</span>
+  <span class="f">is_primary</span>      boolean default false        <span class="c">-- główny kontakt firmy</span>
+  <span class="f">notes</span>           text nullable
+  <span class="f">created_at</span>      timestamp
+  <span class="f">updated_at</span>      timestamp
+
+<span class="c">  -- Index: (client_id), (email)</span></pre>
+
+  <div class="info-box blue">
+    <strong>Uwaga: users vs contacts</strong>
+    <code>users</code> to konta w systemie (login, role, hasło). <code>contacts</code> to osoby kontaktowe
+    w firmach klientów — mogą, ale nie muszą mieć konta użytkownika. Klient loguje się jako
+    <code>user</code> z rolą <code>client-admin</code> lub <code>client-user</code>, powiązanym z <code>client_id</code>.
+  </div>
+</div>
+
+<!-- SECTION 4: SCHEMAS LAYER 2 -->
+<div class="page page-break">
+  <div class="section-header">
+    <div class="section-num">4</div>
+    <div class="section-title-wrap">
+      <div class="section-label">Schemas</div>
+      <div class="section-title">Schematy tabel — Warstwa 2: Sprzedaż</div>
+    </div>
+  </div>
+
+  <h3>leads</h3>
+  <pre><span class="t">leads</span>
+  <span class="pk">id</span>                      bigint PK auto_increment
+  <span class="fk">client_id</span>               bigint nullable FK → clients.id   <span class="c">-- null przed konwersją</span>
+  <span class="fk">contact_id</span>              bigint nullable FK → contacts.id  <span class="c">-- osoba kontaktowa</span>
+  <span class="fk">assigned_to</span>             bigint nullable FK → users.id
+  <span class="f">title</span>                   varchar(255)                      <span class="c">-- np. "SEO dla firmy ABC"</span>
+  <span class="f">company_name</span>            varchar(255) nullable             <span class="c">-- przed konwersją do clients</span>
+  <span class="f">status</span>                  enum('new','contacted','no_response',
+                               'in_discussion','offer_sent','won','lost')
+                          default 'new'
+  <span class="f">source</span>                  enum('manual','import','form','referral') default 'manual'
+  <span class="f">value</span>                   decimal(12,2) nullable            <span class="c">-- szacowana wartość</span>
+  <span class="f">expected_close_date</span>     date nullable
+  <span class="f">notes</span>                   text nullable
+  <span class="f">converted_at</span>            timestamp nullable                <span class="c">-- kiedy status → won</span>
+  <span class="fk">converted_to_client_id</span>  bigint nullable FK → clients.id  <span class="c">-- powstały klient</span>
+  <span class="fk">created_by</span>              bigint FK → users.id
+  <span class="f">created_at</span>              timestamp
+  <span class="f">updated_at</span>              timestamp
+
+<span class="c">  -- Index: (status), (assigned_to), (client_id)</span></pre>
+
+  <h3>lead_activities</h3>
+  <pre><span class="t">lead_activities</span>
+  <span class="pk">id</span>             bigint PK auto_increment
+  <span class="fk">lead_id</span>        bigint FK → leads.id
+  <span class="fk">user_id</span>        bigint FK → users.id              <span class="c">-- kto wykonał aktywność</span>
+  <span class="f">type</span>           enum('call','email','meeting','note','status_change')
+  <span class="f">description</span>    text nullable
+  <span class="f">occurred_at</span>    timestamp                         <span class="c">-- kiedy miała miejsce (nie created_at!)</span>
+  <span class="f">metadata</span>       json nullable
+  <span class="c">                 -- dla status_change: { "from": "new", "to": "contacted" }</span>
+  <span class="c">                 -- dla call: { "duration_minutes": 15 }</span>
+  <span class="c">                 -- dla meeting: { "location": "...", "attendees": [...] }</span>
+  <span class="f">created_at</span>     timestamp</pre>
+
+  <h3>offers</h3>
+  <pre><span class="t">offers</span>
+  <span class="pk">id</span>                      bigint PK auto_increment
+  <span class="fk">lead_id</span>                 bigint FK → leads.id
+  <span class="fk">client_id</span>               bigint nullable FK → clients.id  <span class="c">-- wypełniane przy konwersji</span>
+  <span class="f">title</span>                   varchar(255)
+  <span class="f">status</span>                  enum('draft','sent','accepted','rejected','expired')
+                          default 'draft'
+  <span class="f">value</span>                   decimal(12,2) nullable
+  <span class="f">valid_until</span>             date nullable
+  <span class="fk">document_id</span>             bigint nullable FK → documents.id <span class="c">-- opcjonalny TipTap</span>
+  <span class="f">notes</span>                   text nullable
+  <span class="f">accepted_at</span>             timestamp nullable
+  <span class="f">rejected_at</span>             timestamp nullable
+  <span class="f">converted_to_client_at</span>  timestamp nullable
+  <span class="fk">created_by</span>              bigint FK → users.id
+  <span class="f">created_at</span>              timestamp
+  <span class="f">updated_at</span>              timestamp</pre>
+</div>
+
+<!-- SECTION 5: SCHEMAS LAYER 3a -->
+<div class="page page-break">
+  <div class="section-header">
+    <div class="section-num">5</div>
+    <div class="section-title-wrap">
+      <div class="section-label">Schemas</div>
+      <div class="section-title">Schematy tabel — Warstwa 3: Projekty i dokumenty</div>
+    </div>
+  </div>
+
+  <h3>projects</h3>
+  <pre><span class="t">projects</span>
+  <span class="pk">id</span>              bigint PK auto_increment
+  <span class="fk">client_id</span>       bigint FK → clients.id
+  <span class="f">name</span>            varchar(255)
+  <span class="f">description</span>     text nullable
+  <span class="f">status</span>          enum('planning','active','on_hold','completed','cancelled')
+                  default 'planning'
+  <span class="fk">sla_policy_id</span>   bigint nullable FK → sla_policies.id
+  <span class="fk">assigned_to</span>     bigint nullable FK → users.id    <span class="c">-- główny opiekun projektu</span>
+  <span class="f">deadline</span>        date nullable
+  <span class="f">started_at</span>      timestamp nullable
+  <span class="f">completed_at</span>    timestamp nullable
+  <span class="fk">created_by</span>      bigint FK → users.id
+  <span class="f">created_at</span>      timestamp
+  <span class="f">updated_at</span>      timestamp</pre>
+
+  <h3>documents</h3>
+  <pre><span class="t">documents</span>
+  <span class="pk">id</span>                  bigint PK auto_increment
+  <span class="f">documentable_type</span>  <span class="poly-tag">polymorphic</span> varchar(255)  <span class="c">-- "Project" | "Client" | "Ticket"</span>
+  <span class="f">documentable_id</span>    bigint
+  <span class="f">title</span>              varchar(255)
+  <span class="f">content_json</span>       longtext nullable              <span class="c">-- TipTap JSON format</span>
+  <span class="f">content_html</span>       longtext nullable              <span class="c">-- wygenerowany HTML (cache)</span>
+  <span class="f">pdf_path</span>           varchar(255) nullable          <span class="c">-- ścieżka do S3/MinIO</span>
+  <span class="f">version</span>            int default 1
+  <span class="f">is_published</span>       boolean default false          <span class="c">-- czy widoczny dla klienta</span>
+  <span class="fk">created_by</span>         bigint FK → users.id
+  <span class="f">created_at</span>         timestamp
+  <span class="f">updated_at</span>         timestamp
+
+<span class="c">  -- Index: (documentable_type, documentable_id)</span></pre>
+
+  <h3>document_versions</h3>
+  <pre><span class="t">document_versions</span>
+  <span class="pk">id</span>              bigint PK auto_increment
+  <span class="fk">document_id</span>     bigint FK → documents.id
+  <span class="f">version</span>         int                     <span class="c">-- snapshot numeru wersji</span>
+  <span class="f">content_json</span>    longtext                <span class="c">-- pełny snapshot TipTap JSON</span>
+  <span class="f">title</span>           varchar(255)            <span class="c">-- tytuł w momencie zapisu</span>
+  <span class="fk">created_by</span>      bigint FK → users.id
+  <span class="f">created_at</span>      timestamp               <span class="c">-- tylko created_at, bez updated_at (immutable)</span></pre>
+
+  <div class="info-box blue">
+    <strong>Wersjonowanie dokumentów</strong>
+    Przy każdym zapisie dokumentu: (1) inkrementuj <code>documents.version</code>,
+    (2) utwórz snapshot w <code>document_versions</code>. Stare wersje nigdy nie są nadpisywane.
+    PDF generuje się asynchronicznie z bieżącej wersji (Browsershot + kolejka).
+  </div>
+
+  <h3>sla_policies</h3>
+  <pre><span class="t">sla_policies</span>
+  <span class="pk">id</span>                    bigint PK auto_increment
+  <span class="fk">client_id</span>             bigint nullable FK → clients.id  <span class="c">-- null = globalny default</span>
+  <span class="f">name</span>                  varchar(255)                     <span class="c">-- np. "Standard", "Premium 24/7"</span>
+  <span class="f">priority</span>              enum('low','medium','high','critical')
+  <span class="f">response_time_hours</span>   int                              <span class="c">-- max czas do pierwszej odpowiedzi</span>
+  <span class="f">resolution_time_hours</span> int                              <span class="c">-- max czas do zamknięcia</span>
+  <span class="f">business_hours_only</span>   boolean default true             <span class="c">-- czy liczyć tylko godziny robocze</span>
+  <span class="f">created_at</span>            timestamp
+  <span class="f">updated_at</span>            timestamp</pre>
+</div>
+
+<!-- SECTION 6: SCHEMAS LAYER 3b -->
+<div class="page page-break">
+  <div class="section-header">
+    <div class="section-num">6</div>
+    <div class="section-title-wrap">
+      <div class="section-label">Schemas</div>
+      <div class="section-title">Schematy tabel — Warstwa 3: SLA, tickety, Kanban</div>
+    </div>
+  </div>
+
+  <h3>tickets</h3>
+  <pre><span class="t">tickets</span>
+  <span class="pk">id</span>                    bigint PK auto_increment
+  <span class="fk">client_id</span>             bigint FK → clients.id
+  <span class="fk">project_id</span>            bigint FK → projects.id
+  <span class="f">created_by</span>            bigint                           <span class="c">-- user_id (client-user lub admin)</span>
+  <span class="f">created_by_type</span>       varchar(50)                      <span class="c">-- "User" | "Client"</span>
+  <span class="f">title</span>                 varchar(255)
+  <span class="f">description</span>           text
+  <span class="f">priority</span>              enum('low','medium','high','critical') default 'medium'
+  <span class="f">status</span>                enum('new','open','in_progress','waiting','resolved','closed')
+                        default 'new'
+  <span class="fk">sla_policy_id</span>         bigint nullable FK → sla_policies.id
+  <span class="f">sla_response_due_at</span>   timestamp nullable               <span class="c">-- obliczane przy tworzeniu</span>
+  <span class="f">sla_resolution_due_at</span> timestamp nullable
+  <span class="f">first_responded_at</span>    timestamp nullable               <span class="c">-- kiedy admin pierwszy raz odpowiedział</span>
+  <span class="f">resolved_at</span>           timestamp nullable
+  <span class="f">closed_at</span>             timestamp nullable
+  <span class="fk">kanban_card_id</span>        bigint nullable FK → kanban_cards.id
+  <span class="f">created_at</span>            timestamp
+  <span class="f">updated_at</span>            timestamp</pre>
+
+  <h3>ticket_comments</h3>
+  <pre><span class="t">ticket_comments</span>
+  <span class="pk">id</span>              bigint PK auto_increment
+  <span class="fk">ticket_id</span>       bigint FK → tickets.id
+  <span class="f">author_id</span>       bigint                         <span class="c">-- polymorphic: user lub client user</span>
+  <span class="f">author_type</span>     <span class="poly-tag">polymorphic</span> varchar(50)      <span class="c">-- "User" | "Client"</span>
+  <span class="f">is_internal</span>     boolean default false          <span class="c">-- notatki wewnętrzne niewidoczne dla klienta</span>
+  <span class="f">content</span>         text
+  <span class="f">created_at</span>      timestamp
+  <span class="f">updated_at</span>      timestamp</pre>
+
+  <h3>sla_incidents</h3>
+  <pre><span class="t">sla_incidents</span>
+  <span class="pk">id</span>                  bigint PK auto_increment
+  <span class="f">subject_type</span>        <span class="poly-tag">polymorphic</span> varchar(50)   <span class="c">-- "Ticket" | "Project"</span>
+  <span class="f">subject_id</span>          bigint
+  <span class="f">breach_type</span>         enum('response','resolution','deadline')
+  <span class="f">breached_at</span>         timestamp                     <span class="c">-- kiedy SLA zostało przekroczone</span>
+  <span class="f">detected_at</span>         timestamp                     <span class="c">-- kiedy job to wykrył</span>
+  <span class="f">notified</span>            boolean default false          <span class="c">-- czy powiadomienie wysłane</span>
+  <span class="fk">acknowledged_by</span>     bigint nullable FK → users.id
+  <span class="f">acknowledged_at</span>     timestamp nullable
+  <span class="f">resolved_at</span>         timestamp nullable
+  <span class="f">created_at</span>          timestamp</pre>
+
+  <h3>kanban_boards / kanban_columns / kanban_cards</h3>
+  <div class="schema-grid">
+    <div>
+      <pre><span class="t">kanban_boards</span>
+  <span class="pk">id</span>         bigint PK
+  <span class="f">name</span>       varchar(255)
+  <span class="f">board_type</span> enum('leads',
+             'tickets',
+             'project_tasks')
+  <span class="f">created_at</span> timestamp
+
+<span class="t">kanban_columns</span>
+  <span class="pk">id</span>         bigint PK
+  <span class="fk">board_id</span>   bigint FK
+  <span class="f">name</span>       varchar(255)
+  <span class="f">position</span>   int
+  <span class="f">color</span>      varchar(7) nullable
+  <span class="f">created_at</span> timestamp</pre>
+    </div>
+    <div>
+      <pre><span class="t">kanban_cards</span>
+  <span class="pk">id</span>            bigint PK
+  <span class="fk">board_id</span>      bigint FK
+  <span class="fk">column_id</span>     bigint FK
+  <span class="f">position</span>      int
+  <span class="c">  -- polymorphic subject:</span>
+  <span class="f">cardable_type</span> <span class="poly-tag">poly</span> varchar
+  <span class="c">  -- "Lead"|"Ticket"</span>
+  <span class="c">  -- |"ProjectTask"</span>
+  <span class="f">cardable_id</span>   bigint
+  <span class="fk">assigned_to</span>   bigint nullable FK
+  <span class="f">due_at</span>        timestamp nullable
+  <span class="f">created_at</span>    timestamp
+  <span class="f">updated_at</span>    timestamp</pre>
+    </div>
+  </div>
+</div>
+
+<!-- SECTION 7: SCHEMAS LAYER 3c -->
+<div class="page page-break">
+  <div class="section-header">
+    <div class="section-num">7</div>
+    <div class="section-title-wrap">
+      <div class="section-label">Schemas</div>
+      <div class="section-title">Schematy tabel — Warstwa 3: Inbox, audit log, SEO</div>
+    </div>
+  </div>
+
+  <h3>notifications / notification_preferences</h3>
+  <div class="schema-grid">
+    <div>
+      <pre><span class="t">notifications</span>
+  <span class="pk">id</span>               uuid PK
+  <span class="f">type</span>             varchar(255)
+  <span class="c">  -- sla_breach | mention</span>
+  <span class="c">  -- message | task_assigned</span>
+  <span class="c">  -- comment_reply | pdf_ready</span>
+  <span class="c">  -- new_ticket | audit_complete</span>
+  <span class="f">notifiable_type</span>  <span class="poly-tag">poly</span> varchar
+  <span class="c">  -- "User" | "Client"</span>
+  <span class="f">notifiable_id</span>    bigint
+  <span class="f">data</span>             json
+  <span class="c">  -- { body, sender_id,</span>
+  <span class="c">  --   link, subject_type,</span>
+  <span class="c">  --   subject_id }</span>
+  <span class="f">read_at</span>          timestamp nullable
+  <span class="f">created_at</span>       timestamp</pre>
+    </div>
+    <div>
+      <pre><span class="t">notification_preferences</span>
+  <span class="pk">id</span>              bigint PK
+  <span class="fk">user_id</span>         bigint FK
+  <span class="f">notification_type</span> varchar
+  <span class="f">channels</span>        json
+  <span class="c">  -- ['mail','sms',</span>
+  <span class="c">  --  'database',</span>
+  <span class="c">  --  'broadcast']</span>
+  <span class="f">quiet_hours_from</span> time nullable
+  <span class="f">quiet_hours_to</span>  time nullable
+  <span class="f">quiet_hours_timezone</span>
+                  varchar default
+                  'Europe/Warsaw'
+  <span class="f">created_at</span>      timestamp
+  <span class="f">updated_at</span>      timestamp</pre>
+    </div>
+  </div>
+
+  <h3>conversations / conversation_participants / messages / mentions</h3>
+  <div class="schema-grid">
+    <div>
+      <pre><span class="t">conversations</span>
+  <span class="pk">id</span>          bigint PK
+  <span class="f">subject</span>     varchar nullable
+  <span class="fk">created_by</span>  bigint FK → users
+  <span class="f">created_at</span>  timestamp
+
+<span class="t">conversation_participants</span>
+  <span class="pk">id</span>               bigint PK
+  <span class="fk">conversation_id</span>  bigint FK
+  <span class="f">participable_type</span> <span class="poly-tag">poly</span>
+  <span class="c">    -- "User"|"Client"</span>
+  <span class="f">participable_id</span>  bigint
+  <span class="f">last_read_at</span>     timestamp nullable</pre>
+    </div>
+    <div>
+      <pre><span class="t">messages</span>
+  <span class="pk">id</span>              bigint PK
+  <span class="fk">conversation_id</span> bigint FK
+  <span class="f">sender_type</span>     <span class="poly-tag">poly</span> varchar
+  <span class="c">  -- "User" | "Client"</span>
+  <span class="f">sender_id</span>       bigint
+  <span class="f">body</span>            text
+  <span class="f">created_at</span>      timestamp
+
+<span class="t">mentions</span>
+  <span class="pk">id</span>                bigint PK
+  <span class="f">mentionable_type</span>  <span class="poly-tag">poly</span> varchar
+  <span class="c">  -- "Message"</span>
+  <span class="c">  -- "TicketComment"</span>
+  <span class="f">mentionable_id</span>    bigint
+  <span class="f">mentioned_type</span>    varchar
+  <span class="f">mentioned_id</span>      bigint
+  <span class="f">created_at</span>        timestamp</pre>
+    </div>
+  </div>
+
+  <h3>activity_log (Spatie Activity Log)</h3>
+  <pre><span class="t">activity_log</span>
+  <span class="pk">id</span>             bigint PK auto_increment
+  <span class="f">log_name</span>       varchar(255) nullable   <span class="c">-- "auth" | "crm" | "documents" | "tickets" | "system"</span>
+  <span class="f">description</span>    text                    <span class="c">-- "created" | "updated" | "deleted" | "login" | ...</span>
+  <span class="f">subject_type</span>   <span class="poly-tag">polymorphic</span> varchar    <span class="c">-- "Lead" | "Client" | "Ticket" | "User" | ...</span>
+  <span class="f">subject_id</span>     bigint nullable
+  <span class="f">causer_type</span>    <span class="poly-tag">polymorphic</span> varchar    <span class="c">-- "User" (kto wykonał akcję)</span>
+  <span class="f">causer_id</span>      bigint nullable
+  <span class="f">properties</span>     json nullable
+  <span class="c">                  -- { "old": { "status": "new" }, "attributes": { "status": "contacted" } }</span>
+  <span class="f">created_at</span>     timestamp</pre>
+
+  <h3>seo_analyses / seo_issues / seo_keyword_ranks</h3>
+  <div class="schema-grid">
+    <div>
+      <pre><span class="t">seo_analyses</span>
+  <span class="pk">id</span>            bigint PK
+  <span class="fk">project_id</span>    bigint FK
+  <span class="fk">audit_id</span>      bigint nullable FK
+  <span class="f">status</span>        enum('pending',
+                'running',
+                'completed',
+                'failed')
+  <span class="f">score</span>         int nullable
+  <span class="f">keywords_count</span> int default 0
+  <span class="f">issues_count</span>  int default 0
+  <span class="f">gsc_connected</span> boolean default false
+  <span class="f">ga4_connected</span> boolean default false
+  <span class="f">completed_at</span>  timestamp nullable
+  <span class="f">created_at</span>    timestamp
+
+<span class="t">seo_issues</span>
+  <span class="pk">id</span>              bigint PK
+  <span class="fk">seo_analysis_id</span> bigint FK
+  <span class="f">type</span>            varchar(100)
+  <span class="f">severity</span>        enum('critical',
+                  'warning','info')
+  <span class="f">url</span>             varchar(500)
+  <span class="f">description</span>     text
+  <span class="f">fixed_at</span>        timestamp nullable</pre>
+    </div>
+    <div>
+      <pre><span class="t">seo_keyword_ranks</span>
+  <span class="c">  -- TimescaleDB hypertable</span>
+  <span class="c">  -- partitioned by: time</span>
+  <span class="pk">id</span>              bigint PK
+  <span class="fk">seo_analysis_id</span> bigint FK
+  <span class="f">keyword</span>         varchar(255)
+  <span class="f">position</span>        int
+  <span class="f">clicks</span>          int default 0
+  <span class="f">impressions</span>     int default 0
+  <span class="f">ctr</span>             decimal(5,4)
+  <span class="f">url</span>             varchar(500)
+  <span class="f">device</span>          enum('desktop',
+                  'mobile','tablet')
+  <span class="f">time</span>            timestamp
+  <span class="c">                  -- PRIMARY TIME COLUMN</span>
+  <span class="c">                  -- do continuous aggregates</span>
+
+<span class="t">audits</span>
+  <span class="pk">id</span>            bigint PK
+  <span class="fk">project_id</span>    bigint FK
+  <span class="f">type</span>          enum('seo',
+                'technical',
+                'ux','security',
+                'full')
+  <span class="f">status</span>        enum('pending',
+                'running',
+                'completed',
+                'failed')
+  <span class="f">overall_score</span> int nullable
+  <span class="f">started_at</span>    timestamp nullable
+  <span class="f">completed_at</span>  timestamp nullable
+  <span class="fk">created_by</span>    bigint FK</pre>
+    </div>
+  </div>
+</div>
+
+<!-- SECTION 8: SALES FLOW -->
+<div class="page page-break">
+  <div class="section-header">
+    <div class="section-num">8</div>
+    <div class="section-title-wrap">
+      <div class="section-label">Process</div>
+      <div class="section-title">Flow sprzedaży — od leadu do projektu</div>
+    </div>
+  </div>
+
+  <p>Kompletny proces od pierwszego kontaktu do aktywnej realizacji. Każdy krok to osobny byt — nie skróty, nie aliasy.</p>
 
   <h3>Główny flow</h3>
-
   <div class="flow">
     <div class="flow-step">Kontakt / firma</div>
     <div class="flow-arrow">→</div>
-    <div class="flow-step">Lead (zimny)</div>
+    <div class="flow-step">Lead (nowy)</div>
     <div class="flow-arrow">→</div>
-    <div class="flow-step">Lead (ciepły)</div>
+    <div class="flow-step">Lead (w rozmowie)</div>
     <div class="flow-arrow">→</div>
     <div class="flow-step new">Oferta</div>
     <div class="flow-arrow">→</div>
@@ -781,7 +1014,6 @@
     <div class="flow-arrow">→</div>
     <div class="flow-step">Projekt</div>
   </div>
-
   <div class="flow" style="margin-top:6px">
     <div class="flow-step">Projekt</div>
     <div class="flow-arrow">→</div>
@@ -791,164 +1023,143 @@
     <div class="flow-arrow">+</div>
     <div class="flow-step">Audyty</div>
     <div class="flow-arrow">+</div>
-    <div class="flow-step">SLA</div>
-    <div class="flow-arrow">+</div>
-    <div class="flow-step">Powiadomienia</div>
+    <div class="flow-step warn">SLA monitoring</div>
   </div>
 
-  <div class="info-box green" style="margin-top:16px">
-    <strong>Krok "Oferta" — nowy element względem spec v1.0.0</strong>
-    Oferta to osobny byt między leadem a klientem. Lead może mieć wiele wersji oferty (renegocjacje).
-    Akceptacja oferty wyzwala konwersję leadu na klienta i opcjonalne automatyczne utworzenie projektu.
-  </div>
-
-  <h3>Schematy tabel nowych bytów</h3>
-
-  <div class="card-grid">
-    <div>
-      <pre><span class="c">-- Kontakty (osoby w firmach)</span>
-contacts
-  - client_id
-  - first_name, last_name
-  - email, phone
-  - position          <span class="c">-- stanowisko</span>
-  - is_primary: bool  <span class="c">-- główny kontakt</span>
-  - notes</pre>
-    </div>
-    <div>
-      <pre><span class="c">-- Aktywności na leadzie</span>
-lead_activities
-  - lead_id
-  - user_id           <span class="c">-- kto wykonał</span>
-  - type: call | email
-       | meeting | note
-       | status_change
-  - description
-  - occurred_at</pre>
-    </div>
-  </div>
-
-  <pre><span class="c">-- Oferty handlowe</span>
-offers
-  - lead_id
-  - client_id (nullable)   <span class="c">-- wypełniane przy konwersji</span>
-  - title
-  - status: draft | sent | accepted | rejected | expired
-  - valid_until
-  - document_id (nullable) <span class="c">-- powiązanie z edytorem dokumentów (TipTap)</span>
-  - accepted_at
-  - converted_to_client_at</pre>
-
-  <h3>Flow admina krok po kroku</h3>
-
+  <h3>Krok po kroku — co dzieje się w bazie</h3>
   <table>
-    <thead><tr><th>Krok</th><th>Akcja admina</th><th>Co się dzieje w systemie</th></tr></thead>
+    <thead><tr><th style="width:30px">#</th><th>Akcja</th><th>Zapisy w bazie</th><th>Side effects</th></tr></thead>
     <tbody>
-      <tr><td>1</td><td>Tworzy lead</td><td>Rekord w <code>leads</code>, status: new, opcjonalne powiązanie z <code>contacts</code></td></tr>
-      <tr><td>2</td><td>Kontaktuje się</td><td>Wpis w <code>lead_activities</code> (type: call/email), zmiana statusu leadu</td></tr>
-      <tr><td>3</td><td>Wysyła ofertę</td><td>Rekord w <code>offers</code> (status: sent), opcjonalnie dokument TipTap jako PDF</td></tr>
-      <tr><td>4</td><td>Oferta zaakceptowana</td><td><code>offers.status</code> → accepted, lead → status: wygrany</td></tr>
-      <tr><td>5</td><td>Konwertuje lead → klient</td><td>Tworzony <code>clients</code>, <code>leads.converted_at</code>, kopiowane kontakty</td></tr>
-      <tr><td>6</td><td>Tworzy projekt</td><td>Rekord w <code>projects</code> z <code>client_id</code>, przypisanie SLA policy</td></tr>
+      <tr>
+        <td>1</td>
+        <td>Admin tworzy lead</td>
+        <td><code>leads</code> (status: new)<br>opcjonalnie: <code>contacts</code></td>
+        <td>Karta Kanban w kolumnie "Nowy"<br><code>activity_log</code> (created)</td>
+      </tr>
+      <tr>
+        <td>2</td>
+        <td>Kontakt z leadem</td>
+        <td><code>lead_activities</code> (call/email/meeting)</td>
+        <td>Zmiana statusu → karta Kanban przesuwa się<br><code>activity_log</code> (status_change)</td>
+      </tr>
+      <tr>
+        <td>3</td>
+        <td>Wysyłka oferty</td>
+        <td><code>offers</code> (status: sent)<br>opcjonalnie: <code>documents</code> + <code>document_versions</code></td>
+        <td>Lead → status: offer_sent<br><code>notifications</code> dla przypisanego admina</td>
+      </tr>
+      <tr>
+        <td>4</td>
+        <td>Oferta zaakceptowana</td>
+        <td><code>offers.status</code> → accepted<br><code>offers.accepted_at</code> = now()</td>
+        <td><code>LeadOfferAccepted</code> event fired</td>
+      </tr>
+      <tr>
+        <td>5</td>
+        <td>Konwersja lead → klient</td>
+        <td>Nowy rekord <code>clients</code><br><code>leads.status</code> → won<br><code>leads.converted_at</code> = now()<br><code>leads.converted_to_client_id</code> = new_client.id</td>
+        <td>Kopiowanie <code>contacts</code><br>Karta Kanban → kolumna "Wygrany"<br><code>activity_log</code> (converted_to_client)</td>
+      </tr>
+      <tr>
+        <td>6</td>
+        <td>Tworzenie projektu</td>
+        <td>Nowy rekord <code>projects</code> z client_id<br>Przypisanie <code>sla_policy_id</code></td>
+        <td>Subdomena klienta aktywna<br><code>activity_log</code> (created)</td>
+      </tr>
     </tbody>
   </table>
+
+  <h3>Event-driven — konwersja leadu</h3>
+  <pre><span class="c">// Event: LeadWonEvent::class (fired gdy leads.status → 'won')</span>
+<span class="k">class</span> LeadWonListener
+{
+    <span class="k">public function</span> handle(LeadWonEvent $event): void
+    {
+        $lead   = $event->lead;
+        $client = Client::create([
+            'name'                  => $lead->company_name,
+            'slug'                  => Str::slug($lead->company_name),
+            'converted_from_lead_id'=> $lead->id,
+            'sla_policy_id'         => SlaPolicy::default()->id,
+        ]);
+
+        $lead->contacts->each(fn($c) => $c->update(['client_id' => $client->id]));
+        $lead->update(['converted_to_client_id' => $client->id, 'converted_at' => now()]);
+
+        activity('crm')
+            ->on($lead)
+            ->log('converted_to_client');
+    }
+}</pre>
 </div>
 
-<!-- SECTION 4: KANBAN -->
+<!-- SECTION 9: KANBAN -->
 <div class="page page-break">
   <div class="section-header">
-    <div class="section-num">4</div>
+    <div class="section-num">9</div>
     <div class="section-title-wrap">
       <div class="section-label">UI / Process</div>
-      <div class="section-title">Kanban leadów — kolumny i statusy</div>
+      <div class="section-title">Kanban — statusy, kolumny, ujednolicony model</div>
     </div>
   </div>
-
-  <p>Kanban leadów ma 7 kolumn odzwierciedlających pełny cykl sprzedażowy. Statusy są enumeracją w tabeli <code>leads</code> — zmiana kolumny to zmiana statusu.</p>
 
   <div class="kanban">
-    <div class="kanban-col kb-new">
-      <div class="kanban-col-label">Nowy</div>
-      <div class="kanban-card-mock">Firma ABC</div>
-      <div class="kanban-card-mock">Jan Kowalski</div>
-    </div>
-    <div class="kanban-col kb-contact">
-      <div class="kanban-col-label">Skontaktowany</div>
-      <div class="kanban-card-mock">XYZ Sp. z o.o.</div>
-    </div>
-    <div class="kanban-col kb-noresp">
-      <div class="kanban-col-label">Brak odpowiedzi</div>
-      <div class="kanban-card-mock">Alpha Sp. k.</div>
-    </div>
-    <div class="kanban-col kb-talk">
-      <div class="kanban-col-label">W rozmowie</div>
-      <div class="kanban-card-mock">Beta Corp</div>
-      <div class="kanban-card-mock">Gamma Ltd</div>
-    </div>
-    <div class="kanban-col kb-offer">
-      <div class="kanban-col-label">Oferta</div>
-      <div class="kanban-card-mock">Delta S.A.</div>
-    </div>
-    <div class="kanban-col kb-won">
-      <div class="kanban-col-label">Wygrany</div>
-      <div class="kanban-card-mock">Epsilon</div>
-    </div>
-    <div class="kanban-col kb-lost">
-      <div class="kanban-col-label">Utracony</div>
-      <div class="kanban-card-mock">Zeta Inc.</div>
-    </div>
+    <div class="kanban-col kb-new"><div class="kanban-col-label">Nowy</div><div class="kanban-card-mock">Firma ABC</div><div class="kanban-card-mock">Jan K.</div></div>
+    <div class="kanban-col kb-contact"><div class="kanban-col-label">Kontakt</div><div class="kanban-card-mock">XYZ Sp. z o.o.</div></div>
+    <div class="kanban-col kb-noresp"><div class="kanban-col-label">Brak odp.</div><div class="kanban-card-mock">Alpha Sp.k.</div></div>
+    <div class="kanban-col kb-talk"><div class="kanban-col-label">W rozmowie</div><div class="kanban-card-mock">Beta Corp</div><div class="kanban-card-mock">Gamma Ltd</div></div>
+    <div class="kanban-col kb-offer"><div class="kanban-col-label">Oferta</div><div class="kanban-card-mock">Delta S.A.</div></div>
+    <div class="kanban-col kb-won"><div class="kanban-col-label">Wygrany</div><div class="kanban-card-mock">Epsilon</div></div>
+    <div class="kanban-col kb-lost"><div class="kanban-col-label">Utracony</div><div class="kanban-card-mock">Zeta Inc.</div></div>
   </div>
 
-  <h3>Statusy jako enum w bazie</h3>
-
-<pre><span class="c">-- leads.status</span>
-<span class="k">enum</span> LeadStatus {
-    new,           <span class="c">// Nowy</span>
-    contacted,     <span class="c">// Skontaktowany</span>
-    no_response,   <span class="c">// Brak odpowiedzi</span>
-    in_discussion, <span class="c">// W rozmowie</span>
-    offer_sent,    <span class="c">// Oferta</span>
-    won,           <span class="c">// Wygrany → wyzwala konwersję do klienta</span>
-    lost           <span class="c">// Utracony</span>
+  <h3>Statusy leadu — PHP Enum</h3>
+  <pre><span class="k">enum</span> LeadStatus: string
+{
+    case New          = <span class="s">'new'</span>;
+    case Contacted    = <span class="s">'contacted'</span>;
+    case NoResponse   = <span class="s">'no_response'</span>;
+    case InDiscussion = <span class="s">'in_discussion'</span>;
+    case OfferSent    = <span class="s">'offer_sent'</span>;
+    case Won          = <span class="s">'won'</span>;    <span class="c">// terminal → wyzwala konwersję do klienta</span>
+    case Lost         = <span class="s">'lost'</span>;   <span class="c">// terminal → karta znika z głównego widoku</span>
 }</pre>
 
-  <h3>Ujednolicony model Kanban</h3>
-  <p>Ten sam board obsługuje trzy typy kart dzięki polymorphic relations. Zmiana statusu leadu na "won" lub "lost" to jedyna kolumna terminalna — karta znika z głównego widoku.</p>
+  <h3>Ujednolicony model — jeden Kanban dla trzech typów</h3>
+  <p>Ten sam model <code>kanban_cards</code> obsługuje leady, tickety i zadania projektowe przez polymorphic relations. Zmiana statusu leadu automatycznie przesuwa kartę przez event-listener.</p>
 
-<pre>kanban_cards
-  - board_id, column_id, position
-  - cardable_type: <span class="s">"Lead" | "Ticket" | "ProjectTask"</span>
-  - cardable_id
-  - assigned_to, due_at
+  <pre><span class="c">// Event → Listener: synchronizacja statusu z pozycją karty</span>
+<span class="k">class</span> MoveKanbanCardListener
+{
+    <span class="k">public function</span> handle(LeadStatusChangedEvent $event): void
+    {
+        $column = KanbanColumn::where('board_id', $event->boardId)
+                              ->where('slug', $event->newStatus)
+                              ->first();
 
-<span class="c">-- Zmiana statusu leadu automatycznie przesuwa kartę:</span>
-<span class="c">-- LeadStatusChanged event → MoveKanbanCardListener</span></pre>
-
-  <h3>Aktywności na leadzie w widoku karty</h3>
+        $event->lead->kanbanCard->update(['column_id' => $column->id]);
+    }
+}</pre>
 
   <table>
-    <thead><tr><th>Typ aktywności</th><th>Ikona</th><th>Co zapisuje</th></tr></thead>
+    <thead><tr><th>cardable_type</th><th>Źródło statusu</th><th>Kolumny</th></tr></thead>
     <tbody>
-      <tr><td><code>call</code></td><td>📞</td><td>Data, czas trwania, notatka z rozmowy</td></tr>
-      <tr><td><code>email</code></td><td>✉️</td><td>Temat, kierunek (wysłany/odebrany), notatka</td></tr>
-      <tr><td><code>meeting</code></td><td>🤝</td><td>Data spotkania, miejsce/link, uczestnicy, notatka</td></tr>
-      <tr><td><code>note</code></td><td>📝</td><td>Dowolna notatka tekstowa</td></tr>
-      <tr><td><code>status_change</code></td><td>🔄</td><td>Poprzedni i nowy status, automatycznie przez system</td></tr>
+      <tr><td><code>"Lead"</code></td><td><code>leads.status</code> (enum)</td><td>new → contacted → no_response → in_discussion → offer_sent → won → lost</td></tr>
+      <tr><td><code>"Ticket"</code></td><td><code>tickets.status</code> (enum)</td><td>new → open → in_progress → waiting → resolved → closed</td></tr>
+      <tr><td><code>"ProjectTask"</code></td><td>ręczne drag &amp; drop</td><td>todo → in_progress → review → done</td></tr>
     </tbody>
   </table>
 </div>
 
-<!-- SECTION 5: TICKETS VS SLA -->
+<!-- SECTION 10: TICKETS VS SLA -->
 <div class="page page-break">
   <div class="section-header">
-    <div class="section-num">5</div>
+    <div class="section-num">10</div>
     <div class="section-title-wrap">
       <div class="section-label">Architecture</div>
-      <div class="section-title">Tickets vs SLA Incidents</div>
+      <div class="section-title">Tickets vs SLA Incidents — dwie sfery</div>
     </div>
   </div>
-
-  <p>Dwa osobne byty o różnym źródle pochodzenia i celu. Powiązane — ale niezależne.</p>
 
   <div class="comparison">
     <div class="comparison-box human">
@@ -956,7 +1167,7 @@ offers
       <div class="comparison-item"><span class="comparison-item-label">Twórca</span>klient (ręcznie)</div>
       <div class="comparison-item"><span class="comparison-item-label">Wyzwalacz</span>człowiek klika "zgłoś"</div>
       <div class="comparison-item"><span class="comparison-item-label">Cel</span>obsługa zgłoszenia</div>
-      <div class="comparison-item"><span class="comparison-item-label">Widoczny dla</span>klient + admin</div>
+      <div class="comparison-item"><span class="comparison-item-label">Widoczny</span>klient + admin</div>
       <div class="comparison-item"><span class="comparison-item-label">Komentarze</span>tak (+ wewnętrzne)</div>
       <div class="comparison-item"><span class="comparison-item-label">Kanban</span>tak → karta admina</div>
     </div>
@@ -964,177 +1175,192 @@ offers
       <div class="comparison-box-title">sla_incidents — sfera systemowa</div>
       <div class="comparison-item"><span class="comparison-item-label">Twórca</span>system (automatycznie)</div>
       <div class="comparison-item"><span class="comparison-item-label">Wyzwalacz</span>upływ czasu / brak akcji</div>
-      <div class="comparison-item"><span class="comparison-item-label">Cel</span>alert o naruszeniu umowy</div>
-      <div class="comparison-item"><span class="comparison-item-label">Widoczny dla</span>admin / manager</div>
+      <div class="comparison-item"><span class="comparison-item-label">Cel</span>alert o naruszeniu SLA</div>
+      <div class="comparison-item"><span class="comparison-item-label">Widoczny</span>admin / manager</div>
       <div class="comparison-item"><span class="comparison-item-label">Komentarze</span>nie</div>
-      <div class="comparison-item"><span class="comparison-item-label">Kanban</span>zmiana koloru ticketu</div>
+      <div class="comparison-item"><span class="comparison-item-label">Kanban</span>zmiana koloru karty</div>
     </div>
   </div>
 
-  <h3>Co wyzwala sla_incident</h3>
-
+  <h3>Warunki wyzwalające sla_incident</h3>
   <table>
-    <thead><tr><th>breach_type</th><th>Podmiot</th><th>Warunek</th></tr></thead>
+    <thead><tr><th>breach_type</th><th>subject_type</th><th>Warunek SQL</th></tr></thead>
     <tbody>
-      <tr><td><code>response</code></td><td>Ticket</td><td><code>sla_response_due_at &lt; now()</code> AND brak pierwszej odpowiedzi</td></tr>
-      <tr><td><code>resolution</code></td><td>Ticket</td><td><code>sla_resolution_due_at &lt; now()</code> AND ticket nie zamknięty</td></tr>
-      <tr><td><code>deadline</code></td><td>Project</td><td><code>projects.deadline &lt; now()</code> AND status != completed</td></tr>
+      <tr><td><code>response</code></td><td>Ticket</td><td><code>sla_response_due_at &lt; NOW() AND first_responded_at IS NULL</code></td></tr>
+      <tr><td><code>resolution</code></td><td>Ticket</td><td><code>sla_resolution_due_at &lt; NOW() AND resolved_at IS NULL</code></td></tr>
+      <tr><td><code>deadline</code></td><td>Project</td><td><code>deadline &lt; NOW() AND status != 'completed'</code></td></tr>
     </tbody>
   </table>
 
-  <h3>Schemat tabel</h3>
+  <h3>Scheduled job — CheckSlaBreachesJob (co 5 min)</h3>
+  <pre>Schedule::job(CheckSlaBreachesJob::class)->everyFiveMinutes();
 
-  <div class="card-grid">
-    <div>
-<pre><span class="c">-- Zgłoszenia klientów</span>
-tickets
-  - client_id, project_id
-  - created_by
-  - title, description
-  - priority: low|medium
-              |high|critical
-  - status: new|open|in_progress
-            |waiting|resolved|closed
-  - sla_policy_id
-  - sla_response_due_at
-  - sla_resolution_due_at
-  - first_responded_at
-  - resolved_at
-  - kanban_card_id</pre>
-    </div>
-    <div>
-<pre><span class="c">-- Naruszenia SLA (system)</span>
-sla_incidents
-  - subject_type:
-      <span class="s">"Ticket" | "Project"</span>
-  - subject_id
-  - breach_type:
-      response | resolution
-      | deadline
-  - breached_at
-  - detected_at
-  - notified: bool
-  - acknowledged_by
-  - acknowledged_at
-  - resolved_at</pre>
-    </div>
-  </div>
-
-  <h3>Scheduled job — monitoring co 5 minut</h3>
-
-<pre><span class="c">// app/Console/Commands/CheckSlaBreaches.php</span>
-Schedule::job(CheckSlaBreachesJob::class)->everyFiveMinutes();
-
-<span class="c">CheckSlaBreachesJob skanuje:</span>
+CheckSlaBreachesJob skanuje:
 ├── tickets: sla_response_due_at &lt; now() AND first_responded_at IS NULL
-│     → nowy sla_incident (response) + SMS do admina (jeśli critical)
-│     → ticket na Kanban → kolor czerwony
+│     → INSERT sla_incidents (breach_type: response)
+│     → Notification do admina (mail + SMS jeśli priority: critical)
+│     → Kanban karta → kolor czerwony
 │
 ├── tickets: sla_resolution_due_at &lt; now() AND resolved_at IS NULL
-│     → nowy sla_incident (resolution) + email do managera
+│     → INSERT sla_incidents (breach_type: resolution)
+│     → Notification do managera
 │
 └── projects: deadline &lt; now() AND status != 'completed'
-      → nowy sla_incident (deadline) + powiadomienie in-app</pre>
+      → INSERT sla_incidents (breach_type: deadline)
+      → Notification in-app + email</pre>
 
   <div class="info-box orange">
     <strong>Jeden ticket może mieć wiele sla_incidents</strong>
-    Np. najpierw <code>response_breach</code> (nie odpowiedziano w czasie), potem <code>resolution_breach</code>
-    (nie rozwiązano w czasie). Każdy incydent jest osobnym rekordem z własnym <code>detected_at</code>.
+    Np. najpierw <code>response_breach</code> po 4h bez odpowiedzi, potem <code>resolution_breach</code> po 24h.
+    Każdy incydent to osobny rekord z własnym <code>detected_at</code> i niezależnym procesem <code>acknowledged</code>.
   </div>
 </div>
 
-<!-- SECTION 6: AUDITS vs SEO -->
+<!-- SECTION 11: INBOX FLOW -->
 <div class="page page-break">
   <div class="section-header">
-    <div class="section-num">6</div>
+    <div class="section-num">11</div>
     <div class="section-title-wrap">
       <div class="section-label">Module</div>
-      <div class="section-title">Audyty i analizy SEO — relacja</div>
+      <div class="section-title">Inbox i wiadomości wewnętrzne — flow</div>
     </div>
   </div>
 
-  <p>Analiza SEO może być bytem samodzielnym (uruchamianym ad hoc) lub składową audytu (grupowaną razem z innymi typami analiz). Obie ścieżki są obsługiwane przez jeden model z opcjonalnym <code>audit_id</code>.</p>
+  <p>Dwa strumienie zdarzeń trafiają do jednego inboxu. Różnią się źródłem — ale dostarczane są tym samym mechanizmem: tabela <code>notifications</code> + broadcast przez Reverb.</p>
 
-  <h3>Dwa tryby użycia</h3>
+  <h3>Flow — każde zdarzenie wymagające uwagi</h3>
+  <pre><span class="c">┌─────────────────────────────────────────────────────────────────┐</span>
+<span class="c">│                     ŹRÓDŁA ZDARZEŃ                              │</span>
+<span class="c">└─────────────────────────────────────────────────────────────────┘</span>
 
-  <div class="card-grid">
-    <div class="card">
-      <div class="card-title">Analiza SEO — samodzielna</div>
-      <div class="card-body">
-        Admin uruchamia analizę dla projektu bez tworzenia audytu.
-        <code>seo_analyses.audit_id = null</code>.
-        Widoczna w sekcji "Analizy SEO" projektu.
-        Typowy przypadek: miesięczny monitoring pozycji.
-      </div>
-    </div>
-    <div class="card">
-      <div class="card-title">Analiza SEO — składowa audytu</div>
-      <div class="card-body">
-        Audit grupuje wiele analiz i typów (SEO + techniczne + UX).
-        <code>seo_analyses.audit_id = 42</code>.
-        Wyniki agregowane w raporcie audytu z jednym scoringiem.
-        Typowy przypadek: kompleksowy audyt kwartalny.
-      </div>
+  System automatyczny          Człowiek (admin / klient)
+  ─────────────────────        ──────────────────────────
+  SLA breach                   Admin pisze do admina
+  @mention w komentarzu        Admin pisze do klienta
+  Task assigned                Klient pisze do admina
+  Ticket zgłoszony             @mention w wiadomości
+  PDF gotowy
+  Audyt ukończony
+         │                              │
+         └──────────────┬───────────────┘
+                        ▼
+            INSERT INTO notifications
+            (type, notifiable_type/id, data)
+                        │
+                        ▼
+            broadcast('private-user.' . $userId)
+              via Laravel Reverb
+                        │
+                        ▼
+            Echo.private('user.' + id)
+              .listen('.NotificationCreated', ...)
+                        │
+                        ▼
+            Zustand store: unread_count++
+            Bell icon w navbar się podświetla</pre>
+
+  <h3>Po kliknięciu w powiadomienie</h3>
+  <table>
+    <thead><tr><th>type</th><th>data.link prowadzi do</th><th>Email?</th></tr></thead>
+    <tbody>
+      <tr><td><code>sla_breach</code></td><td>Widok naruszenia SLA</td><td>✅ + SMS (critical)</td></tr>
+      <tr><td><code>new_ticket</code></td><td>Ticket w panelu admina</td><td>✅</td></tr>
+      <tr><td><code>mention</code></td><td>Komentarz w kontekście (ticket / projekt)</td><td>wg preferencji</td></tr>
+      <tr><td><code>task_assigned</code></td><td>Kanban karta / zadanie</td><td>wg preferencji</td></tr>
+      <tr><td><code>message</code></td><td>Wątek konwersacji w inboxie</td><td>wg preferencji</td></tr>
+      <tr><td><code>pdf_ready</code></td><td>Link do pobrania PDF</td><td>—</td></tr>
+      <tr><td><code>audit_complete</code></td><td>Raport audytu SEO</td><td>✅</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Flow wiadomości — zapis + broadcast</h3>
+  <pre><span class="c">// Admin A pisze do Admin B</span>
+$message = Message::create([
+    'conversation_id' => $conv->id,
+    'sender_type'     => <span class="s">'User'</span>,
+    'sender_id'       => auth()->id(),
+    'body'            => $request->body,
+]);
+
+<span class="c">// Powiadom wszystkich uczestników (poza nadawcą)</span>
+$conv->participants
+    ->reject(fn($p) => $p->participable_id === auth()->id())
+    ->each(function($participant) use ($message) {
+        $participant->participable->notify(
+            <span class="k">new</span> NewMessageNotification($message)
+        );
+    });
+
+<span class="c">// NewMessageNotification via('database', 'broadcast') + opcjonalnie 'mail'</span></pre>
+</div>
+
+<!-- SECTION 12: SEO PIPELINE -->
+<div class="page page-break">
+  <div class="section-header">
+    <div class="section-num">12</div>
+    <div class="section-title-wrap">
+      <div class="section-label">Module</div>
+      <div class="section-title">Audyty i analizy SEO — pipeline</div>
     </div>
   </div>
 
-  <h3>Schemat tabel</h3>
+  <p>Analiza SEO może być bytem samodzielnym (<code>audit_id = null</code>) lub składową audytu. Pipeline kolejkowy uruchamia się asynchronicznie przez Laravel Horizon.</p>
 
-<pre><span class="c">-- Byt nadrzędny — grupuje analizy różnych typów</span>
-audits
-  - project_id
-  - type: <span class="s">seo | technical | ux | security | full</span>
-  - status: pending | running | completed | failed
-  - overall_score     <span class="c">-- 0-100, agregat wszystkich składowych</span>
-  - started_at, completed_at
-  - created_by
-
-<span class="c">-- Analiza SEO — samodzielna LUB składowa audytu</span>
-seo_analyses
-  - project_id
-  - audit_id (nullable)  <span class="c">-- null = samodzielna, int = część audytu</span>
-  - status: pending | running | completed | failed
-  - score               <span class="c">-- 0-100</span>
-  - keywords_count
-  - issues_count
-  - gsc_connected: bool <span class="c">-- czy dane z Google Search Console</span>
-  - ga4_connected: bool <span class="c">-- czy dane z Google Analytics 4</span>
-  - completed_at
-
-<span class="c">-- Błędy wykryte w analizie</span>
-seo_issues
-  - seo_analysis_id
-  - type: missing_meta | broken_link | duplicate_content | ...
-  - severity: critical | warning | info
-  - url
-  - description
-  - fixed_at (nullable)</pre>
-
-  <h3>Flow uruchamiania</h3>
-
-  <div class="flow">
-    <div class="flow-step">Admin klika "Uruchom analizę"</div>
-    <div class="flow-arrow">→</div>
-    <div class="flow-step">Tworzony seo_analyses</div>
-    <div class="flow-arrow">→</div>
-    <div class="flow-step">Pipeline jobów (Horizon)</div>
-    <div class="flow-arrow">→</div>
-    <div class="flow-step">Wyniki zapisane</div>
-    <div class="flow-arrow">→</div>
-    <div class="flow-step">Powiadomienie</div>
+  <h3>Dwa tryby użycia seo_analyses</h3>
+  <div class="comparison">
+    <div class="comparison-box human">
+      <div class="comparison-box-title">Analiza samodzielna</div>
+      <div class="comparison-item"><span class="comparison-item-label">audit_id</span>NULL</div>
+      <div class="comparison-item"><span class="comparison-item-label">Widoczna w</span>"Analizy SEO" projektu</div>
+      <div class="comparison-item"><span class="comparison-item-label">Typ</span>miesięczny monitoring</div>
+    </div>
+    <div class="comparison-box system">
+      <div class="comparison-box-title">Składowa audytu</div>
+      <div class="comparison-item"><span class="comparison-item-label">audit_id</span>= audits.id</div>
+      <div class="comparison-item"><span class="comparison-item-label">Widoczna w</span>raport audytu + agregat</div>
+      <div class="comparison-item"><span class="comparison-item-label">Typ</span>audyt kwartalny</div>
+    </div>
   </div>
 
-  <div class="info-box blue" style="margin-top:16px">
-    <strong>Dlaczego nie jeden model "seo_audits"?</strong>
-    Rozdzielenie <code>audits</code> od <code>seo_analyses</code> pozwala w przyszłości dodać inne typy analiz
-    (UX, security, performance) bez zmiany struktury. Audyt staje się "folderem" — analiza SEO to jeden z dokumentów w tym folderze.
+  <h3>Pipeline kolejkowy (Horizon)</h3>
+  <pre>AuditRequestedEvent
+  │
+  ├── CrawlWebsiteJob        (queue: crawlers)
+  │     → seo_audit_pages, seo_issues (broken links, missing meta...)
+  │
+  ├── FetchGSCDataJob        (queue: google-apis)
+  │     → seo_keyword_ranks (pozycje, kliknięcia, impressions, CTR)
+  │
+  ├── FetchGA4DataJob        (queue: google-apis) ← równolegle z GSC
+  │     → organic traffic, conversions per page
+  │
+  ├── AnalyzeKeywordsJob     (queue: ai-processing)
+  │     → seo_keywords (klasyfikacja, grupy tematyczne)
+  │
+  ├── AnalyzeSemanticsJob    (queue: ai-processing) ← równolegle
+  │     → seo_recommendations (AI: Claude API / OpenAI)
+  │
+  ├── GenerateAuditReportJob
+  │     → audits.overall_score = avg(component scores)
+  │     → seo_analyses.status → 'completed'
+  │
+  └── NotifyAuditCompleteJob
+        → notifications (type: audit_complete)
+        → broadcast → bell w UI</pre>
+
+  <div class="info-box blue">
+    <strong>TimescaleDB — seo_keyword_ranks</strong>
+    Tabela <code>seo_keyword_ranks</code> to hypertable TimescaleDB partycjonowany po kolumnie <code>time</code>.
+    Umożliwia zapytania time-series: trend pozycji w czasie, rolling average, continuous aggregates.
+    Dane z Google Search Console mogą mieć miliony wierszy — standardowy PostgreSQL nie skaluje się
+    dla takich zapytań. TimescaleDB to rozszerzenie PostgreSQL — nie zmienia stacku.
   </div>
 </div>
 
-<!-- SECTION 7: UI -->
+<!-- SECTION 13: UI MENU -->
 <div class="page">
   <div class="section-header">
-    <div class="section-num">7</div>
+    <div class="section-num">13</div>
     <div class="section-title-wrap">
       <div class="section-label">UI</div>
       <div class="section-title">Struktura menu — panel admina i klienta</div>
@@ -1145,7 +1371,7 @@ seo_issues
     <div class="ui-panel admin">
       <div class="ui-panel-header admin">Panel admina — app.clientops.pl</div>
       <div class="ui-menu-item admin"><div class="ui-menu-dot"></div>Dashboard</div>
-      <div class="ui-menu-item admin"><div class="ui-menu-dot"></div>Leady</div>
+      <div class="ui-menu-item admin"><div class="ui-menu-dot"></div>Leady + Kanban</div>
       <div class="ui-menu-item admin"><div class="ui-menu-dot"></div>Klienci</div>
       <div class="ui-menu-item admin"><div class="ui-menu-dot"></div>Kontakty</div>
       <div class="ui-menu-item admin"><div class="ui-menu-dot"></div>Projekty</div>
@@ -1155,11 +1381,10 @@ seo_issues
       <div class="ui-menu-item admin"><div class="ui-menu-dot"></div>Audyty</div>
       <div class="ui-menu-item admin"><div class="ui-menu-dot"></div>Zgłoszenia (Tickets)</div>
       <div class="ui-menu-item admin"><div class="ui-menu-dot"></div>SLA / Naruszenia</div>
-      <div class="ui-menu-item admin"><div class="ui-menu-dot"></div>Powiadomienia</div>
+      <div class="ui-menu-item admin"><div class="ui-menu-dot"></div>Inbox / Powiadomienia</div>
       <div class="ui-menu-item admin"><div class="ui-menu-dot"></div>Użytkownicy</div>
-      <div class="ui-menu-item admin"><div class="ui-menu-dot"></div>Ustawienia</div>
+      <div class="ui-menu-item admin"><div class="ui-menu-dot"></div>Ustawienia + Audit log</div>
     </div>
-
     <div class="ui-panel client">
       <div class="ui-panel-header client">Panel klienta — {slug}.clientops.pl</div>
       <div class="ui-menu-item client"><div class="ui-menu-dot"></div>Dashboard</div>
@@ -1169,28 +1394,52 @@ seo_issues
       <div class="ui-menu-item client"><div class="ui-menu-dot"></div>Audyty</div>
       <div class="ui-menu-item client"><div class="ui-menu-dot"></div>Zgłoszenia</div>
       <div class="ui-menu-item client"><div class="ui-menu-dot"></div>SLA — status umowy</div>
-      <div class="ui-menu-item client"><div class="ui-menu-dot"></div>Powiadomienia</div>
+      <div class="ui-menu-item client"><div class="ui-menu-dot"></div>Inbox / Powiadomienia</div>
       <div class="ui-menu-item client"><div class="ui-menu-dot"></div>Profil</div>
     </div>
   </div>
 
   <h3>Różnice w widokach</h3>
-
   <table>
     <thead><tr><th>Sekcja</th><th>Admin widzi</th><th>Klient widzi</th></tr></thead>
     <tbody>
-      <tr><td>Leady</td><td>Wszystkie leady, Kanban, aktywności</td><td>— (niedostępne)</td></tr>
-      <tr><td>Oferty</td><td>Pełne zarządzanie ofertami</td><td>— (niedostępne)</td></tr>
-      <tr><td>Kontakty</td><td>Wszystkie kontakty per klient</td><td>Własne dane kontaktowe</td></tr>
-      <tr><td>Projekty</td><td>Wszystkich klientów, pełne dane</td><td>Tylko swoje, ograniczony widok</td></tr>
-      <tr><td>Zgłoszenia</td><td>Wszystkie tickets, komentarze wewnętrzne</td><td>Tylko swoje, bez wewnętrznych</td></tr>
-      <tr><td>SLA</td><td>Incydenty, konfiguracja polityk</td><td>Status umowy, czy SLA jest spełniane</td></tr>
-      <tr><td>SEO / Audyty</td><td>Pełne dane, uruchamianie analiz</td><td>Wyniki i raporty (read-only)</td></tr>
+      <tr><td>Leady</td><td>Wszystkie, Kanban, aktywności, konwersja</td><td>— (niedostępne)</td></tr>
+      <tr><td>Oferty</td><td>Pełne zarządzanie, wersje dokumentu</td><td>— (niedostępne)</td></tr>
+      <tr><td>Kontakty</td><td>Wszystkie per klient, edycja</td><td>Własne dane</td></tr>
+      <tr><td>Projekty</td><td>Wszyscy klienci, pełne dane, deadline</td><td>Tylko swoje, ograniczony widok</td></tr>
+      <tr><td>Zgłoszenia</td><td>Wszystkie, komentarze wewnętrzne, notatki</td><td>Tylko swoje, bez notatek wewnętrznych</td></tr>
+      <tr><td>SLA</td><td>Incydenty, konfiguracja polityk, breach history</td><td>Status umowy — czy SLA jest spełniane</td></tr>
+      <tr><td>SEO / Audyty</td><td>Pełne dane, uruchamianie analiz, AI rekomendacje</td><td>Wyniki i raporty (read-only)</td></tr>
+      <tr><td>Inbox</td><td>Notyfikacje system + wiadomości od klientów + admin↔admin</td><td>Wiadomości od admina + notyfikacje systemowe</td></tr>
+      <tr><td>Audit log</td><td>Historia zmian per rekord + widok globalny (super-admin)</td><td>— (niedostępne)</td></tr>
     </tbody>
   </table>
 
-  <div style="margin-top:48px; padding-top:20px; border-top:1px solid var(--gray-200); text-align:center; color:var(--gray-400); font-size:11px;">
-    ClientOps CRM — Architektura i Model Danych v1.0.0 &nbsp;·&nbsp; Marzec 2026 &nbsp;·&nbsp; Dokument uzupełniający do Spec v1.0.0
+  <div class="doc-footer">
+    ClientOps CRM — Architektura i Model Danych v2.0.0 &nbsp;·&nbsp; Marzec 2026 &nbsp;·&nbsp;
+    27 tabel · 13 sekcji · Laravel 12 + React 19 + PostgreSQL + TimescaleDB
+  </div>
+
+  <!-- CROSS-DOCUMENT NAV -->
+  <div style="margin-top:32px; padding:16px 20px; background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; font-size:11px; color:#475569;">
+    <div style="font-weight:700; color:#1e293b; margin-bottom:10px; font-size:12px;">📂 Dokumentacja ClientOps CRM — powiązane dokumenty</div>
+    <div style="display:flex; gap:16px; flex-wrap:wrap;">
+      <div style="background:#eff6ff; border:1px solid #bfdbfe; border-radius:6px; padding:8px 14px;">
+        <div style="font-weight:700; color:#1e40af; margin-bottom:2px;">📋 Specyfikacja Techniczna v1.4</div>
+        <div style="color:#475569;">clientops-crm-spec.html</div>
+        <div style="color:#94a3b8; font-size:10px; margin-top:2px;">Stack, moduły, decyzje techniczne</div>
+      </div>
+      <div style="background:#f0fdfa; border:1px solid #99f6e4; border-radius:6px; padding:8px 14px;">
+        <div style="font-weight:700; color:#0d9488; margin-bottom:2px;">🏗️ Ten dokument</div>
+        <div style="color:#475569;">Architektura i Model Danych v2.0.0</div>
+        <div style="color:#94a3b8; font-size:10px; margin-top:2px;">ERD, schematy tabel, przepływy, 27 tabel</div>
+      </div>
+      <div style="background:#f5f3ff; border:1px solid #ddd6fe; border-radius:6px; padding:8px 14px;">
+        <div style="font-weight:700; color:#7c3aed; margin-bottom:2px;">🎨 Design System — Biblioteki v1.0</div>
+        <div style="color:#475569;">clientops-libraries.html · clientops-structure.html</div>
+        <div style="color:#94a3b8; font-size:10px; margin-top:2px;">Mapowanie JS, tokeny CSS, komponenty</div>
+      </div>
+    </div>
   </div>
 </div>
 
