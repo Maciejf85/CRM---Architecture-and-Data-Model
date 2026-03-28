@@ -61,15 +61,32 @@ SANCTUM_STATEFUL_DOMAINS=app.clientops.pl,*.clientops.pl
 ### Frontend
 
 - **React 19 + TypeScript + Vite** — SPA, szybki build, HMR
-- **Tailwind CSS v4 + shadcn/ui** — utility-first + gotowe dostępne komponenty
+- **Tailwind CSS v4** — utility-first, konfiguracja przez `@tailwindcss/vite`
+- **phoenix-design-system** — własny design system przepisany z ClientOps Bootstrap; tokens (kolory, typografia, spacing, shadows, dark mode) + komponenty CSS (buttons, forms, modal, kanban, cards i in.); zastępuje shadcn/ui
+- **class-variance-authority (cva)** — typowane warianty komponentów React, migracja z klas CSS `.btn-mkds` do komponentów
 - **TanStack Query v5** — server state, cache, optimistic updates
-- **React Hook Form + Zod** — formularze + walidacja schematowa (schemat reużywalny)
+- **React Hook Form + Zod** — formularze + walidacja schematowa
 - **dnd-kit** — drag & drop dla Kanban (następca react-beautiful-dnd)
-- **TipTap v2** — edytor dokumentów (ProseMirror), zapis jako JSON + HTML
-- **Recharts + Tremor** — wykresy SEO (Recharts) + widgety dashboardów (Tremor)
+- **TipTap v2** — edytor dokumentów (headless ProseMirror, JSON+HTML, MIT, brak API key)
+- **echarts + echarts-for-react** — wykresy SEO i dashboardów (linie, słupki, pie, heatmapy, gauge)
 - **React Router v7** — routing SPA, code splitting per route
 - **Zustand** — global state: powiadomienia, user context, UI state
-- **Laravel Echo** — WebSocket client → Reverb, autoryzacja prywatnych kanałów
+- **Laravel Echo** — WebSocket client → Reverb
+- **react-select** — custom select, multi-select, autocomplete
+- **react-dropzone** — upload plików drag & drop
+- **react-day-picker** — date picker, date range
+- **@fullcalendar/react** — kalendarz eventów (miesiąc/tydzień/dzień)
+- **lucide-react** — ikony SVG (następca Feather Icons)
+- **@floating-ui/react** — pozycjonowanie tooltip/popover
+- **dayjs** — manipulacja datami
+- **lodash-es** — utility funkcje, tree-shakeable
+
+### Czego NIE ma w stacku (i dlaczego)
+
+- ~~shadcn/ui~~ → phoenix-design-system (własne komponenty + cva)
+- ~~Tremor~~ → echarts-for-react (potężniejszy, SEO potrzebuje heatmap/gauge)
+- ~~TinyMCE~~ → TipTap (headless, MIT, JSON output, stylowalny design systemem)
+- ~~Recharts~~ → echarts (bogatszy zestaw typów wykresów)
 
 ---
 

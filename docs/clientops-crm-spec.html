@@ -695,8 +695,12 @@
       }
 
       @page {
-        margin: 0;
+        margin: 14mm 0 10mm;
         size: A4;
+      }
+
+      @page :first {
+        margin: 0;
       }
     </style>
   </head>
@@ -1103,7 +1107,7 @@
             <td><strong>React 19 + TypeScript</strong></td>
             <td>
               Biblioteka JavaScript do budowy interfejsów użytkownika oparta o komponenty i jednokierunkowy przepływ danych. React 19 wprowadza Server Components, Actions i ulepszony concurrent rendering dla płynniejszego UX. TypeScript dodaje statyczne typowanie, eliminując całą klasę błędów runtime i znacząco przyspieszając development w dużym projekcie.
-              <div class="why">Największy ekosystem komponentów i narzędzi. TypeScript jest obowiązkowy przy CRM tej skali — typy na API responses, formularze, modele danych eliminują całą klasę błędów jeszcze przed uruchomieniem.</div>
+              <div class="why">Największy ekosystem komponentów i narzędzi. TypeScript obowiązkowy przy CRM tej skali — typy na API responses, formularze i modele eliminują całą klasę błędów jeszcze przed uruchomieniem.</div>
             </td>
           </tr>
           <tr>
@@ -1116,71 +1120,120 @@
           <tr>
             <td><strong>Tailwind CSS v4</strong></td>
             <td>
-              Utility-first CSS framework gdzie style definiuje się bezpośrednio w klasach HTML, eliminując przełączanie się między plikami CSS i JSX. Tailwind v4 to kompletne przepisanie silnika — oparty o Lightning CSS (Rust), do 10x szybszy build i nowe cascade layers. Design system wymuszony przez predefiniowaną skalę spacing/color zapewnia spójność UI bez dodatkowych wysiłków.
-              <div class="why">shadcn/ui wymaga Tailwind — nie ma wyboru. Poza tym utility-first eliminuje problem nazewnictwa klas CSS i dead code w dużym projekcie. Cały team pisze styles jednakowo.</div>
+              Utility-first CSS framework gdzie style definiuje się bezpośrednio w klasach HTML, eliminując przełączanie się między plikami CSS i JSX. Tailwind v4 to kompletne przepisanie silnika — oparty o Lightning CSS (Rust), do 10x szybszy build. Konfiguracja wyłącznie przez <code>@tailwindcss/vite</code> plugin, bez pliku konfiguracyjnego JS.
+              <div class="why">Fundament design systemu — phoenix-design-system definiuje tokeny przez <code>@theme</code> Tailwinda v4. Utility-first eliminuje problem nazewnictwa klas CSS i dead code w dużym projekcie.</div>
             </td>
           </tr>
           <tr>
-            <td><strong>shadcn/ui</strong></td>
+            <td><strong>phoenix-design-system</strong></td>
             <td>
-              Kolekcja dostępnych komponentów UI opartych o Radix UI (niewidoczne prymitywy) i stylowanych Tailwindem — kopiowanych bezpośrednio do projektu, nie instalowanych jako dependency. Dzięki temu komponenty są w pełni pod kontrolą dewelopera, można je dowolnie modyfikować bez nadpisywania styli biblioteki. Zapewnia dostępność (ARIA, keyboard navigation) out of the box.
-              <div class="why">MUI/Antd są ciężkie i trudne do customizacji. shadcn/ui daje gotowe, dostępne komponenty (Dialog, Select, Table, DatePicker) które wyglądają profesjonalnie i można je modyfikować bez walki z biblioteką.</div>
+              Własny design system przepisany z ClientOps Bootstrap na Tailwind v4. Zawiera tokeny (<code>@theme</code>: kolory, typografia, spacing, shadows, border-radius, dark mode przez CSS variables) oraz gotowe komponenty CSS (buttons, badges, cards, forms, modal, dropdown, kanban, timeline, wizard i inne). Jeden import (<code>@import "./phoenix-design-system/index.css"</code>) daje pełny system.
+              <div class="why">Zastępuje shadcn/ui — mamy już wszystkie komponenty ze spójnym wyglądem dopasowanym do projektu. shadcn/ui byłoby nadmiarowe i wymagałoby nadpisywania styli. Migracja z klas CSS do React+cva odbywa się stopniowo.</div>
+            </td>
+          </tr>
+          <tr>
+            <td><strong>class-variance-authority (cva)</strong></td>
+            <td>
+              Biblioteka do tworzenia typowanych wariantów komponentów React — definiujesz raz warianty (variant, size, intent) i dostajesz w pełni typowaną funkcję generującą klasy Tailwind. Integruje się z <code>clsx</code> i <code>tailwind-merge</code> dla obsługi warunkowych i nadpisanych klas. Pozwala stopniowo migrować komponenty CSS z phoenix-design-system do natywnych komponentów React.
+              <div class="why">Bez cva każdy komponent Button/Badge wymaga ręcznego zarządzania klasami warunkowymi — chaos przy wielu wariantach. cva daje type safety: TypeScript wie jakie warianty istnieją i pilnuje poprawności props.</div>
             </td>
           </tr>
           <tr>
             <td><strong>TanStack Query v5</strong></td>
             <td>
               Biblioteka do zarządzania stanem serwera w React — fetching, caching, synchronizacja i aktualizacja danych z API. Automatycznie obsługuje loading states, error handling, background refetching i optimistic updates, eliminując setki linii boilerplate kodu. TanStack Query v5 wprowadza ulepszony infinite scrolling, streamlined API i lepszy TypeScript inference.
-              <div class="why">W CRM niemal każdy widok to dane z serwera. Bez TanStack Query każdy komponent potrzebuje własnego useEffect + useState + loading + error — setki linii boilerplate. TanStack Query zastępuje to kilkoma liniami z automatycznym cache invalidation.</div>
+              <div class="why">W CRM niemal każdy widok to dane z serwera. Bez TanStack Query każdy komponent potrzebuje własnego useEffect + useState + loading + error. TanStack zastępuje to kilkoma liniami z automatycznym cache invalidation.</div>
             </td>
           </tr>
           <tr>
             <td><strong>React Hook Form + Zod</strong></td>
             <td>
               React Hook Form to biblioteka formularzy minimalizująca re-rendery (uncontrolled components), Zod to TypeScript-first schema validation z pełnym type inference. Razem tworzą potężny duet — Zod definiuje schemat danych, Hook Form obsługuje formularz, walidacja dzieje się automatycznie z precyzyjnymi komunikatami błędów. Jeden schemat Zod może być reużyty zarówno na frontendzie jak i w API.
-              <div class="why">CRM ma dziesiątki formularzy (lead, klient, projekt, ticket, oferta, dokument...). Formik jest wolniejszy (controlled), własna walidacja to duplikacja logiki backendowej. Zod schema może być współdzielona między frontendem a backendem (tRPC lub ręcznie).</div>
+              <div class="why">CRM ma dziesiątki formularzy (lead, klient, projekt, ticket, oferta...). Formik jest wolniejszy, własna walidacja to duplikacja logiki backendowej. Jeden Zod schema obsługuje frontend i może być współdzielony z backendem.</div>
             </td>
           </tr>
           <tr>
             <td><strong>dnd-kit</strong></td>
             <td>
-              Nowoczesna, lekka biblioteka drag &amp; drop dla React z pełnym wsparciem dla TypeScript i dostępności (keyboard DnD). Modułowa architektura pozwala budować dowolne interakcje — pionowe listy, siatki, kanban boards — bez niepotrzebnego kodu. Obsługuje touch events, sensory (mouse/touch/keyboard) i smooth animations przez CSS transforms bez layout thrashing.
-              <div class="why">React Beautiful DnD nie jest już aktywnie rozwijany i ma problemy z React 18+. dnd-kit to jego następca — lżejszy, szybszy, z lepszym TypeScript support. Kluczowy dla Kanban leadów i ticketów.</div>
+              Nowoczesna, lekka biblioteka drag &amp; drop dla React z pełnym wsparciem dla TypeScript i dostępności (keyboard DnD). Modułowa architektura pozwala budować pionowe listy, siatki i kanban boards bez zbędnego kodu. Obsługuje touch events, sensory (mouse/touch/keyboard) i smooth animations przez CSS transforms bez layout thrashing.
+              <div class="why">React Beautiful DnD nie jest już aktywnie rozwijany i ma problemy z React 18+. dnd-kit to jego następca — lżejszy, szybszy. Kluczowy dla Kanban leadów i ticketów.</div>
             </td>
           </tr>
           <tr>
             <td><strong>TipTap v2</strong></td>
             <td>
-              Headless rich text editor oparty o ProseMirror, w pełni kontrolowalny przez React i TypeScript, z ekosystemem gotowych rozszerzeń. Obsługuje tabele, listy, obrazy, mentions (@user), linki, formatowanie i można go rozszerzyć o custom nodes — np. bloki z sugestiami AI dla dokumentów SEO. Zapisuje treść jako JSON (portable format) lub HTML, co ułatwia eksport do PDF.
-              <div class="why">Quill jest przestarzały, Slate.js wymaga ogromnej ilości własnego kodu. TipTap daje gotowy edytor klasy Notion z rozszerzeniami, aktywnym rozwojem i najlepszym React + TypeScript DX spośród dostępnych opcji.</div>
+              Headless rich text editor oparty o ProseMirror, w pełni kontrolowalny przez React i TypeScript, bez narzuconych styli — aplikujesz klasy phoenix-design-system bezpośrednio. Obsługuje tabele, listy, obrazy, mentions (@user), linki i można go rozszerzyć o custom nodes (np. bloki AI suggestions). Zapisuje treść jako JSON lub HTML, co ułatwia eksport do PDF przez Browsershot.
+              <div class="why">TinyMCE wymaga API key, ma narzucone style trudne do nadpisania i jest ciężki. TipTap jest headless (MIT) — stylujemy go phoenix-design-system bez walki z biblioteką. JSON output to lepszy format niż HTML dla wersjonowania dokumentów.</div>
             </td>
           </tr>
           <tr>
-            <td><strong>Recharts / Tremor</strong></td>
+            <td><strong>echarts + echarts-for-react</strong></td>
             <td>
-              Recharts to biblioteka wykresów zbudowana na D3.js i React — kompozycyjna, customizowalna, z pełnym TypeScript support. Tremor to wyższy poziom abstrakcji: gotowe komponenty dashboardów (karty metryk, wykresy, tabele) stylowane Tailwindem, idealne do szybkiego budowania paneli analitycznych. Używane razem — Tremor dla standardowych widgetów, Recharts dla zaawansowanych wizualizacji danych SEO.
-              <div class="why">Moduł SEO wymaga wykresów rankingów, trendów, porównań — Chart.js nie integruje się dobrze z React. Recharts jest natywnie reaktywny. Tremor przyspiesza budowę dashboardów o gotowe karty KPI bez pisania od zera.</div>
+              Apache ECharts to jedna z najpotężniejszych bibliotek wykresów — obsługuje linie, słupki, pie, scatter, heatmapy, gauge, tree charts, mapy i wiele więcej. <code>echarts-for-react</code> to oficjalny wrapper React. Wykresy są w pełni konfigurowalane przez opcje JSON i responsywne out of the box.
+              <div class="why">Moduł SEO wymaga heatmap (godziny aktywności), gauge (score audytu), tree chart (struktura strony) — Recharts tego nie ma. ECharts zastępuje Recharts i Tremor jednocześnie, z większymi możliwościami i spójnym API.</div>
             </td>
           </tr>
           <tr>
             <td><strong>React Router v7</strong></td>
             <td>
-              Standard routingu dla React SPA z pełnym wsparciem dla nested routes, lazy loading (code splitting per route) i data loading patterns. React Router v7 unifikuje się z Remix oferując server-side rendering, loaders i actions — opcjonalne, ale dostępne jeśli w przyszłości zajdzie potrzeba. Code splitting zapewnia że klient pobiera tylko kod potrzebny dla aktualnego widoku.
-              <div class="why">TanStack Router ma lepszy TypeScript support ale mniejszy ekosystem i mniej zasobów edukacyjnych. React Router v7 to de facto standard — każdy React developer go zna, co ułatwia onboarding. Code splitting krytyczny przy dużej aplikacji z dziesiątkami widoków.</div>
+              Standard routingu dla React SPA z pełnym wsparciem dla nested routes, lazy loading (code splitting per route) i data loading patterns. React Router v7 unifikuje się z Remix oferując loaders i actions. Code splitting zapewnia że klient pobiera tylko kod potrzebny dla aktualnego widoku.
+              <div class="why">De facto standard — każdy React developer go zna, co ułatwia onboarding. Code splitting krytyczny przy dużej aplikacji z dziesiątkami widoków i modułów.</div>
             </td>
           </tr>
           <tr>
             <td><strong>Zustand</strong></td>
             <td>
-              Minimalistyczna biblioteka do zarządzania globalnym stanem aplikacji (~1KB gzip), znacznie prostsza niż Redux bez boilerplate. Używana dla stanu który nie należy do serwera (TanStack Query) — aktywne powiadomienia, preferencje UI, stan bocznego panelu, dane zalogowanego użytkownika. Zustand nie wymaga Provider wrappera i działa poza komponentami React, co ułatwia integrację z Laravel Echo.
-              <div class="why">Redux to overhead dla stanu UI. React Context re-renderuje cały subtree przy każdej zmianie. Zustand subskrybuje tylko do konkretnych wartości — idealne dla powiadomień real-time które zmieniają się często i muszą być dostępne globalnie.</div>
+              Minimalistyczna biblioteka do zarządzania globalnym stanem aplikacji (~1KB gzip), znacznie prostsza niż Redux bez boilerplate. Używana dla stanu który nie należy do serwera (TanStack Query) — aktywne powiadomienia, preferencje UI, stan sidebara, dane zalogowanego użytkownika. Nie wymaga Provider wrappera i działa poza komponentami React.
+              <div class="why">Redux to overhead dla stanu UI. React Context re-renderuje cały subtree. Zustand subskrybuje tylko do konkretnych wartości — idealne dla powiadomień real-time z Reverb.</div>
             </td>
           </tr>
           <tr>
             <td><strong>Laravel Echo</strong></td>
             <td>
-              JavaScript biblioteka ułatwiająca subskrypcję kanałów WebSocket w Laravel, współpracująca natywnie z Reverb (i Pusher). Abstrahuje niskopoziomowe WebSocket API dostarczając prosty interfejs do nasłuchiwania eventów na prywatnych i publicznych kanałach. Używana do real-time powiadomień in-app, live aktualizacji statusu ticketów i Kanban boardów bez przeładowania strony.
-              <div class="why">Pisanie własnego WebSocket klienta dla Laravel Broadcasting to niepotrzebna praca. Echo obsługuje automatycznie autoryzację prywatnych kanałów, reconnection logic i jest oficjalnie wspierany przez Laravel team razem z Reverb.</div>
+              JavaScript biblioteka ułatwiająca subskrypcję kanałów WebSocket w Laravel, współpracująca natywnie z Reverb. Abstrahuje niskopoziomowe WebSocket API — prosty interfejs do nasłuchiwania eventów na prywatnych i publicznych kanałach. Używana do real-time powiadomień in-app, live aktualizacji ticketów i Kanban.
+              <div class="why">Pisanie własnego WebSocket klienta dla Laravel Broadcasting to niepotrzebna praca. Echo obsługuje automatycznie autoryzację prywatnych kanałów i reconnection logic.</div>
+            </td>
+          </tr>
+          <tr>
+            <td><strong>react-select</strong></td>
+            <td>
+              Zaawansowany komponent select z wbudowanym multi-select, autocomplete, async loading opcji i pełną customizacją. Zastępuje natywny HTML select i Choices.js z ClientOps Bootstrap. Styl nadpisywalny przez <code>classNames</code> API — kompatybilny z phoenix-design-system.
+              <div class="why">Natywny select HTML nie obsługuje multi-select z wyszukiwaniem. react-select jest standardem dla tego wzorca w React — używany m.in. w formularzu leadów (tagi) i przypisywaniu użytkowników do projektów.</div>
+            </td>
+          </tr>
+          <tr>
+            <td><strong>react-dropzone</strong></td>
+            <td>
+              Hook i komponent do obsługi drag &amp; drop uploadu plików z walidacją typów, rozmiarów i podglądem. Integruje się z Spatie Media Library po stronie backendu. Używany w module dokumentów (załączniki) i profilu klienta.
+              <div class="why">Natywny input file nie obsługuje drag &amp; drop. react-dropzone to lekki, elastyczny hook — łatwy do ostylowania komponentami phoenix-design-system.</div>
+            </td>
+          </tr>
+          <tr>
+            <td><strong>react-day-picker</strong></td>
+            <td>
+              Lekki, elastyczny date picker i date range picker dla React, bez zewnętrznych zależności. Styl w pełni kontrolowany przez CSS classes — kompatybilny z Tailwind. Używany w formularzach leadów (follow-up date), projektów (deadline) i filtrach tabeli.
+              <div class="why">flatpickr z ClientOps Bootstrap nie integruje się z React Hook Form. react-day-picker jest headless jak TipTap — aplikujemy klasy phoenix-design-system bezpośrednio.</div>
+            </td>
+          </tr>
+          <tr>
+            <td><strong>@fullcalendar/react</strong></td>
+            <td>
+              Pełnofunkcjonalny kalendarz eventów z widokami miesiąc/tydzień/dzień/lista i drag &amp; drop eventów. Oficjalny wrapper React z TypeScript support. Używany w module projektów (harmonogram zadań) i CRM (follow-upy, spotkania).
+              <div class="why">Bezpośredni odpowiednik fullcalendar z ClientOps Bootstrap — ta sama biblioteka, oficjalny wrapper React, zero nauki od zera. Potrzebny dla widoku kalendarza CRM i harmonogramu projektów.</div>
+            </td>
+          </tr>
+          <tr>
+            <td><strong>lucide-react</strong></td>
+            <td>
+              Biblioteka ikon SVG jako komponenty React — następca Feather Icons, przepisany w TypeScript. Ponad 1000 ikon w spójnym stylu outline, każda jako osobny named export (tree-shakeable). Używana w całym interfejsie.
+              <div class="why">feather-icons i FontAwesome wymagają osobnych wrapperów. lucide-react jest natywnie dla React, tree-shakeable (zero nieużywanych ikon w bundle) i ma aktywny rozwój.</div>
+            </td>
+          </tr>
+          <tr>
+            <td><strong>dayjs + lodash-es</strong></td>
+            <td>
+              dayjs to lekka (~2KB) biblioteka do manipulacji datami (format, diff, parse, relative time) — bezpośredni zamiennik moment.js. lodash-es to tree-shakeable wersja lodash z utility funkcjami (debounce, throttle, groupBy, pick).
+              <div class="why">Obie biblioteki były używane w ClientOps Bootstrap i działają w React bez żadnych zmian. lodash-es zamiast lodash — tree-shaking eliminuje nieużywane funkcje z bundle.</div>
             </td>
           </tr>
         </tbody>

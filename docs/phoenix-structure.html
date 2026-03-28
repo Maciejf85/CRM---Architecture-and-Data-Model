@@ -1,0 +1,817 @@
+<!doctype html>
+<html lang="pl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Phoenix Design System — Struktura i dokumentacja</title>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap");
+
+      :root {
+        --primary: #1e40af;
+        --primary-light: #eff6ff;
+        --accent: #0ea5e9;
+        --dark: #0f172a;
+        --gray-800: #1e293b;
+        --gray-600: #475569;
+        --gray-400: #94a3b8;
+        --gray-100: #f1f5f9;
+        --gray-50: #f8fafc;
+        --border: #e2e8f0;
+        --green: #059669;
+        --green-light: #ecfdf5;
+        --orange: #d97706;
+        --orange-light: #fffbeb;
+        --red: #dc2626;
+        --red-light: #fef2f2;
+        --purple: #7c3aed;
+        --purple-light: #f5f3ff;
+      }
+
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+
+      body {
+        font-family: "Inter", -apple-system, sans-serif;
+        color: var(--dark);
+        background: white;
+        font-size: 13px;
+        line-height: 1.6;
+      }
+
+      @page {
+        margin: 14mm 0 10mm;
+        size: A4;
+      }
+      @page :first {
+        margin: 0;
+      }
+
+      /* COVER */
+      .cover {
+        min-height: 100vh;
+        background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 50%, #0f172a 100%);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        padding: 60px 40px;
+        page-break-after: always;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .cover::before {
+        content: "";
+        position: absolute;
+        width: 600px; height: 600px;
+        background: radial-gradient(circle, rgba(14, 165, 233, 0.15) 0%, transparent 70%);
+        top: -100px; right: -100px;
+        border-radius: 50%;
+      }
+
+      .cover::after {
+        content: "";
+        position: absolute;
+        width: 400px; height: 400px;
+        background: radial-gradient(circle, rgba(124, 58, 237, 0.1) 0%, transparent 70%);
+        bottom: -50px; left: -50px;
+        border-radius: 50%;
+      }
+
+      .cover-badge {
+        background: rgba(14, 165, 233, 0.2);
+        border: 1px solid rgba(14, 165, 233, 0.4);
+        color: #7dd3fc;
+        padding: 6px 18px;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: 500;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        margin-bottom: 32px;
+        position: relative;
+        z-index: 1;
+      }
+
+      .cover-logo {
+        font-size: 52px;
+        font-weight: 700;
+        color: white;
+        letter-spacing: -2px;
+        margin-bottom: 8px;
+        position: relative;
+        z-index: 1;
+      }
+
+      .cover-logo span { color: #38bdf8; }
+
+      .cover-subtitle {
+        font-size: 18px;
+        color: #94a3b8;
+        font-weight: 300;
+        margin-bottom: 48px;
+        position: relative;
+        z-index: 1;
+      }
+
+      .cover-divider {
+        width: 60px; height: 2px;
+        background: linear-gradient(90deg, #0ea5e9, #7c3aed);
+        margin: 0 auto 48px;
+        position: relative;
+        z-index: 1;
+      }
+
+      .cover-title {
+        font-size: 32px;
+        font-weight: 700;
+        color: white;
+        margin-bottom: 16px;
+        line-height: 1.2;
+        position: relative;
+        z-index: 1;
+      }
+
+      .cover-desc {
+        font-size: 15px;
+        color: #64748b;
+        max-width: 520px;
+        margin-bottom: 64px;
+        position: relative;
+        z-index: 1;
+      }
+
+      .cover-meta {
+        display: flex;
+        gap: 48px;
+        justify-content: center;
+        position: relative;
+        z-index: 1;
+      }
+
+      .cover-meta-item { text-align: center; }
+
+      .cover-meta-label {
+        font-size: 10px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: #475569;
+        margin-bottom: 4px;
+      }
+
+      .cover-meta-value {
+        font-size: 13px;
+        color: #cbd5e1;
+        font-weight: 500;
+      }
+
+      /* CONTENT */
+      .page {
+        padding: 48px 60px;
+      }
+
+      .section-header {
+        display: flex;
+        align-items: flex-start;
+        gap: 16px;
+        margin-bottom: 28px;
+        padding-bottom: 16px;
+        border-bottom: 2px solid var(--border);
+      }
+
+      .section-icon {
+        width: 48px; height: 48px;
+        background: var(--primary);
+        color: white;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 22px;
+        flex-shrink: 0;
+      }
+
+      .section-label {
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        color: var(--primary);
+        font-weight: 600;
+        margin-bottom: 2px;
+      }
+
+      .section-title {
+        font-size: 24px;
+        font-weight: 700;
+        color: var(--dark);
+        line-height: 1.2;
+      }
+
+      .intro-text {
+        color: var(--gray-600);
+        margin-bottom: 28px;
+        font-size: 14px;
+        line-height: 1.7;
+      }
+
+      h3 {
+        font-size: 15px;
+        font-weight: 600;
+        color: var(--dark);
+        margin: 32px 0 12px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      h3::before {
+        content: "";
+        display: inline-block;
+        width: 3px; height: 16px;
+        background: var(--primary);
+        border-radius: 2px;
+      }
+
+      h4 {
+        font-size: 12px;
+        font-weight: 700;
+        color: var(--gray-600);
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+        margin: 20px 0 8px;
+        padding: 6px 10px;
+        background: var(--gray-100);
+        border-radius: 4px;
+        border-left: 3px solid var(--primary);
+      }
+
+      /* Tables */
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 24px;
+        font-size: 12px;
+      }
+
+      thead tr {
+        background: var(--primary);
+        color: white;
+      }
+
+      thead th {
+        padding: 10px 14px;
+        text-align: left;
+        font-weight: 600;
+        font-size: 11px;
+        letter-spacing: 0.3px;
+      }
+
+      tbody tr { border-bottom: 1px solid var(--border); }
+      tbody tr:nth-child(even) { background: var(--gray-50); }
+      tbody tr:hover { background: var(--primary-light); }
+
+      td {
+        padding: 9px 14px;
+        vertical-align: top;
+        color: var(--gray-600);
+        line-height: 1.5;
+      }
+
+      td:first-child { font-weight: 500; color: var(--dark); }
+      td strong { font-weight: 600; color: var(--dark); }
+
+      /* Code */
+      pre {
+        background: var(--gray-800);
+        border-radius: 10px;
+        padding: 18px 20px;
+        margin: 12px 0 20px;
+        overflow: hidden;
+        font-family: "JetBrains Mono", "Courier New", monospace;
+        font-size: 10.5px;
+        line-height: 1.7;
+        color: #e2e8f0;
+      }
+
+      code {
+        font-family: "JetBrains Mono", "Courier New", monospace;
+        font-size: 11px;
+        background: var(--gray-100);
+        color: var(--primary);
+        padding: 1px 5px;
+        border-radius: 3px;
+      }
+
+      pre code {
+        background: none;
+        color: #e2e8f0;
+        padding: 0;
+        font-size: 10.5px;
+      }
+
+      /* File tree — special styling */
+      .file-tree {
+        background: #0d1117;
+        border-radius: 10px;
+        padding: 20px 24px;
+        margin: 12px 0 20px;
+        font-family: "JetBrains Mono", "Courier New", monospace;
+        font-size: 10.5px;
+        line-height: 1.9;
+        color: #e2e8f0;
+        overflow: hidden;
+      }
+
+      .file-tree .dir { color: #79c0ff; font-weight: 600; }
+      .file-tree .file { color: #a5d6ff; }
+      .file-tree .comment { color: #6e7681; }
+      .file-tree .section-mark { color: #f78166; font-weight: 700; }
+
+      /* Note / callout */
+      .note {
+        background: var(--primary-light);
+        border-left: 3px solid var(--primary);
+        border-radius: 0 8px 8px 0;
+        padding: 12px 16px;
+        margin: 12px 0 20px;
+        font-size: 12px;
+        color: var(--gray-600);
+        line-height: 1.6;
+      }
+
+      .note strong { color: var(--primary); }
+
+      /* Component cards grid */
+      .component-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        margin: 12px 0 24px;
+      }
+
+      .component-card {
+        background: var(--gray-50);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 12px 14px;
+      }
+
+      .component-card-name {
+        font-family: "JetBrains Mono", "Courier New", monospace;
+        font-size: 11px;
+        font-weight: 600;
+        color: var(--primary);
+        margin-bottom: 4px;
+      }
+
+      .component-card-desc {
+        font-size: 11px;
+        color: var(--gray-600);
+        line-height: 1.5;
+      }
+
+      .divider {
+        border: none;
+        border-top: 1px solid var(--border);
+        margin: 24px 0;
+      }
+
+      /* CSS variable table */
+      .var-row-light { color: #374151; }
+      .var-row-dark { color: #60a5fa; font-size: 11px; }
+    </style>
+  </head>
+  <body>
+
+    <!-- COVER -->
+    <div class="cover">
+      <div class="cover-badge">Phoenix Design System</div>
+      <div class="cover-logo">Client<span>Ops</span></div>
+      <div class="cover-subtitle">Struktura plików i architektura CSS</div>
+      <div class="cover-divider"></div>
+      <div class="cover-title">ClientOps Design System</div>
+      <div class="cover-desc">Przenośny design system oparty na ClientOps Bootstrap, przygotowany dla projektów Laravel + React SPA + Tailwind v4. Tokeny, komponenty CSS, migracja do React + cva.</div>
+      <div class="cover-meta">
+        <div class="cover-meta-item">
+          <div class="cover-meta-label">Wersja</div>
+          <div class="cover-meta-value">1.0.0</div>
+        </div>
+        <div class="cover-meta-item">
+          <div class="cover-meta-label">Data</div>
+          <div class="cover-meta-value">Marzec 2026</div>
+        </div>
+        <div class="cover-meta-item">
+          <div class="cover-meta-label">Baza</div>
+          <div class="cover-meta-value">Bootstrap 5.3.3 → Tailwind v4</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CONTENT -->
+    <div class="page">
+
+      <div class="section-header">
+        <div class="section-icon">🏗️</div>
+        <div>
+          <div class="section-label">Phoenix Design System</div>
+          <div class="section-title">Struktura plików i architektura CSS</div>
+        </div>
+      </div>
+
+      <p class="intro-text">
+        Przenośny design system oparty na ClientOps Bootstrap, zmapowany z <code>phoenix_resources/scss/theme/</code>.
+        Jeden import (<code>index.css</code>) daje tokeny Tailwinda, komponenty CSS i dark mode gotowy do użycia
+        w każdym projekcie Laravel + React SPA.
+      </p>
+
+      <!-- Użycie -->
+      <h3>Jak używać w nowym projekcie</h3>
+      <pre><code>/* resources/css/app.css */
+@import "tailwindcss";
+@import "./phoenix-design-system/index.css";</code></pre>
+
+      <p style="color: var(--gray-600); margin-bottom: 8px; font-size: 12px;">
+        Skopiuj cały folder <code>phoenix-design-system/</code> do nowego projektu — jeden import daje wszystko.
+      </p>
+
+      <p style="color: var(--gray-600); margin-bottom: 16px; font-size: 12px;">
+        <strong>Dark mode</strong> — klasa <code>.dark</code> na <code>&lt;html&gt;</code>:
+      </p>
+      <pre><code>document.documentElement.classList.toggle('dark')</code></pre>
+
+      <!-- Struktura plików -->
+      <h3>Struktura plików</h3>
+      <div class="file-tree">
+<span class="dir">phoenix-design-system/</span>
+├── <span class="file">index.css</span>                          <span class="comment">← jeden import dający cały system</span>
+├── <span class="file">STRUCTURE.md</span>                       <span class="comment">← ta dokumentacja</span>
+│
+├── <span class="dir">tokens/</span>                            <span class="comment">← @theme → utility klasy Tailwinda</span>
+│   │                                    <span class="comment">   tree-shakowane — tylko użyte w bundlu</span>
+│   │
+│   ├── <span class="file">colors.css</span>                     <span class="comment">← paleta + dark mode overrides</span>
+│   │                                    <span class="comment">   primary, gray, success, danger, warning, info</span>
+│   ├── <span class="file">typography.css</span>                 <span class="comment">← font-sans, font-mono, text-sm..text-6xl</span>
+│   │                                    <span class="comment">   skala 1.25 (Major Third) z ClientOps</span>
+│   ├── <span class="file">spacing.css</span>                    <span class="comment">← spacing-1..spacing-15 + layout vars</span>
+│   │                                    <span class="comment">   sidebar-width, navbar-height, gutter</span>
+│   ├── <span class="file">radius.css</span>                     <span class="comment">← rounded-sm (0.25rem) .. rounded-full</span>
+│   │                                    <span class="comment">   zmapowane z $border-radius-*</span>
+│   ├── <span class="file">shadows.css</span>                    <span class="comment">← shadow-xs..shadow-xl + kolorowe</span>
+│   │                                    <span class="comment">   zmapowane z $box-shadow*</span>
+│   └── <span class="file">root.css</span>                       <span class="comment">← CSS variables semantyczne</span>
+│                                        <span class="comment">   surface-*, text-*, border-*, kanban-*, navbar-*</span>
+│
+└── <span class="dir">components/</span>                        <span class="comment">← @layer components → gotowe klasy CSS</span>
+    │                                    <span class="comment">   ładowane w całości — przenosić do React+cva</span>
+    │
+    ├── <span class="section-mark">── UI PODSTAWOWE ──────────────────────────────────────────────────</span>
+    │
+    ├── <span class="file">buttons.css</span>                    <span class="comment">← .btn-mkds</span>
+    ├── <span class="file">badges.css</span>                     <span class="comment">← .badge-mkds</span>
+    ├── <span class="file">cards.css</span>                      <span class="comment">← .card-mkds, .card-header, .card-body</span>
+    ├── <span class="file">forms.css</span>                      <span class="comment">← .input-mkds, .textarea-mkds, .select-mkds</span>
+    ├── <span class="file">alerts.css</span>                     <span class="comment">← .alert-mkds (solid, subtle-*, outline-*)</span>
+    ├── <span class="file">modal.css</span>                      <span class="comment">← .modal-backdrop-mkds, .modal-mkds</span>
+    ├── <span class="file">dropdown.css</span>                   <span class="comment">← .dropdown-mkds, .dropdown-menu-mkds</span>
+    ├── <span class="file">tooltip.css</span>                    <span class="comment">← [data-tooltip] CSS-only + .tooltip-mkds Radix</span>
+    │
+    ├── <span class="section-mark">── NAWIGACJA ───────────────────────────────────────────────────────</span>
+    │
+    ├── <span class="file">tabs.css</span>                       <span class="comment">← .tabs-mkds, .tabs-pills, .tabs-segment</span>
+    ├── <span class="file">breadcrumb.css</span>                 <span class="comment">← .breadcrumb-mkds</span>
+    ├── <span class="file">pagination.css</span>                 <span class="comment">← .pagination-mkds, .page-item-mkds</span>
+    ├── <span class="file">accordion.css</span>                  <span class="comment">← .accordion-mkds</span>
+    ├── <span class="file">offcanvas.css</span>                  <span class="comment">← .offcanvas-mkds + offcanvas-crm</span>
+    ├── <span class="file">search-box.css</span>                 <span class="comment">← .search-box-mkds</span>
+    │
+    ├── <span class="section-mark">── DANE ────────────────────────────────────────────────────────────</span>
+    │
+    ├── <span class="file">table.css</span>                      <span class="comment">← .table-mkds (striped, hover, sm, bordered)</span>
+    ├── <span class="file">avatar.css</span>                     <span class="comment">← .avatar-mkds (xs..5xl + group)</span>
+    ├── <span class="file">indicator.css</span>                  <span class="comment">← .indicator-mkds, .status-dot</span>
+    ├── <span class="file">progress.css</span>                   <span class="comment">← .progress-mkds + .progress-circle-svg</span>
+    │
+    ├── <span class="section-mark">── FEEDBACK ────────────────────────────────────────────────────────</span>
+    │
+    ├── <span class="file">toasts.css</span>                     <span class="comment">← .toast-container-mkds, .toast-mkds</span>
+    ├── <span class="file">type.css</span>                       <span class="comment">← .line-clamp-*, .text-gradient-*, .heading-mkds</span>
+    ├── <span class="file">scrollbar.css</span>                  <span class="comment">← .scrollbar-mkds</span>
+    │
+    ├── <span class="section-mark">── CRM &amp; SPECJALISTYCZNE ───────────────────────────────────────────</span>
+    │
+    ├── <span class="file">kanban.css</span>                     <span class="comment">← .kanban-board-mkds, .kanban-column-mkds</span>
+    ├── <span class="file">timeline.css</span>                   <span class="comment">← .timeline-mkds, .timeline-item-mkds</span>
+    ├── <span class="file">feed.css</span>                       <span class="comment">← .feed-mkds, .feed-item-mkds</span>
+    ├── <span class="file">chat.css</span>                       <span class="comment">← .chat-mkds, .chat-sidebar-mkds</span>
+    ├── <span class="file">wizard.css</span>                     <span class="comment">← .wizard-mkds</span>
+    └── <span class="file">crm.css</span>                        <span class="comment">← .lead-card-mkds, .deals-col-mkds</span>
+      </div>
+
+      <!-- Tokeny -->
+      <h3>Tokeny — mapowanie z ClientOps SCSS</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Token CSS (@theme)</th>
+            <th>Źródło ClientOps</th>
+            <th>Przykładowe klasy Tailwind</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>--color-primary-*</code></td>
+            <td><code>$blue-*</code> (base: <code>$blue-500</code>)</td>
+            <td><code>bg-primary-500</code>, <code>text-primary-700</code>, <code>border-primary-200</code></td>
+          </tr>
+          <tr>
+            <td><code>--color-gray-*</code></td>
+            <td><code>$gray-*</code> (50..1100)</td>
+            <td><code>bg-gray-50</code>, <code>text-gray-700</code>, <code>border-gray-200</code></td>
+          </tr>
+          <tr>
+            <td><code>--color-success-*</code></td>
+            <td><code>$green-*</code></td>
+            <td><code>bg-success-50</code>, <code>text-success-500</code></td>
+          </tr>
+          <tr>
+            <td><code>--color-danger-*</code></td>
+            <td><code>$red-*</code></td>
+            <td><code>bg-danger-500</code>, <code>text-danger-700</code></td>
+          </tr>
+          <tr>
+            <td><code>--color-warning-*</code></td>
+            <td><code>$orange-*</code></td>
+            <td><code>bg-warning-50</code>, <code>text-warning-600</code></td>
+          </tr>
+          <tr>
+            <td><code>--color-info-*</code></td>
+            <td><code>$cyan-*</code></td>
+            <td><code>bg-info-500</code>, <code>text-info-700</code></td>
+          </tr>
+          <tr>
+            <td><code>--font-sans</code></td>
+            <td><code>$font-family-sans-serif</code> (Nunito Sans)</td>
+            <td><code>font-sans</code></td>
+          </tr>
+          <tr>
+            <td><code>--text-xs</code> .. <code>--text-xl</code></td>
+            <td>skala 1.25 (Major Third)</td>
+            <td><code>text-xs</code>, <code>text-sm</code>, <code>text-base</code>, <code>text-lg</code>, <code>text-xl</code></td>
+          </tr>
+          <tr>
+            <td><code>--radius</code>, <code>--radius-lg</code>, <code>--radius-full</code></td>
+            <td><code>$border-radius-*</code></td>
+            <td><code>rounded</code>, <code>rounded-lg</code>, <code>rounded-full</code></td>
+          </tr>
+          <tr>
+            <td><code>--shadow-sm</code>, <code>--shadow</code>, <code>--shadow-lg</code></td>
+            <td><code>$box-shadow*</code></td>
+            <td><code>shadow-sm</code>, <code>shadow</code>, <code>shadow-lg</code></td>
+          </tr>
+          <tr>
+            <td><code>--spacing-3</code></td>
+            <td><code>$spacer</code> = 1rem</td>
+            <td><code>p-3</code>, <code>m-3</code>, <code>gap-3</code></td>
+          </tr>
+          <tr>
+            <td><code>--spacing-4</code></td>
+            <td><code>$spacer * 1.5</code> = 1.5rem</td>
+            <td><code>p-4</code>, <code>m-4</code></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- CSS Variables -->
+      <h3>CSS Variables semantyczne (tokens/root.css)</h3>
+      <p style="color: var(--gray-600); font-size: 12px; margin-bottom: 12px;">Używane przez komponenty CSS. Automatycznie przełączają się w dark mode (klasa <code>.dark</code> na <code>&lt;html&gt;</code>).</p>
+      <table>
+        <thead>
+          <tr>
+            <th>Variable</th>
+            <th>Light</th>
+            <th>Dark</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>--surface-bg</code></td>
+            <td><span style="display:inline-block;width:10px;height:10px;background:#f5f7fa;border:1px solid #ccc;border-radius:2px;margin-right:5px;"></span> #f5f7fa</td>
+            <td><span style="display:inline-block;width:10px;height:10px;background:#0f111a;border:1px solid #444;border-radius:2px;margin-right:5px;"></span> #0f111a</td>
+          </tr>
+          <tr>
+            <td><code>--surface-card</code></td>
+            <td><span style="display:inline-block;width:10px;height:10px;background:#ffffff;border:1px solid #ccc;border-radius:2px;margin-right:5px;"></span> #ffffff</td>
+            <td><span style="display:inline-block;width:10px;height:10px;background:#141824;border:1px solid #444;border-radius:2px;margin-right:5px;"></span> #141824</td>
+          </tr>
+          <tr>
+            <td><code>--surface-highlight</code></td>
+            <td>#eff2f6</td>
+            <td>#1c2231</td>
+          </tr>
+          <tr>
+            <td><code>--text-body</code></td>
+            <td>#31374a</td>
+            <td>#9fa6bc</td>
+          </tr>
+          <tr>
+            <td><code>--text-tertiary</code></td>
+            <td>#525b75</td>
+            <td>#8a94ad</td>
+          </tr>
+          <tr>
+            <td><code>--text-muted</code></td>
+            <td>#8a94ad</td>
+            <td>#606981</td>
+          </tr>
+          <tr>
+            <td><code>--border-color</code></td>
+            <td>#e3e6ed</td>
+            <td>#373e53</td>
+          </tr>
+          <tr>
+            <td><code>--kanban-column-bg</code></td>
+            <td>#f5f7fa</td>
+            <td>#141824</td>
+          </tr>
+          <tr>
+            <td><code>--kanban-drag-bg</code></td>
+            <td>#ffffff</td>
+            <td>#1c222c</td>
+          </tr>
+          <tr>
+            <td><code>--wizard-active-color</code></td>
+            <td>#3874ff</td>
+            <td>#85a9ff</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- Migracja do React + cva -->
+      <h3>Komponenty CSS → React (migracja do cva)</h3>
+      <p style="color: var(--gray-600); font-size: 12px; margin-bottom: 12px;">
+        Klasy CSS z <code>components/</code> są punktem startowym. Docelowo przenosisz je do komponentów React używając <code>class-variance-authority</code>. Po migracji komponentu — usuń odpowiadający plik CSS.
+      </p>
+      <pre><code>// Zamiast: &lt;button class="btn-mkds btn-primary btn-sm"&gt;
+// Docelowo:
+import { cva, type VariantProps } from 'class-variance-authority'
+
+const button = cva('inline-flex items-center font-bold rounded', {
+  variants: {
+    variant: {
+      primary:  'bg-primary-500 text-white hover:bg-primary-600',
+      outline:  'border border-primary-500 text-primary-500 hover:bg-primary-500 hover:text-white',
+      ghost:    'text-gray-700 hover:bg-gray-100',
+      danger:   'bg-danger-500 text-white hover:bg-danger-600',
+    },
+    size: {
+      sm: 'px-4 py-2 text-xs',
+      md: 'px-6 py-[0.625rem] text-sm',
+      lg: 'px-6 py-[0.875rem] text-base',
+    }
+  },
+  defaultVariants: { variant: 'primary', size: 'md' }
+})
+
+// Użycie:
+&lt;button className={button({ variant: 'primary', size: 'sm' })}&gt;Zapisz&lt;/button&gt;</code></pre>
+
+      <!-- Zależności -->
+      <h3>Zależności w nowym projekcie</h3>
+      <pre><code>{
+  "dependencies": {
+    "tailwindcss": "^4.0.0",
+    "class-variance-authority": "^0.7.0"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "^4.0.0"
+  }
+}</code></pre>
+
+      <pre><code>// vite.config.ts
+import tailwindcss from '@tailwindcss/vite'
+
+export default { plugins: [tailwindcss()] }</code></pre>
+
+      <hr class="divider" />
+
+      <!-- Komponenty overview -->
+      <h3>Przegląd komponentów CSS</h3>
+
+      <h4>UI Podstawowe</h4>
+      <div class="component-grid">
+        <div class="component-card">
+          <div class="component-card-name">buttons.css</div>
+          <div class="component-card-desc">Warianty: primary, secondary, success, danger, warning, outline-*, ghost. Rozmiary: btn-sm, btn-lg. (359 linii)</div>
+        </div>
+        <div class="component-card">
+          <div class="component-card-name">badges.css</div>
+          <div class="component-card-desc">Warianty solid i soft dla wszystkich kolorów. Kształty: badge-pill. (55 linii)</div>
+        </div>
+        <div class="component-card">
+          <div class="component-card-name">cards.css</div>
+          <div class="component-card-desc">.card-mkds, card-hoverable, card-flat, card-dark-header.</div>
+        </div>
+        <div class="component-card">
+          <div class="component-card-name">forms.css</div>
+          <div class="component-card-desc">input, textarea, select, label, floating label, input-group, checkbox, radio, switch. (169 linii)</div>
+        </div>
+        <div class="component-card">
+          <div class="component-card-name">alerts.css</div>
+          <div class="component-card-desc">Warianty: solid, subtle-*, outline-*. Z ikoną i przyciskiem zamknięcia. (100 linii)</div>
+        </div>
+        <div class="component-card">
+          <div class="component-card-name">modal.css</div>
+          <div class="component-card-desc">Rozmiary: sm, md, lg, xl, fullscreen. Backdrop, header, body, footer.</div>
+        </div>
+        <div class="component-card">
+          <div class="component-card-name">dropdown.css</div>
+          <div class="component-card-desc">Menu, item, header, divider. Warianty: menu-end, dropdown-md. (42 linii)</div>
+        </div>
+        <div class="component-card">
+          <div class="component-card-name">tooltip.css</div>
+          <div class="component-card-desc">CSS-only via [data-tooltip] + .tooltip-mkds dla Radix. Pozycje: top/bottom/left/right.</div>
+        </div>
+      </div>
+
+      <h4>Nawigacja</h4>
+      <div class="component-grid">
+        <div class="component-card">
+          <div class="component-card-name">tabs.css</div>
+          <div class="component-card-desc">tabs-mkds (default), tabs-pills (rounded), tabs-segment (control), tabs-underline. (151 linii)</div>
+        </div>
+        <div class="component-card">
+          <div class="component-card-name">offcanvas.css</div>
+          <div class="component-card-desc">Pozycje: right/left/top/bottom. Specjalny: offcanvas-crm (lead details). (121 linii)</div>
+        </div>
+        <div class="component-card">
+          <div class="component-card-name">search-box.css</div>
+          <div class="component-card-desc">Pole wyszukiwania z wynikami, wariant rect (nie pill). (79 linii)</div>
+        </div>
+        <div class="component-card">
+          <div class="component-card-name">accordion.css</div>
+          <div class="component-card-desc">Trigger, icon, content. Wariant: accordion-flush. (23 linii)</div>
+        </div>
+      </div>
+
+      <h4>Dane i feedback</h4>
+      <div class="component-grid">
+        <div class="component-card">
+          <div class="component-card-name">table.css</div>
+          <div class="component-card-desc">Warianty: striped, hover, sm, bordered, nowrap. Wrapper responsive.</div>
+        </div>
+        <div class="component-card">
+          <div class="component-card-name">avatar.css</div>
+          <div class="component-card-desc">Rozmiary xs..5xl. Inicjały, statusy (online/offline/away/busy), group. (290 linii)</div>
+        </div>
+        <div class="component-card">
+          <div class="component-card-name">progress.css</div>
+          <div class="component-card-desc">Rozmiary xs..xl, kolory, stacked bars, SVG circle z animacją. (41 linii)</div>
+        </div>
+        <div class="component-card">
+          <div class="component-card-name">toasts.css</div>
+          <div class="component-card-desc">Pozycje: 5 wariantów. Kolory: primary/success/danger/warning/info.</div>
+        </div>
+      </div>
+
+      <h4>CRM &amp; specjalistyczne</h4>
+      <div class="component-grid">
+        <div class="component-card">
+          <div class="component-card-name">kanban.css</div>
+          <div class="component-card-desc">Horizontal scroll board, kolumny 22.875rem, karty drag&amp;drop ready, ghost placeholder. (421 linii)</div>
+        </div>
+        <div class="component-card">
+          <div class="component-card-name">timeline.css</div>
+          <div class="component-card-desc">Connector, icon z wariantami kolorów, hover effects. (55 linii)</div>
+        </div>
+        <div class="component-card">
+          <div class="component-card-name">chat.css</div>
+          <div class="component-card-desc">Sidebar 360px, thread list, received/sent bubbles, input bar. (143 linii)</div>
+        </div>
+        <div class="component-card">
+          <div class="component-card-name">wizard.css</div>
+          <div class="component-card-desc">Nawigacja kroków, circle (active/done), connector, footer. (221 linii)</div>
+        </div>
+        <div class="component-card">
+          <div class="component-card-name">crm.css</div>
+          <div class="component-card-desc">lead-card, lead-details-sidebar, deals-col, reports-table, sticky-leads-sidebar. (223 linii)</div>
+        </div>
+        <div class="component-card">
+          <div class="component-card-name">feed.css</div>
+          <div class="component-card-desc">Avatar, content, header, body, attachment, reactions. (47 linii)</div>
+        </div>
+      </div>
+
+      <hr class="divider" />
+
+      <div class="note">
+        <strong>Źródło:</strong> Zmapowane z <strong>ClientOps Bootstrap v3</strong> (<code>phoenix_resources/scss/theme/</code>).
+        Framework bazowy: Bootstrap 5.3.3 + custom SCSS extensions.
+        Autor mapowania: phoenix-design-system, marzec 2026.
+      </div>
+
+    </div>
+
+  </body>
+</html>

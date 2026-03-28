@@ -1,0 +1,965 @@
+<!doctype html>
+<html lang="pl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Phoenix Design System — Mapowanie bibliotek JS</title>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap");
+
+      :root {
+        --primary: #1e40af;
+        --primary-light: #eff6ff;
+        --accent: #0ea5e9;
+        --dark: #0f172a;
+        --gray-800: #1e293b;
+        --gray-600: #475569;
+        --gray-400: #94a3b8;
+        --gray-100: #f1f5f9;
+        --gray-50: #f8fafc;
+        --border: #e2e8f0;
+        --green: #059669;
+        --green-light: #ecfdf5;
+        --orange: #d97706;
+        --orange-light: #fffbeb;
+        --red: #dc2626;
+        --red-light: #fef2f2;
+        --purple: #7c3aed;
+        --purple-light: #f5f3ff;
+      }
+
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+
+      body {
+        font-family: "Inter", -apple-system, sans-serif;
+        color: var(--dark);
+        background: white;
+        font-size: 13px;
+        line-height: 1.6;
+      }
+
+      @page {
+        margin: 14mm 0 10mm;
+        size: A4;
+      }
+      @page :first {
+        margin: 0;
+      }
+
+      /* COVER */
+      .cover {
+        min-height: 100vh;
+        background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 50%, #0f172a 100%);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        padding: 60px 40px;
+        page-break-after: always;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .cover::before {
+        content: "";
+        position: absolute;
+        width: 600px; height: 600px;
+        background: radial-gradient(circle, rgba(14, 165, 233, 0.15) 0%, transparent 70%);
+        top: -100px; right: -100px;
+        border-radius: 50%;
+      }
+
+      .cover::after {
+        content: "";
+        position: absolute;
+        width: 400px; height: 400px;
+        background: radial-gradient(circle, rgba(124, 58, 237, 0.1) 0%, transparent 70%);
+        bottom: -50px; left: -50px;
+        border-radius: 50%;
+      }
+
+      .cover-badge {
+        background: rgba(14, 165, 233, 0.2);
+        border: 1px solid rgba(14, 165, 233, 0.4);
+        color: #7dd3fc;
+        padding: 6px 18px;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: 500;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        margin-bottom: 32px;
+        position: relative;
+        z-index: 1;
+      }
+
+      .cover-logo {
+        font-size: 52px;
+        font-weight: 700;
+        color: white;
+        letter-spacing: -2px;
+        margin-bottom: 8px;
+        position: relative;
+        z-index: 1;
+      }
+
+      .cover-logo span { color: #38bdf8; }
+
+      .cover-subtitle {
+        font-size: 18px;
+        color: #94a3b8;
+        font-weight: 300;
+        margin-bottom: 48px;
+        position: relative;
+        z-index: 1;
+      }
+
+      .cover-divider {
+        width: 60px; height: 2px;
+        background: linear-gradient(90deg, #0ea5e9, #7c3aed);
+        margin: 0 auto 48px;
+        position: relative;
+        z-index: 1;
+      }
+
+      .cover-title {
+        font-size: 32px;
+        font-weight: 700;
+        color: white;
+        margin-bottom: 16px;
+        line-height: 1.2;
+        position: relative;
+        z-index: 1;
+      }
+
+      .cover-desc {
+        font-size: 15px;
+        color: #64748b;
+        max-width: 520px;
+        margin-bottom: 64px;
+        position: relative;
+        z-index: 1;
+      }
+
+      .cover-meta {
+        display: flex;
+        gap: 48px;
+        justify-content: center;
+        position: relative;
+        z-index: 1;
+      }
+
+      .cover-meta-item { text-align: center; }
+
+      .cover-meta-label {
+        font-size: 10px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: #475569;
+        margin-bottom: 4px;
+      }
+
+      .cover-meta-value {
+        font-size: 13px;
+        color: #cbd5e1;
+        font-weight: 500;
+      }
+
+      /* CONTENT */
+      .page {
+        padding: 48px 60px;
+      }
+
+      .section-header {
+        display: flex;
+        align-items: flex-start;
+        gap: 16px;
+        margin-bottom: 28px;
+        padding-bottom: 16px;
+        border-bottom: 2px solid var(--border);
+      }
+
+      .section-icon {
+        width: 48px; height: 48px;
+        background: var(--primary);
+        color: white;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 22px;
+        flex-shrink: 0;
+      }
+
+      .section-label {
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        color: var(--primary);
+        font-weight: 600;
+        margin-bottom: 2px;
+      }
+
+      .section-title {
+        font-size: 24px;
+        font-weight: 700;
+        color: var(--dark);
+        line-height: 1.2;
+      }
+
+      .intro-text {
+        color: var(--gray-600);
+        margin-bottom: 32px;
+        font-size: 14px;
+        line-height: 1.7;
+      }
+
+      h3 {
+        font-size: 15px;
+        font-weight: 600;
+        color: var(--dark);
+        margin: 32px 0 12px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      h3::before {
+        content: "";
+        display: inline-block;
+        width: 3px; height: 16px;
+        background: var(--primary);
+        border-radius: 2px;
+      }
+
+      /* Tables */
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 24px;
+        font-size: 12px;
+      }
+
+      thead tr {
+        background: var(--primary);
+        color: white;
+      }
+
+      thead th {
+        padding: 10px 14px;
+        text-align: left;
+        font-weight: 600;
+        font-size: 11px;
+        letter-spacing: 0.3px;
+      }
+
+      tbody tr { border-bottom: 1px solid var(--border); }
+      tbody tr:nth-child(even) { background: var(--gray-50); }
+      tbody tr:hover { background: var(--primary-light); }
+
+      td {
+        padding: 9px 14px;
+        vertical-align: top;
+        color: var(--gray-600);
+        line-height: 1.5;
+      }
+
+      td:first-child { font-weight: 500; color: var(--dark); }
+
+      td strong {
+        font-weight: 600;
+        color: var(--dark);
+      }
+
+      /* Priority badges */
+      .prio-high {
+        display: inline-block;
+        background: #fef2f2;
+        color: #dc2626;
+        border: 1px solid #fecaca;
+        border-radius: 4px;
+        padding: 2px 7px;
+        font-size: 10px;
+        font-weight: 600;
+        white-space: nowrap;
+      }
+
+      .prio-mid {
+        display: inline-block;
+        background: #fffbeb;
+        color: #d97706;
+        border: 1px solid #fde68a;
+        border-radius: 4px;
+        padding: 2px 7px;
+        font-size: 10px;
+        font-weight: 600;
+        white-space: nowrap;
+      }
+
+      .prio-low {
+        display: inline-block;
+        background: #f0fdf4;
+        color: #16a34a;
+        border: 1px solid #bbf7d0;
+        border-radius: 4px;
+        padding: 2px 7px;
+        font-size: 10px;
+        font-weight: 600;
+        white-space: nowrap;
+      }
+
+      .prio-none {
+        display: inline-block;
+        background: var(--gray-100);
+        color: var(--gray-600);
+        border: 1px solid var(--border);
+        border-radius: 4px;
+        padding: 2px 7px;
+        font-size: 10px;
+        font-weight: 600;
+        white-space: nowrap;
+      }
+
+      /* Code */
+      pre {
+        background: var(--gray-800);
+        border-radius: 10px;
+        padding: 18px 20px;
+        margin: 12px 0 20px;
+        overflow: hidden;
+        font-family: "JetBrains Mono", "Courier New", monospace;
+        font-size: 11px;
+        line-height: 1.7;
+        color: #e2e8f0;
+      }
+
+      code {
+        font-family: "JetBrains Mono", "Courier New", monospace;
+        font-size: 11px;
+        background: var(--gray-100);
+        color: var(--primary);
+        padding: 1px 5px;
+        border-radius: 3px;
+      }
+
+      pre code {
+        background: none;
+        color: #e2e8f0;
+        padding: 0;
+      }
+
+      /* Note / callout */
+      .note {
+        background: var(--primary-light);
+        border-left: 3px solid var(--primary);
+        border-radius: 0 8px 8px 0;
+        padding: 12px 16px;
+        margin: 12px 0 20px;
+        font-size: 12px;
+        color: var(--gray-600);
+        line-height: 1.6;
+      }
+
+      .note strong { color: var(--primary); }
+
+      /* Priority summary table */
+      .summary-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        margin-top: 16px;
+      }
+
+      .summary-card {
+        border-radius: 10px;
+        padding: 16px 18px;
+        font-size: 12px;
+      }
+
+      .summary-card.high { background: #fef2f2; border: 1px solid #fecaca; }
+      .summary-card.mid  { background: #fffbeb; border: 1px solid #fde68a; }
+      .summary-card.low  { background: #f0fdf4; border: 1px solid #bbf7d0; }
+      .summary-card.none { background: var(--gray-50); border: 1px solid var(--border); }
+
+      .summary-card-title {
+        font-weight: 700;
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 8px;
+      }
+
+      .summary-card.high .summary-card-title { color: #dc2626; }
+      .summary-card.mid  .summary-card-title { color: #d97706; }
+      .summary-card.low  .summary-card-title { color: #16a34a; }
+      .summary-card.none .summary-card-title { color: var(--gray-600); }
+
+      .summary-card ul {
+        list-style: none;
+        padding: 0;
+      }
+
+      .summary-card ul li {
+        padding: 2px 0;
+        color: var(--gray-600);
+      }
+
+      .summary-card ul li::before {
+        content: "•";
+        margin-right: 6px;
+        opacity: 0.5;
+      }
+
+      .divider {
+        border: none;
+        border-top: 1px solid var(--border);
+        margin: 24px 0;
+      }
+    </style>
+  </head>
+  <body>
+
+    <!-- COVER -->
+    <div class="cover">
+      <div class="cover-badge">Phoenix Design System</div>
+      <div class="cover-logo">Client<span>Ops</span></div>
+      <div class="cover-subtitle">React SPA — Mapowanie bibliotek JS</div>
+      <div class="cover-divider"></div>
+      <div class="cover-title">ClientOps Bootstrap → React</div>
+      <div class="cover-desc">Kompletne mapowanie bibliotek JavaScript używanych w ClientOps Bootstrap na ich odpowiedniki dla projektu Laravel + React SPA.</div>
+      <div class="cover-meta">
+        <div class="cover-meta-item">
+          <div class="cover-meta-label">Wersja</div>
+          <div class="cover-meta-value">1.0.0</div>
+        </div>
+        <div class="cover-meta-item">
+          <div class="cover-meta-label">Data</div>
+          <div class="cover-meta-value">Marzec 2026</div>
+        </div>
+        <div class="cover-meta-item">
+          <div class="cover-meta-label">Framework</div>
+          <div class="cover-meta-value">Laravel 12 + React 19</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CONTENT -->
+    <div class="page">
+
+      <div class="section-header">
+        <div class="section-icon">📦</div>
+        <div>
+          <div class="section-label">Dokumentacja techniczna</div>
+          <div class="section-title">Mapowanie bibliotek JS: ClientOps Bootstrap → React</div>
+        </div>
+      </div>
+
+      <p class="intro-text">
+        Wszystkie biblioteki JS używane w ClientOps Bootstrap i ich odpowiedniki dla projektu <strong>Laravel + React SPA</strong>. Tabele zawierają priorytet wdrożenia z perspektywy CRM.
+      </p>
+
+      <!-- Wykresy -->
+      <h3>Wykresy i wizualizacja danych</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Biblioteka ClientOps</th>
+            <th>Zastosowanie</th>
+            <th>React odpowiednik</th>
+            <th>Instalacja</th>
+            <th>Priorytet</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>echarts</strong></td>
+            <td>Wykresy (linie, słupki, pie, mapy ciepła) — główna biblioteka wykresów</td>
+            <td><code>echarts-for-react</code></td>
+            <td><code>npm i echarts echarts-for-react</code></td>
+            <td><span class="prio-high">🔴 Wysoki</span></td>
+          </tr>
+          <tr>
+            <td><strong>chart</strong> (Chart.js)</td>
+            <td>Dodatkowe wykresy (wrapper)</td>
+            <td><code>react-chartjs-2</code></td>
+            <td><code>npm i chart.js react-chartjs-2</code></td>
+            <td><span class="prio-mid">🟡 Średni</span></td>
+          </tr>
+          <tr>
+            <td><strong>countup</strong></td>
+            <td>Animowane liczniki (dashboardy)</td>
+            <td><code>react-countup</code></td>
+            <td><code>npm i react-countup</code></td>
+            <td><span class="prio-mid">🟡 Średni</span></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- Kalendarze -->
+      <h3>Kalendarze i czas</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Biblioteka ClientOps</th>
+            <th>Zastosowanie</th>
+            <th>React odpowiednik</th>
+            <th>Instalacja</th>
+            <th>Priorytet</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>fullcalendar</strong></td>
+            <td>Pełny kalendarz eventów (miesiąc/tydzień/dzień, drag &amp; drop)</td>
+            <td><code>@fullcalendar/react</code></td>
+            <td><code>npm i @fullcalendar/react @fullcalendar/daygrid @fullcalendar/timegrid @fullcalendar/interaction</code></td>
+            <td><span class="prio-high">🔴 Wysoki</span></td>
+          </tr>
+          <tr>
+            <td><strong>flatpickr</strong></td>
+            <td>Date picker, time picker, date range</td>
+            <td><code>react-day-picker</code></td>
+            <td><code>npm i react-day-picker</code></td>
+            <td><span class="prio-high">🔴 Wysoki</span></td>
+          </tr>
+          <tr>
+            <td><strong>dayjs</strong></td>
+            <td>Manipulacja datami (format, diff, parse)</td>
+            <td><code>dayjs</code> — bez zmian, działa w React</td>
+            <td><code>npm i dayjs</code></td>
+            <td><span class="prio-low">🟢 Bez zmian</span></td>
+          </tr>
+          <tr>
+            <td><strong>dhtmlx-gantt</strong></td>
+            <td>Wykres Gantta (harmonogramy) — komercyjna</td>
+            <td><code>@dhx/trial-gantt</code> + własny wrapper ⚠️</td>
+            <td><code>npm i @dhx/trial-gantt</code></td>
+            <td><span class="prio-high">🔴 Trudne</span></td>
+          </tr>
+          <tr>
+            <td><strong>frappe-gantt</strong></td>
+            <td>Alternatywny Gantt (open source, prostszy)</td>
+            <td>Brak oficjalnego wrappera — własny <code>useEffect</code> + ref</td>
+            <td><code>npm i frappe-gantt</code></td>
+            <td><span class="prio-mid">🟡 Średni</span></td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="note"><strong>Gantt uwaga:</strong> dhtmlx-gantt jest komercyjny. Dla CRM rozważ <code>@bryntum/gantt</code> (płatny, dobry wrapper React) lub prostszy <code>frappe-gantt</code> z własnym wrapperem.</div>
+
+      <!-- Formularze -->
+      <h3>Formularze i inputy</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Biblioteka ClientOps</th>
+            <th>Zastosowanie</th>
+            <th>React odpowiednik</th>
+            <th>Instalacja</th>
+            <th>Priorytet</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>choices</strong> (Choices.js)</td>
+            <td>Custom select, multi-select, autocomplete</td>
+            <td><code>react-select</code></td>
+            <td><code>npm i react-select</code></td>
+            <td><span class="prio-high">🔴 Wysoki</span></td>
+          </tr>
+          <tr>
+            <td><strong>nouislider</strong></td>
+            <td>Range slider (jeden lub dwa uchwyty)</td>
+            <td><code>@radix-ui/react-slider</code> lub <code>rc-slider</code></td>
+            <td><code>npm i @radix-ui/react-slider</code></td>
+            <td><span class="prio-mid">🟡 Średni</span></td>
+          </tr>
+          <tr>
+            <td><strong>dropzone</strong></td>
+            <td>Drag &amp; drop upload plików</td>
+            <td><code>react-dropzone</code></td>
+            <td><code>npm i react-dropzone</code></td>
+            <td><span class="prio-high">🔴 Wysoki</span></td>
+          </tr>
+          <tr>
+            <td><strong>tinymce</strong></td>
+            <td>Rich text editor (WYSIWYG) — <em>zastąpiony przez TipTap</em></td>
+            <td><code>@tiptap/react</code></td>
+            <td><code>npm i @tiptap/react @tiptap/starter-kit</code></td>
+            <td><span class="prio-mid">🟡 Średni</span></td>
+          </tr>
+          <tr>
+            <td><strong>rater-js</strong></td>
+            <td>Oceny gwiazdkowe</td>
+            <td><code>react-rating</code> lub własny komponent</td>
+            <td><code>npm i react-rating</code></td>
+            <td><span class="prio-low">🟢 Niski</span></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- Drag & Drop -->
+      <h3>Drag &amp; Drop i sortowanie</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Biblioteka ClientOps</th>
+            <th>Zastosowanie</th>
+            <th>React odpowiednik</th>
+            <th>Instalacja</th>
+            <th>Priorytet</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>sortablejs</strong></td>
+            <td>Sortowanie list, kanban drag &amp; drop</td>
+            <td><code>@dnd-kit/core</code> + <code>@dnd-kit/sortable</code></td>
+            <td><code>npm i @dnd-kit/core @dnd-kit/sortable @dnd-kit/utilities</code></td>
+            <td><span class="prio-high">🔴 Wysoki</span></td>
+          </tr>
+          <tr>
+            <td><strong>draggable</strong> (Shopify)</td>
+            <td>Alternatywny drag &amp; drop</td>
+            <td><code>@dnd-kit/core</code> — jak wyżej</td>
+            <td>—</td>
+            <td><span class="prio-high">🔴 Wysoki</span></td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="note"><strong>dnd-kit</strong> to standard dla React — lepszy niż <code>react-beautiful-dnd</code> (niezależnie utrzymywany, działa z wirtualizacją).</div>
+
+      <!-- Mapy -->
+      <h3>Mapy</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Biblioteka ClientOps</th>
+            <th>Zastosowanie</th>
+            <th>React odpowiednik</th>
+            <th>Instalacja</th>
+            <th>Priorytet</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>leaflet</strong></td>
+            <td>Interaktywne mapy OpenStreetMap</td>
+            <td><code>react-leaflet</code></td>
+            <td><code>npm i react-leaflet leaflet</code></td>
+            <td><span class="prio-mid">🟡 Średni</span></td>
+          </tr>
+          <tr>
+            <td><strong>leaflet.markercluster</strong></td>
+            <td>Grupowanie markerów na mapie</td>
+            <td><code>react-leaflet-cluster</code></td>
+            <td><code>npm i react-leaflet-cluster</code></td>
+            <td><span class="prio-mid">🟡 Średni</span></td>
+          </tr>
+          <tr>
+            <td><strong>leaflet.tilelayer.colorfilter</strong></td>
+            <td>Filtry kolorów warstw mapy</td>
+            <td>Własny wrapper przez <code>useEffect</code></td>
+            <td>—</td>
+            <td><span class="prio-low">🟢 Niski</span></td>
+          </tr>
+          <tr>
+            <td><strong>mapbox-gl</strong></td>
+            <td>Zaawansowane mapy Mapbox</td>
+            <td><code>react-map-gl</code></td>
+            <td><code>npm i react-map-gl mapbox-gl</code></td>
+            <td><span class="prio-mid">🟡 Średni</span></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- Multimedia -->
+      <h3>Multimedia i UI</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Biblioteka ClientOps</th>
+            <th>Zastosowanie</th>
+            <th>React odpowiednik</th>
+            <th>Instalacja</th>
+            <th>Priorytet</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>swiper</strong></td>
+            <td>Touch slider, karuzela</td>
+            <td><code>swiper/react</code> (ta sama biblioteka)</td>
+            <td><code>npm i swiper</code></td>
+            <td><span class="prio-mid">🟡 Średni</span></td>
+          </tr>
+          <tr>
+            <td><strong>glightbox</strong></td>
+            <td>Lightbox dla obrazów/wideo</td>
+            <td><code>yet-another-react-lightbox</code></td>
+            <td><code>npm i yet-another-react-lightbox</code></td>
+            <td><span class="prio-low">🟢 Niski</span></td>
+          </tr>
+          <tr>
+            <td><strong>bigpicture</strong></td>
+            <td>Przeglądarka mediów (video, iframe)</td>
+            <td><code>react-player</code> + modal</td>
+            <td><code>npm i react-player</code></td>
+            <td><span class="prio-low">🟢 Niski</span></td>
+          </tr>
+          <tr>
+            <td><strong>plyr</strong></td>
+            <td>Odtwarzacz wideo/audio</td>
+            <td><code>plyr-react</code></td>
+            <td><code>npm i plyr-react plyr</code></td>
+            <td><span class="prio-low">🟢 Niski</span></td>
+          </tr>
+          <tr>
+            <td><strong>lottie</strong></td>
+            <td>Animacje JSON (Lottie)</td>
+            <td><code>lottie-react</code></td>
+            <td><code>npm i lottie-react</code></td>
+            <td><span class="prio-low">🟢 Niski</span></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- Layout -->
+      <h3>Layout i scrollowanie</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Biblioteka ClientOps</th>
+            <th>Zastosowanie</th>
+            <th>React odpowiednik</th>
+            <th>Instalacja</th>
+            <th>Priorytet</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>isotope-layout</strong></td>
+            <td>Masonry/grid layout z filtrowaniem</td>
+            <td><code>react-masonry-css</code> lub <code>masonic</code></td>
+            <td><code>npm i masonic</code></td>
+            <td><span class="prio-low">🟢 Niski</span></td>
+          </tr>
+          <tr>
+            <td><strong>simplebar</strong></td>
+            <td>Custom scrollbar (cross-browser)</td>
+            <td><code>simplebar-react</code> (ta sama biblioteka)</td>
+            <td><code>npm i simplebar-react</code></td>
+            <td><span class="prio-mid">🟡 Średni</span></td>
+          </tr>
+          <tr>
+            <td><strong>overlayscrollbars</strong></td>
+            <td>Overlay scrollbar</td>
+            <td><code>overlayscrollbars-react</code></td>
+            <td><code>npm i overlayscrollbars-react overlayscrollbars</code></td>
+            <td><span class="prio-low">🟢 Niski</span></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- Narzędzia -->
+      <h3>Narzędzia i utilities</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Biblioteka ClientOps</th>
+            <th>Zastosowanie</th>
+            <th>React odpowiednik</th>
+            <th>Instalacja</th>
+            <th>Priorytet</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>list.js</strong></td>
+            <td>Filtrowanie i sortowanie list HTML</td>
+            <td>Zastąpiony przez <strong>TanStack Table</strong></td>
+            <td><code>npm i @tanstack/react-table</code></td>
+            <td><span class="prio-high">🔴 Wysoki</span></td>
+          </tr>
+          <tr>
+            <td><strong>typed.js</strong></td>
+            <td>Efekt pisania tekstu (typing animation)</td>
+            <td><code>react-type-animation</code></td>
+            <td><code>npm i react-type-animation</code></td>
+            <td><span class="prio-low">🟢 Niski</span></td>
+          </tr>
+          <tr>
+            <td><strong>lodash</strong></td>
+            <td>Utility funkcje (debounce, throttle, get)</td>
+            <td><code>lodash-es</code> lub wbudowane hooki React</td>
+            <td><code>npm i lodash-es</code></td>
+            <td><span class="prio-mid">🟡 Średni</span></td>
+          </tr>
+          <tr>
+            <td><strong>imagesloaded</strong></td>
+            <td>Wykrywanie załadowania obrazów</td>
+            <td><code>react-intersection-observer</code></td>
+            <td><code>npm i react-intersection-observer</code></td>
+            <td><span class="prio-low">🟢 Niski</span></td>
+          </tr>
+          <tr>
+            <td><strong>is</strong></td>
+            <td>Type checking (isString, isArray...)</td>
+            <td>Wbudowane TypeScript — zbędne</td>
+            <td>—</td>
+            <td><span class="prio-none">❌ Zbędne</span></td>
+          </tr>
+          <tr>
+            <td><strong>anchorjs</strong></td>
+            <td>Deep linking (kotwice w nagłówkach)</td>
+            <td>Zbędne w SPA (React Router handles)</td>
+            <td>—</td>
+            <td><span class="prio-none">❌ Zbędne</span></td>
+          </tr>
+          <tr>
+            <td><strong>prism</strong></td>
+            <td>Syntax highlighting kodu</td>
+            <td><code>react-syntax-highlighter</code></td>
+            <td><code>npm i react-syntax-highlighter</code></td>
+            <td><span class="prio-low">🟢 Niski</span></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- Ikony -->
+      <h3>Ikony</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Biblioteka ClientOps</th>
+            <th>Zastosowanie</th>
+            <th>React odpowiednik</th>
+            <th>Instalacja</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>feather-icons</strong></td>
+            <td>SVG ikony (outline style)</td>
+            <td><code>react-feather</code></td>
+            <td><code>npm i react-feather</code></td>
+          </tr>
+          <tr>
+            <td><strong>fontawesome</strong></td>
+            <td>Rozbudowany zestaw ikon</td>
+            <td><code>@fortawesome/react-fontawesome</code></td>
+            <td><code>npm i @fortawesome/react-fontawesome @fortawesome/free-solid-svg-icons</code></td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="note"><strong>Alternatywa:</strong> <code>lucide-react</code> — nowoczesny następca Feather Icons, lepiej napisany dla React, mniejszy bundle.<br><code>npm i lucide-react</code></div>
+
+      <!-- Framework UI -->
+      <h3>Framework UI (zastąpiony w całości)</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Biblioteka ClientOps</th>
+            <th>Zastosowanie</th>
+            <th>React odpowiednik</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>bootstrap</strong></td>
+            <td>CSS framework</td>
+            <td>Tailwind CSS v4 + phoenix-design-system</td>
+          </tr>
+          <tr>
+            <td><strong>popper</strong></td>
+            <td>Pozycjonowanie tooltip/dropdown</td>
+            <td><code>@floating-ui/react</code> (używany przez Radix/shadcn)</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <hr class="divider" />
+
+      <!-- Minimalny zestaw -->
+      <h3>Zalecany minimalny zestaw dla CRM</h3>
+      <pre><code># Wykresy
+npm i echarts echarts-for-react
+
+# Tabele i listy
+npm i @tanstack/react-table @tanstack/react-query
+
+# Formularze
+npm i react-hook-form zod react-select react-day-picker react-dropzone
+
+# Drag &amp; drop (kanban)
+npm i @dnd-kit/core @dnd-kit/sortable @dnd-kit/utilities
+
+# Kalendarz
+npm i @fullcalendar/react @fullcalendar/daygrid @fullcalendar/timegrid @fullcalendar/interaction
+
+# Rich text (TipTap zamiast TinyMCE)
+npm i @tiptap/react @tiptap/starter-kit
+
+# UI komponenty (tokeny już w design systemie)
+npm i class-variance-authority clsx tailwind-merge
+
+# Ikony
+npm i lucide-react
+
+# Animacje
+npm i lottie-react
+
+# Utilities
+npm i dayjs lodash-es</code></pre>
+
+      <hr class="divider" />
+
+      <!-- Priorytety -->
+      <h3>Priorytety wdrożenia dla CRM</h3>
+      <div class="summary-grid">
+        <div class="summary-card high">
+          <div class="summary-card-title">🔴 Wysoki — niezbędne od razu</div>
+          <ul>
+            <li>echarts + echarts-for-react</li>
+            <li>react-select</li>
+            <li>react-hook-form + zod</li>
+            <li>@dnd-kit (kanban)</li>
+            <li>react-dropzone</li>
+            <li>@fullcalendar/react</li>
+            <li>@tanstack/react-table</li>
+          </ul>
+        </div>
+        <div class="summary-card mid">
+          <div class="summary-card-title">🟡 Średni — przy budowie modułów</div>
+          <ul>
+            <li>react-day-picker</li>
+            <li>@tiptap/react (dokumenty)</li>
+            <li>react-leaflet (mapy)</li>
+            <li>dayjs</li>
+            <li>simplebar-react</li>
+          </ul>
+        </div>
+        <div class="summary-card low">
+          <div class="summary-card-title">🟢 Niski — opcjonalne</div>
+          <ul>
+            <li>swiper</li>
+            <li>lottie-react</li>
+            <li>react-player</li>
+            <li>react-syntax-highlighter</li>
+            <li>react-type-animation</li>
+          </ul>
+        </div>
+        <div class="summary-card none">
+          <div class="summary-card-title">❌ Zbędne — React/TS zastępuje</div>
+          <ul>
+            <li>is.js</li>
+            <li>anchorjs</li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+
+  </body>
+</html>
