@@ -1,0 +1,1939 @@
+<!doctype html>
+<html lang="pl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CRM — Specyfikacja Techniczna</title>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap");
+
+      :root {
+        --primary: #1e40af;
+        --primary-light: #eff6ff;
+        --accent: #0ea5e9;
+        --dark: #0f172a;
+        --gray-800: #1e293b;
+        --gray-600: #475569;
+        --gray-400: #94a3b8;
+        --gray-100: #f1f5f9;
+        --gray-50: #f8fafc;
+        --border: #e2e8f0;
+        --green: #059669;
+        --green-light: #ecfdf5;
+        --orange: #d97706;
+        --orange-light: #fffbeb;
+        --red: #dc2626;
+        --red-light: #fef2f2;
+        --purple: #7c3aed;
+        --purple-light: #f5f3ff;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family:
+          "Inter",
+          -apple-system,
+          sans-serif;
+        color: var(--dark);
+        background: white;
+        font-size: 13px;
+        line-height: 1.6;
+      }
+
+      /* COVER PAGE */
+      .cover {
+        min-height: 100vh;
+        background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 50%, #0f172a 100%);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        padding: 60px 40px;
+        page-break-after: always;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .cover::before {
+        content: "";
+        position: absolute;
+        width: 600px;
+        height: 600px;
+        background: radial-gradient(circle, rgba(14, 165, 233, 0.15) 0%, transparent 70%);
+        top: -100px;
+        right: -100px;
+        border-radius: 50%;
+      }
+
+      .cover::after {
+        content: "";
+        position: absolute;
+        width: 400px;
+        height: 400px;
+        background: radial-gradient(circle, rgba(124, 58, 237, 0.1) 0%, transparent 70%);
+        bottom: -50px;
+        left: -50px;
+        border-radius: 50%;
+      }
+
+      .cover-badge {
+        background: rgba(14, 165, 233, 0.2);
+        border: 1px solid rgba(14, 165, 233, 0.4);
+        color: #7dd3fc;
+        padding: 6px 18px;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: 500;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        margin-bottom: 32px;
+        position: relative;
+        z-index: 1;
+      }
+
+      .cover-logo {
+        font-size: 52px;
+        font-weight: 700;
+        color: white;
+        letter-spacing: -2px;
+        margin-bottom: 8px;
+        position: relative;
+        z-index: 1;
+      }
+
+      .cover-logo span {
+        color: #38bdf8;
+      }
+
+      .cover-subtitle {
+        font-size: 18px;
+        color: #94a3b8;
+        font-weight: 300;
+        margin-bottom: 48px;
+        position: relative;
+        z-index: 1;
+      }
+
+      .cover-divider {
+        width: 60px;
+        height: 2px;
+        background: linear-gradient(90deg, #0ea5e9, #7c3aed);
+        margin: 0 auto 48px;
+        position: relative;
+        z-index: 1;
+      }
+
+      .cover-title {
+        font-size: 32px;
+        font-weight: 700;
+        color: white;
+        margin-bottom: 16px;
+        line-height: 1.2;
+        position: relative;
+        z-index: 1;
+      }
+
+      .cover-desc {
+        font-size: 15px;
+        color: #64748b;
+        max-width: 480px;
+        margin-bottom: 64px;
+        position: relative;
+        z-index: 1;
+      }
+
+      .cover-meta {
+        display: flex;
+        gap: 48px;
+        justify-content: center;
+        position: relative;
+        z-index: 1;
+      }
+
+      .cover-meta-item {
+        text-align: center;
+      }
+
+      .cover-meta-label {
+        font-size: 10px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: #475569;
+        margin-bottom: 4px;
+      }
+
+      .cover-meta-value {
+        font-size: 13px;
+        color: #cbd5e1;
+        font-weight: 500;
+      }
+
+      /* TOC */
+      .toc-page {
+        padding: 60px 60px;
+        page-break-after: always;
+        min-height: 100vh;
+      }
+
+      .toc-title {
+        font-size: 28px;
+        font-weight: 700;
+        color: var(--dark);
+        margin-bottom: 8px;
+      }
+
+      .toc-subtitle {
+        color: var(--gray-400);
+        font-size: 13px;
+        margin-bottom: 40px;
+      }
+
+      .toc-list {
+        list-style: none;
+      }
+
+      .toc-section {
+        margin-bottom: 6px;
+      }
+
+      .toc-item {
+        display: flex;
+        align-items: center;
+        padding: 10px 16px;
+        border-radius: 8px;
+        transition: background 0.1s;
+      }
+
+      .toc-item:hover {
+        background: var(--gray-50);
+      }
+
+      .toc-num {
+        width: 28px;
+        height: 28px;
+        background: var(--primary);
+        color: white;
+        border-radius: 6px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 11px;
+        font-weight: 700;
+        margin-right: 14px;
+        flex-shrink: 0;
+      }
+
+      .toc-text {
+        font-size: 14px;
+        font-weight: 500;
+        color: var(--gray-800);
+        flex: 1;
+      }
+
+      .toc-dots {
+        flex: 1;
+        border-bottom: 1px dashed var(--border);
+        margin: 0 12px;
+        height: 1px;
+        align-self: flex-end;
+        margin-bottom: 5px;
+      }
+
+      /* CONTENT */
+      .page {
+        padding: 56px 60px;
+        page-break-inside: avoid;
+      }
+
+      .page-break {
+        page-break-after: always;
+      }
+
+      /* Section Headers */
+      .section-header {
+        display: flex;
+        align-items: flex-start;
+        gap: 16px;
+        margin-bottom: 32px;
+        padding-bottom: 20px;
+        border-bottom: 2px solid var(--border);
+      }
+
+      .section-num {
+        width: 48px;
+        height: 48px;
+        background: var(--primary);
+        color: white;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+        font-weight: 700;
+        flex-shrink: 0;
+      }
+
+      .section-title-wrap {
+      }
+
+      .section-label {
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        color: var(--primary);
+        font-weight: 600;
+        margin-bottom: 2px;
+      }
+
+      .section-title {
+        font-size: 24px;
+        font-weight: 700;
+        color: var(--dark);
+        line-height: 1.2;
+      }
+
+      h3 {
+        font-size: 15px;
+        font-weight: 600;
+        color: var(--dark);
+        margin: 28px 0 12px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      h3::before {
+        content: "";
+        display: inline-block;
+        width: 3px;
+        height: 16px;
+        background: var(--primary);
+        border-radius: 2px;
+      }
+
+      h4 {
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--gray-600);
+        margin: 20px 0 8px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      p {
+        color: var(--gray-600);
+        margin-bottom: 12px;
+        line-height: 1.7;
+      }
+
+      /* Code blocks */
+      pre {
+        background: var(--gray-800);
+        border-radius: 10px;
+        padding: 18px 20px;
+        margin: 12px 0 20px;
+        overflow: hidden;
+        font-family: "JetBrains Mono", "Courier New", monospace;
+        font-size: 11.5px;
+        line-height: 1.7;
+        color: #e2e8f0;
+      }
+
+      code {
+        font-family: "JetBrains Mono", "Courier New", monospace;
+        font-size: 11px;
+        background: var(--gray-100);
+        padding: 2px 6px;
+        border-radius: 4px;
+        color: var(--primary);
+      }
+
+      pre code {
+        background: none;
+        padding: 0;
+        color: inherit;
+      }
+
+      .comment {
+        color: #64748b;
+      }
+      .keyword {
+        color: #93c5fd;
+      }
+      .string {
+        color: #6ee7b7;
+      }
+      .tag {
+        color: #fca5a5;
+      }
+      .arrow {
+        color: #fbbf24;
+      }
+
+      /* Tables */
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 12px 0 20px;
+        font-size: 12.5px;
+      }
+
+      th {
+        background: var(--primary);
+        color: white;
+        padding: 10px 14px;
+        text-align: left;
+        font-weight: 600;
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      th:first-child {
+        border-radius: 8px 0 0 0;
+      }
+      th:last-child {
+        border-radius: 0 8px 0 0;
+      }
+
+      td {
+        padding: 10px 14px;
+        border-bottom: 1px solid var(--border);
+        color: var(--gray-600);
+        vertical-align: top;
+      }
+
+      tr:nth-child(even) td {
+        background: var(--gray-50);
+      }
+      tr:last-child td {
+        border-bottom: none;
+      }
+
+      /* Cards / Grids */
+      .card-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 16px;
+        margin: 16px 0;
+      }
+
+      .card-grid-3 {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 14px;
+        margin: 16px 0;
+      }
+
+      .card {
+        background: var(--gray-50);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 18px;
+      }
+
+      .card-title {
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--dark);
+        margin-bottom: 8px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .card-icon {
+        width: 24px;
+        height: 24px;
+        border-radius: 6px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+      }
+
+      .card-body {
+        font-size: 12px;
+        color: var(--gray-600);
+        line-height: 1.6;
+      }
+
+      /* Badges */
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        padding: 3px 10px;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: 600;
+        margin: 2px;
+      }
+
+      .badge-blue {
+        background: var(--primary-light);
+        color: var(--primary);
+      }
+      .badge-green {
+        background: var(--green-light);
+        color: var(--green);
+      }
+      .badge-orange {
+        background: var(--orange-light);
+        color: var(--orange);
+      }
+      .badge-red {
+        background: var(--red-light);
+        color: var(--red);
+      }
+      .badge-purple {
+        background: var(--purple-light);
+        color: var(--purple);
+      }
+
+      /* Info boxes */
+      .info-box {
+        border-left: 4px solid;
+        padding: 14px 18px;
+        border-radius: 0 8px 8px 0;
+        margin: 16px 0;
+        font-size: 12.5px;
+      }
+
+      .info-box.blue {
+        border-color: var(--accent);
+        background: #f0f9ff;
+        color: #0c4a6e;
+      }
+      .info-box.green {
+        border-color: var(--green);
+        background: var(--green-light);
+        color: #064e3b;
+      }
+      .info-box.orange {
+        border-color: var(--orange);
+        background: var(--orange-light);
+        color: #78350f;
+      }
+      .info-box.purple {
+        border-color: var(--purple);
+        background: var(--purple-light);
+        color: #4c1d95;
+      }
+
+      .info-box strong {
+        display: block;
+        font-weight: 600;
+        margin-bottom: 4px;
+      }
+
+      /* Flow diagrams */
+      .flow {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin: 12px 0;
+        padding: 16px;
+        background: var(--gray-50);
+        border-radius: 10px;
+        border: 1px solid var(--border);
+      }
+
+      .flow-step {
+        background: white;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 8px 14px;
+        font-size: 12px;
+        font-weight: 500;
+        color: var(--dark);
+        white-space: nowrap;
+      }
+
+      .flow-arrow {
+        color: var(--gray-400);
+        font-size: 16px;
+        flex-shrink: 0;
+      }
+
+      /* Role list */
+      .role-list {
+        list-style: none;
+        margin: 12px 0;
+      }
+
+      .role-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        padding: 10px 0;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .role-item:last-child {
+        border-bottom: none;
+      }
+
+      .role-name {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 11px;
+        background: var(--gray-800);
+        color: #93c5fd;
+        padding: 2px 8px;
+        border-radius: 4px;
+        min-width: 120px;
+        text-align: center;
+      }
+
+      .role-desc {
+        font-size: 12px;
+        color: var(--gray-600);
+        line-height: 1.5;
+      }
+
+      /* Priority section */
+      .priority-list {
+        counter-reset: priority;
+        list-style: none;
+        margin: 12px 0;
+      }
+
+      .priority-item {
+        counter-increment: priority;
+        display: flex;
+        align-items: flex-start;
+        gap: 14px;
+        padding: 14px 0;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .priority-item:last-child {
+        border-bottom: none;
+      }
+
+      .priority-num {
+        width: 32px;
+        height: 32px;
+        background: var(--primary-light);
+        border: 2px solid var(--primary);
+        color: var(--primary);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 13px;
+        font-weight: 700;
+        flex-shrink: 0;
+      }
+
+      .priority-content {
+      }
+
+      .priority-title {
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--dark);
+        margin-bottom: 4px;
+      }
+
+      .priority-desc {
+        font-size: 12px;
+        color: var(--gray-600);
+      }
+
+      /* Stack pills */
+      .stack-grid {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin: 12px 0;
+      }
+
+      .stack-pill {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        background: white;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 8px 14px;
+        font-size: 12px;
+        font-weight: 500;
+      }
+
+      .stack-pill-cat {
+        font-size: 10px;
+        color: var(--gray-400);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      /* Print */
+      @media print {
+        body {
+          font-size: 12px;
+        }
+        .page {
+          padding: 40px 48px;
+        }
+        .cover {
+          page-break-after: always;
+          min-height: 100vh;
+        }
+        pre {
+          font-size: 10.5px;
+        }
+        .card-grid {
+          break-inside: avoid;
+        }
+      }
+
+      @page {
+        margin: 0;
+        size: A4;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- COVER -->
+    <div class="cover">
+      <div class="cover-badge">Specyfikacja Techniczna v1.0</div>
+      <div style="position: relative; z-index: 1; margin-bottom: 16px">
+        <span
+          style="
+            background: rgba(220, 38, 38, 0.25);
+            border: 2px solid rgba(220, 38, 38, 0.6);
+            color: #fca5a5;
+            padding: 8px 28px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+          "
+          >DRAFT</span
+        >
+      </div>
+      <div class="cover-logo">Client<span>Ops</span></div>
+      <div class="cover-subtitle">Platforma CRM nowej generacji</div>
+      <div class="cover-divider"></div>
+      <div class="cover-title">Architektura &amp; Stack Technologiczny</div>
+      <div class="cover-desc">
+        Kompletna specyfikacja systemu CRM z panelem klienta, modułem SEO AI, systemem SLA, edytorem
+        dokumentów i powiadomieniami wielokanałowymi.
+      </div>
+      <div class="cover-meta">
+        <div class="cover-meta-item">
+          <div class="cover-meta-label">Data</div>
+          <div class="cover-meta-value">Marzec 2026</div>
+        </div>
+        <div class="cover-meta-item">
+          <div class="cover-meta-label">Wersja</div>
+          <div class="cover-meta-value">1.0.0</div>
+        </div>
+        <div class="cover-meta-item">
+          <div class="cover-meta-label">Stack</div>
+          <div class="cover-meta-value">Laravel + React</div>
+        </div>
+        <div class="cover-meta-item">
+          <div class="cover-meta-label">Typ</div>
+          <div class="cover-meta-value">SaaS / Multi-tenant</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TOC -->
+    <div class="toc-page">
+      <div class="toc-title">Spis treści</div>
+      <div class="toc-subtitle">Dokument zawiera 9 sekcji</div>
+      <ul class="toc-list">
+        <li class="toc-section">
+          <div class="toc-item">
+            <div class="toc-num">1</div>
+            <span class="toc-text">Przegląd systemu i moduły</span>
+            <div class="toc-dots"></div>
+          </div>
+        </li>
+        <li class="toc-section">
+          <div class="toc-item">
+            <div class="toc-num">2</div>
+            <span class="toc-text">Stack technologiczny</span>
+            <div class="toc-dots"></div>
+          </div>
+        </li>
+        <li class="toc-section">
+          <div class="toc-item">
+            <div class="toc-num">3</div>
+            <span class="toc-text">Architektura subdomen i multi-tenancy</span>
+            <div class="toc-dots"></div>
+          </div>
+        </li>
+        <li class="toc-section">
+          <div class="toc-item">
+            <div class="toc-num">4</div>
+            <span class="toc-text">Moduł SEO z AI</span>
+            <div class="toc-dots"></div>
+          </div>
+        </li>
+        <li class="toc-section">
+          <div class="toc-item">
+            <div class="toc-num">5</div>
+            <span class="toc-text">System SLA i ticketów</span>
+            <div class="toc-dots"></div>
+          </div>
+        </li>
+        <li class="toc-section">
+          <div class="toc-item">
+            <div class="toc-num">6</div>
+            <span class="toc-text">Dokumenty — edycja online i PDF</span>
+            <div class="toc-dots"></div>
+          </div>
+        </li>
+        <li class="toc-section">
+          <div class="toc-item">
+            <div class="toc-num">7</div>
+            <span class="toc-text">Powiadomienia wielokanałowe</span>
+            <div class="toc-dots"></div>
+          </div>
+        </li>
+        <li class="toc-section">
+          <div class="toc-item">
+            <div class="toc-num">8</div>
+            <span class="toc-text">Role i uprawnienia</span>
+            <div class="toc-dots"></div>
+          </div>
+        </li>
+        <li class="toc-section">
+          <div class="toc-item">
+            <div class="toc-num">9</div>
+            <span class="toc-text">Priorytety i plan wdrożenia</span>
+            <div class="toc-dots"></div>
+          </div>
+        </li>
+      </ul>
+    </div>
+
+    <!-- SECTION 1: OVERVIEW -->
+    <div class="page page-break">
+      <div class="section-header">
+        <div class="section-num">1</div>
+        <div class="section-title-wrap">
+          <div class="section-label">Overview</div>
+          <div class="section-title">Przegląd systemu i moduły</div>
+        </div>
+      </div>
+
+      <p>
+        ClientOps to wielomodułowy system CRM klasy SaaS przeznaczony do zarządzania klientami,
+        projektami i działaniami marketingowymi (SEO). System oferuje dwa interfejsy: panel
+        administracyjny dla zespołu oraz dedykowane panele klienckie dostępne pod indywidualnymi
+        subdomenami.
+      </p>
+
+      <div class="card-grid">
+        <div class="card">
+          <div class="card-title">
+            <div class="card-icon" style="background: #eff6ff">👥</div>
+            CRM — Leady i Klienci
+          </div>
+          <div class="card-body">
+            Zarządzanie lejkiem sprzedaży, kontaktami, historią komunikacji. Kanban dla leadów z
+            drag &amp; drop. Segmentacja klientów i tagowanie.
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">
+            <div class="card-icon" style="background: #f0fdf4">📁</div>
+            Projekty
+          </div>
+          <div class="card-body">
+            Tworzenie i zarządzanie projektami powiązanymi z klientami. Zadania, kamienie milowe,
+            śledzenie postępu. Powiązanie z SLA.
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">
+            <div class="card-icon" style="background: #fef3c7">🔍</div>
+            SEO z AI
+          </div>
+          <div class="card-body">
+            Audyty techniczne, analiza słów kluczowych, semantyka treści, integracja z Google Search
+            Console i Analytics 4. Silnik AI.
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">
+            <div class="card-icon" style="background: #fdf4ff">🎫</div>
+            SLA i Tickety
+          </div>
+          <div class="card-body">
+            System zgłoszeń dla klientów z SLA (czas odpowiedzi / rozwiązania). Automatyczne
+            przekazywanie ticketów do Kanban admina.
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">
+            <div class="card-icon" style="background: #fff7ed">📄</div>
+            Dokumenty
+          </div>
+          <div class="card-body">
+            Edytor online (TipTap), wersjonowanie, eksport do PDF. Dokumenty powiązane z projektami,
+            klientami lub ticketami.
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">
+            <div class="card-icon" style="background: #f0f9ff">🔔</div>
+            Powiadomienia
+          </div>
+          <div class="card-body">
+            Trzy kanały: Email, SMS (SMSAPI.pl), in-app real-time (Reverb). Preferencje per
+            użytkownik z quiet hours dla SMS.
+          </div>
+        </div>
+      </div>
+
+      <div class="card-grid">
+        <div class="card">
+          <div class="card-title">
+            <div class="card-icon" style="background: #eff6ff">🏢</div>
+            Panel Klienta
+          </div>
+          <div class="card-body">
+            Dedykowana subdomena <code>{slug}.clientops.pl</code> per klient. Podgląd projektów,
+            zgłaszanie ticketów, dostęp do dokumentów i raportów SEO.
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">
+            <div class="card-icon" style="background: #f0fdf4">📋</div>
+            Kanban
+          </div>
+          <div class="card-body">
+            Ujednolicony Kanban obsługujący leady, tickety i zadania projektowe. Jeden model z
+            polymorphic relations, drag &amp; drop (dnd-kit).
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 2: STACK -->
+    <div class="page page-break">
+      <div class="section-header">
+        <div class="section-num">2</div>
+        <div class="section-title-wrap">
+          <div class="section-label">Technology</div>
+          <div class="section-title">Stack technologiczny</div>
+        </div>
+      </div>
+
+      <style>
+        .why {
+          margin-top: 6px;
+          padding-top: 6px;
+          border-top: 1px dashed #e2e8f0;
+          font-size: 11px;
+          color: #0369a1;
+          line-height: 1.6;
+        }
+        .why::before {
+          content: 'Dlaczego: ';
+          font-weight: 700;
+          color: #1e40af;
+        }
+      </style>
+
+      <h3>Backend</h3>
+      <table>
+        <thead>
+          <tr>
+            <th style="width:170px">Technologia</th>
+            <th style="width:55px">Wersja</th>
+            <th>Opis &amp; Uzasadnienie</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Laravel</strong></td>
+            <td>12.x</td>
+            <td>
+              Główny framework PHP do budowy aplikacji webowych. Dostarcza routing, ORM (Eloquent), system kolejek, broadcasting, autoryzację i wiele więcej. Laravel 12 wprowadza ulepszone starter kity, streamlined middleware API oraz lepszą integrację z nowoczesnymi narzędziami frontendowymi.
+              <div class="why">Największy ekosystem PHP, najlepsza dokumentacja, aktywna społeczność. Dostarcza out-of-the-box wszystko czego wymaga CRM tej skali — bez składania frameworka z osobnych bibliotek.</div>
+            </td>
+          </tr>
+          <tr>
+            <td><strong>PHP</strong></td>
+            <td>8.3+</td>
+            <td>
+              Nowoczesna wersja PHP z Fiber (asynchroniczność), named arguments, readonly properties i natywne typy wyliczeniowe (enums). Wersja 8.3 wprowadza typed class constants, readonly w klasach anonimowych oraz lepszą obsługę błędów. Wydajność PHP 8.x jest o ~30% wyższa niż PHP 7.4 dzięki JIT compiler.
+              <div class="why">Wymagany przez Laravel 12. PHP 8.3 to najnowsza stabilna wersja z długim wsparciem (LTS do 2027). Enums i typed properties kluczowe dla modelowania statusów (LeadStatus, TicketPriority).</div>
+            </td>
+          </tr>
+          <tr>
+            <td><strong>PostgreSQL</strong></td>
+            <td>16+</td>
+            <td>
+              Zaawansowana relacyjna baza danych open-source z pełnym wsparciem dla ACID, JSON/JSONB, full-text search i rozszerzeń (TimescaleDB). PostgreSQL 16 wprowadza równoległe wykonywanie zapytań, lepszy query planner i wsparcie dla logicznej replikacji. Obsługuje zarówno strukturalne dane CRM jak i półstrukturalne dane audytów SEO (JSONB).
+              <div class="why">MySQL nie obsługuje TimescaleDB ani zaawansowanego JSONB — oba kluczowe dla modułu SEO. PostgreSQL jest standardem dla nowych projektów SaaS wymagających złożonych zapytań analitycznych.</div>
+            </td>
+          </tr>
+          <tr>
+            <td><strong>Redis</strong></td>
+            <td>7.x</td>
+            <td>
+              Szybki in-memory data store działający jako cache, broker kolejek i magazyn sesji. Używany przez Laravel Horizon do dystrybucji jobów, przez Laravel do cache'owania zapytań i przez Reverb do przechowywania stanu połączeń WebSocket. Redis 7.x dodaje Redis Functions i ACL v2 dla lepszej kontroli dostępu.
+              <div class="why">Jeden komponent pełni trzy role (cache + queue + session) — upraszcza infrastrukturę. Alternatywy (database queue driver) nie skalują się przy obciążeniu jakie generują audyty SEO i powiadomienia.</div>
+            </td>
+          </tr>
+          <tr>
+            <td><strong>Laravel Queues</strong></td>
+            <td>—</td>
+            <td>
+              Wbudowany system kolejek Laravel umożliwiający asynchroniczne wykonywanie zadań w tle — bez blokowania odpowiedzi HTTP. Joby mogą być opóźniane, ponawiane przy błędach, priorytetyzowane i rozdzielane na dedykowane kolejki (np. osobna kolejka dla AI, osobna dla emaili). Fundament dla wszystkich operacji długotrwałych w systemie.
+              <div class="why">Audyt SEO trwa minuty, generowanie PDF sekundy, wysyłka SMS może mieć opóźnienia API — bez kolejek użytkownik czekałby na odpowiedź HTTP. Queues sprawiają że każda akcja jest natychmiastowa z perspektywy użytkownika.</div>
+            </td>
+          </tr>
+          <tr>
+            <td><strong>Laravel Sanctum</strong></td>
+            <td>—</td>
+            <td>
+              Lekki system autentykacji dla SPA i API oparty o cookies (stateful) lub tokeny (stateless). Dla panelu admina i panelu klienta używa autentykacji cookie-based — bezpieczniejszej niż tokeny w localStorage, odpornej na XSS. Dla potencjalnych integracji zewnętrznych obsługuje Personal Access Tokens.
+              <div class="why">Passport to overhead dla SPA (OAuth2 server). Sanctum jest dedykowany dla tego wzorca użycia: SPA na tej samej domenie + opcjonalne API tokeny. Natywna integracja z subdomenami przez SESSION_DOMAIN.</div>
+            </td>
+          </tr>
+          <tr>
+            <td><strong>Laravel Policies / Gates</strong></td>
+            <td>—</td>
+            <td>
+              Wbudowany w Laravel system autoryzacji na poziomie zasobów (Policies) i akcji (Gates). Policy to klasa PHP powiązana z modelem Eloquent — definiuje kto może wykonać daną akcję na konkretnym rekordzie (np. czy ten user może edytować ten projekt). Gates to proste domknięcia dla uprawnień niezwiązanych z modelem.
+              <div class="why">Spatie Permission zarządza rolami — Policies zarządzają dostępem do konkretnych rekordów. To dwa poziomy autoryzacji: "czy masz rolę manager" (Spatie) oraz "czy jesteś przypisany do tego projektu" (Policy). Oba są konieczne.</div>
+            </td>
+          </tr>
+          <tr>
+            <td><strong>Spatie Permission</strong></td>
+            <td>—</td>
+            <td>
+              Pakiet implementujący RBAC (Role-Based Access Control) dla Laravel z obsługą ról i uprawnień per guard. Pozwala przypisywać role użytkownikom, definiować granularne uprawnienia (np. tickets.respond, seo.view) i sprawdzać je przez Blade directives i Gate facades. Integruje się z Laravel's Policy system dla ochrony zasobów.
+              <div class="why">Pisanie własnego RBAC to tygodnie pracy i źródło błędów bezpieczeństwa. Spatie to standard de facto w ekosystemie Laravel — przetestowany, dobrze udokumentowany, z obsługą wielu guardów (admin vs client panel).</div>
+            </td>
+          </tr>
+          <tr>
+            <td><strong>Laravel Notifications</strong></td>
+            <td>—</td>
+            <td>
+              Wbudowany w Laravel system powiadomień obsługujący wiele kanałów przez jeden interfejs: email, SMS, database (in-app), broadcast (WebSocket), Slack i inne. Każde powiadomienie to klasa PHP z metodami per kanał — jeden kod obsługuje wszystkie kanały. Preferencje użytkownika decydują które kanały są aktywne.
+              <div class="why">Alternatywa — osobny kod dla email, osobny dla SMS, osobny dla WebSocket — prowadzi do duplikacji i niespójności. Notifications unifikuje wszystko w jednym miejscu. Kluczowe dla systemu z trzema kanałami (email + SMS + in-app).</div>
+            </td>
+          </tr>
+          <tr>
+            <td><strong>Laravel Horizon</strong></td>
+            <td>—</td>
+            <td>
+              Dashboard i supervisor dla kolejek Redis w Laravel, umożliwiający monitoring jobów w czasie rzeczywistym. Automatycznie balansuje workery między kolejkami na podstawie obciążenia, powiadamia o nieudanych jobach i przechowuje statystyki przepustowości. Krytyczny dla heavy asynchronicznych operacji: audyty SEO, generowanie PDF, wysyłka powiadomień.
+              <div class="why">Bez Horizon kolejki są "czarną skrzynką" — nie wiesz ile jobów czeka, które się nie powiodły, ile trwają. Horizon to observability dla kolejek, niezbędna gdy audyt SEO składa się z 6 różnych jobów uruchamianych seryjnie.</div>
+            </td>
+          </tr>
+          <tr>
+            <td><strong>Laravel Reverb</strong></td>
+            <td>—</td>
+            <td>
+              Natywny serwer WebSocket dla Laravel, wprowadzony jako alternatywa dla Pusher bez zewnętrznych zależności. Obsługuje prywatne i publiczne kanały, presence channels (kto jest online) oraz skalowanie przez Redis pub/sub. Używany do in-app powiadomień real-time, aktualizacji statusu ticketów i live Kanban updates.
+              <div class="why">Pusher kosztuje przy skali i uzależnia od zewnętrznego dostawcy. Reverb działa self-hosted, jest oficjalnie wspierany przez Laravel team i nie wymaga żadnych zmian w kodzie aplikacji względem Pushera (ten sam protokół).</div>
+            </td>
+          </tr>
+          <tr>
+            <td><strong>S3 / MinIO</strong></td>
+            <td>—</td>
+            <td>
+              Object storage do przechowywania plików: dokumenty, załączniki, eksportowane PDF, dane SEO. S3 (AWS) lub kompatybilny self-hosted MinIO — identyczne API, wymienne bez zmiany kodu. Laravel Filesystem abstrahuje storage przez ten sam interfejs niezależnie od wybranego drivera. Spatie Media Library korzysta z tego storage dla wszystkich mediów.
+              <div class="why">Przechowywanie plików na dysku serwera nie skaluje się i komplikuje deployment. S3/MinIO to standard — pliki są poza aplikacją, dostępne z CDN, łatwe do backupu. MinIO na start (self-hosted, zero kosztów), migracja do S3 bez zmiany kodu gdy zajdzie potrzeba.</div>
+            </td>
+          </tr>
+          <tr>
+            <td><strong>Spatie Media Library</strong></td>
+            <td>—</td>
+            <td>
+              Pakiet do zarządzania plikami i mediami powiązanymi z modelami Eloquent, z obsługą konwersji i optymalizacji obrazów. Abstrahuje storage — pliki mogą być przechowywane lokalnie, na S3 lub innym dysku bez zmiany kodu aplikacji. Używany dla załączników dokumentów, plików SEO i eksportowanych PDF.
+              <div class="why">Bez Media Library każdy upload to ręczne zarządzanie ścieżkami, konwersjami, czyszczeniem. Pakiet dostarcza polymorphic relacje (każdy model może mieć media), automatyczne konwersje obrazów i responsywne URL z jedną linią kodu.</div>
+            </td>
+          </tr>
+          <tr>
+            <td><strong>Laravel Browsershot</strong></td>
+            <td>—</td>
+            <td>
+              Wrapper Laravel dla biblioteki Puppeteer (Node.js), umożliwiający generowanie PDF i screenshotów przez headless Chromium. Zapewnia najwyższą jakość renderowania CSS — dokładnie to co widzi przeglądarka, przeniesione do PDF. Generowanie odbywa się asynchronicznie przez kolejkę, użytkownik dostaje powiadomienie gdy PDF jest gotowy.
+              <div class="why">DomPDF nie obsługuje flexbox/grid — dokumenty TipTap używają nowoczesnego CSS. Browsershot renderuje identycznie jak Chrome, co gwarantuje że eksportowany PDF wygląda tak samo jak podgląd w edytorze.</div>
+            </td>
+          </tr>
+          <tr>
+            <td><strong>Laravel Scout + Meilisearch</strong></td>
+            <td>—</td>
+            <td>
+              Scout to abstrakcja full-text search dla Eloquent modeli, Meilisearch to szybki open-source silnik wyszukiwania z relevance ranking i typo-tolerance. Razem umożliwiają błyskawiczne wyszukiwanie w dokumentach, danych SEO i historii klientów bez obciążania PostgreSQL. Meilisearch można hostować self-hosted lub używać Meilisearch Cloud.
+              <div class="why">PostgreSQL LIKE query nie skaluje się na tysiącach dokumentów i nie obsługuje literówek ani relevance rankingu. Meilisearch zwraca wyniki w &lt;50ms z typo-tolerance — kluczowe dla wyszukiwarki w panelu klienta i admina.</div>
+            </td>
+          </tr>
+          <tr>
+            <td><strong>TimescaleDB</strong></td>
+            <td>—</td>
+            <td>
+              Rozszerzenie PostgreSQL optymalizujące przechowywanie i zapytania dla danych time-series (szeregi czasowe). Automatycznie partycjonuje tabele po czasie (hypertables), co przyspiesza zapytania z filtrem po dacie nawet 100x. Idealne dla rankingów słów kluczowych SEO, gdzie zbieramy dziesiątki tysięcy punktów danych dziennie per klient.
+              <div class="why">Tabela rankingów bez TimescaleDB przy 100 klientach × 500 słów kluczowych × 365 dni = 18 mln wierszy rocznie — standardowe zapytania stają się wolne. TimescaleDB rozwiązuje to bez zmiany stacku, bo to rozszerzenie PostgreSQL.</div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>Frontend</h3>
+      <table>
+        <thead>
+          <tr>
+            <th style="width:200px">Technologia</th>
+            <th>Opis &amp; Uzasadnienie</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>React 19 + TypeScript</strong></td>
+            <td>
+              Biblioteka JavaScript do budowy interfejsów użytkownika oparta o komponenty i jednokierunkowy przepływ danych. React 19 wprowadza Server Components, Actions i ulepszony concurrent rendering dla płynniejszego UX. TypeScript dodaje statyczne typowanie, eliminując całą klasę błędów runtime i znacząco przyspieszając development w dużym projekcie.
+              <div class="why">Największy ekosystem komponentów i narzędzi. TypeScript jest obowiązkowy przy CRM tej skali — typy na API responses, formularze, modele danych eliminują całą klasę błędów jeszcze przed uruchomieniem.</div>
+            </td>
+          </tr>
+          <tr>
+            <td><strong>Vite</strong></td>
+            <td>
+              Nowoczesny build tool oparty o natywne ES modules i esbuild, zapewniający błyskawiczny cold start serwera deweloperskiego (poniżej 300ms) i Hot Module Replacement bez przeładowania strony. Vite optymalizuje bundle produkcyjny przez Rollup z tree-shaking i code splitting per route. Zastępuje Webpack oferując wielokrotnie szybszy development experience.
+              <div class="why">Webpack przy projekcie tej wielkości startuje 30–60 sekund. Vite startuje poniżej sekundy. Przy kilkuset komponentach różnica w DX jest znacząca każdego dnia pracy.</div>
+            </td>
+          </tr>
+          <tr>
+            <td><strong>Tailwind CSS v4</strong></td>
+            <td>
+              Utility-first CSS framework gdzie style definiuje się bezpośrednio w klasach HTML, eliminując przełączanie się między plikami CSS i JSX. Tailwind v4 to kompletne przepisanie silnika — oparty o Lightning CSS (Rust), do 10x szybszy build i nowe cascade layers. Design system wymuszony przez predefiniowaną skalę spacing/color zapewnia spójność UI bez dodatkowych wysiłków.
+              <div class="why">shadcn/ui wymaga Tailwind — nie ma wyboru. Poza tym utility-first eliminuje problem nazewnictwa klas CSS i dead code w dużym projekcie. Cały team pisze styles jednakowo.</div>
+            </td>
+          </tr>
+          <tr>
+            <td><strong>shadcn/ui</strong></td>
+            <td>
+              Kolekcja dostępnych komponentów UI opartych o Radix UI (niewidoczne prymitywy) i stylowanych Tailwindem — kopiowanych bezpośrednio do projektu, nie instalowanych jako dependency. Dzięki temu komponenty są w pełni pod kontrolą dewelopera, można je dowolnie modyfikować bez nadpisywania styli biblioteki. Zapewnia dostępność (ARIA, keyboard navigation) out of the box.
+              <div class="why">MUI/Antd są ciężkie i trudne do customizacji. shadcn/ui daje gotowe, dostępne komponenty (Dialog, Select, Table, DatePicker) które wyglądają profesjonalnie i można je modyfikować bez walki z biblioteką.</div>
+            </td>
+          </tr>
+          <tr>
+            <td><strong>TanStack Query v5</strong></td>
+            <td>
+              Biblioteka do zarządzania stanem serwera w React — fetching, caching, synchronizacja i aktualizacja danych z API. Automatycznie obsługuje loading states, error handling, background refetching i optimistic updates, eliminując setki linii boilerplate kodu. TanStack Query v5 wprowadza ulepszony infinite scrolling, streamlined API i lepszy TypeScript inference.
+              <div class="why">W CRM niemal każdy widok to dane z serwera. Bez TanStack Query każdy komponent potrzebuje własnego useEffect + useState + loading + error — setki linii boilerplate. TanStack Query zastępuje to kilkoma liniami z automatycznym cache invalidation.</div>
+            </td>
+          </tr>
+          <tr>
+            <td><strong>React Hook Form + Zod</strong></td>
+            <td>
+              React Hook Form to biblioteka formularzy minimalizująca re-rendery (uncontrolled components), Zod to TypeScript-first schema validation z pełnym type inference. Razem tworzą potężny duet — Zod definiuje schemat danych, Hook Form obsługuje formularz, walidacja dzieje się automatycznie z precyzyjnymi komunikatami błędów. Jeden schemat Zod może być reużyty zarówno na frontendzie jak i w API.
+              <div class="why">CRM ma dziesiątki formularzy (lead, klient, projekt, ticket, oferta, dokument...). Formik jest wolniejszy (controlled), własna walidacja to duplikacja logiki backendowej. Zod schema może być współdzielona między frontendem a backendem (tRPC lub ręcznie).</div>
+            </td>
+          </tr>
+          <tr>
+            <td><strong>dnd-kit</strong></td>
+            <td>
+              Nowoczesna, lekka biblioteka drag &amp; drop dla React z pełnym wsparciem dla TypeScript i dostępności (keyboard DnD). Modułowa architektura pozwala budować dowolne interakcje — pionowe listy, siatki, kanban boards — bez niepotrzebnego kodu. Obsługuje touch events, sensory (mouse/touch/keyboard) i smooth animations przez CSS transforms bez layout thrashing.
+              <div class="why">React Beautiful DnD nie jest już aktywnie rozwijany i ma problemy z React 18+. dnd-kit to jego następca — lżejszy, szybszy, z lepszym TypeScript support. Kluczowy dla Kanban leadów i ticketów.</div>
+            </td>
+          </tr>
+          <tr>
+            <td><strong>TipTap v2</strong></td>
+            <td>
+              Headless rich text editor oparty o ProseMirror, w pełni kontrolowalny przez React i TypeScript, z ekosystemem gotowych rozszerzeń. Obsługuje tabele, listy, obrazy, mentions (@user), linki, formatowanie i można go rozszerzyć o custom nodes — np. bloki z sugestiami AI dla dokumentów SEO. Zapisuje treść jako JSON (portable format) lub HTML, co ułatwia eksport do PDF.
+              <div class="why">Quill jest przestarzały, Slate.js wymaga ogromnej ilości własnego kodu. TipTap daje gotowy edytor klasy Notion z rozszerzeniami, aktywnym rozwojem i najlepszym React + TypeScript DX spośród dostępnych opcji.</div>
+            </td>
+          </tr>
+          <tr>
+            <td><strong>Recharts / Tremor</strong></td>
+            <td>
+              Recharts to biblioteka wykresów zbudowana na D3.js i React — kompozycyjna, customizowalna, z pełnym TypeScript support. Tremor to wyższy poziom abstrakcji: gotowe komponenty dashboardów (karty metryk, wykresy, tabele) stylowane Tailwindem, idealne do szybkiego budowania paneli analitycznych. Używane razem — Tremor dla standardowych widgetów, Recharts dla zaawansowanych wizualizacji danych SEO.
+              <div class="why">Moduł SEO wymaga wykresów rankingów, trendów, porównań — Chart.js nie integruje się dobrze z React. Recharts jest natywnie reaktywny. Tremor przyspiesza budowę dashboardów o gotowe karty KPI bez pisania od zera.</div>
+            </td>
+          </tr>
+          <tr>
+            <td><strong>React Router v7</strong></td>
+            <td>
+              Standard routingu dla React SPA z pełnym wsparciem dla nested routes, lazy loading (code splitting per route) i data loading patterns. React Router v7 unifikuje się z Remix oferując server-side rendering, loaders i actions — opcjonalne, ale dostępne jeśli w przyszłości zajdzie potrzeba. Code splitting zapewnia że klient pobiera tylko kod potrzebny dla aktualnego widoku.
+              <div class="why">TanStack Router ma lepszy TypeScript support ale mniejszy ekosystem i mniej zasobów edukacyjnych. React Router v7 to de facto standard — każdy React developer go zna, co ułatwia onboarding. Code splitting krytyczny przy dużej aplikacji z dziesiątkami widoków.</div>
+            </td>
+          </tr>
+          <tr>
+            <td><strong>Zustand</strong></td>
+            <td>
+              Minimalistyczna biblioteka do zarządzania globalnym stanem aplikacji (~1KB gzip), znacznie prostsza niż Redux bez boilerplate. Używana dla stanu który nie należy do serwera (TanStack Query) — aktywne powiadomienia, preferencje UI, stan bocznego panelu, dane zalogowanego użytkownika. Zustand nie wymaga Provider wrappera i działa poza komponentami React, co ułatwia integrację z Laravel Echo.
+              <div class="why">Redux to overhead dla stanu UI. React Context re-renderuje cały subtree przy każdej zmianie. Zustand subskrybuje tylko do konkretnych wartości — idealne dla powiadomień real-time które zmieniają się często i muszą być dostępne globalnie.</div>
+            </td>
+          </tr>
+          <tr>
+            <td><strong>Laravel Echo</strong></td>
+            <td>
+              JavaScript biblioteka ułatwiająca subskrypcję kanałów WebSocket w Laravel, współpracująca natywnie z Reverb (i Pusher). Abstrahuje niskopoziomowe WebSocket API dostarczając prosty interfejs do nasłuchiwania eventów na prywatnych i publicznych kanałach. Używana do real-time powiadomień in-app, live aktualizacji statusu ticketów i Kanban boardów bez przeładowania strony.
+              <div class="why">Pisanie własnego WebSocket klienta dla Laravel Broadcasting to niepotrzebna praca. Echo obsługuje automatycznie autoryzację prywatnych kanałów, reconnection logic i jest oficjalnie wspierany przez Laravel team razem z Reverb.</div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="info-box blue">
+        <strong>Dlaczego React SPA zamiast Inertia.js?</strong>
+        Panel klienta na subdomenach (<code>{slug}.clientops.pl</code>) wymaga oddzielnego
+        frontendu, co oznacza konieczność budowania API. Skoro API jest i tak potrzebne, React SPA
+        jest naturalnym wyborem — oba frontendy (admin + client) mogą współdzielić kod i korzystać z
+        tego samego API.
+      </div>
+    </div>
+
+    <!-- SECTION 3: SUBDOMAINS -->
+    <div class="page page-break">
+      <div class="section-header">
+        <div class="section-num">3</div>
+        <div class="section-title-wrap">
+          <div class="section-label">Architecture</div>
+          <div class="section-title">Architektura subdomen i multi-tenancy</div>
+        </div>
+      </div>
+
+      <h3>Struktura subdomen</h3>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Subdomena</th>
+            <th>Typ</th>
+            <th>Opis</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>app.clientops.pl</code></td>
+            <td><span class="badge badge-blue">Admin Panel</span></td>
+            <td>CRM dla zespołu — leady, projekty, SEO, kanban, ustawienia</td>
+          </tr>
+          <tr>
+            <td><code>api.clientops.pl</code></td>
+            <td><span class="badge badge-green">API</span></td>
+            <td>Laravel REST API — obsługuje oba frontendy + potencjalne integracje</td>
+          </tr>
+          <tr>
+            <td><code>{slug}.clientops.pl</code></td>
+            <td><span class="badge badge-purple">Client Portal</span></td>
+            <td>Dedykowany panel per klient — projekty, tickety, dokumenty, SEO</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>Identyfikacja tenanta</h3>
+      <p>Middleware wyciąga slug z subdomeny i wstrzykuje klienta do IoC container:</p>
+
+      <pre><span class="comment">// app/Http/Middleware/IdentifyTenant.php</span>
+<span class="keyword">public function</span> handle(Request $request, Closure $next)
+{
+    $host = $request-&gt;getHost();         <span class="comment">// acme.clientops.pl</span>
+    $slug = explode(<span class="string">'.'</span>, $host)[<span class="string">0</span>];    <span class="comment">// acme</span>
+
+    <span class="keyword">if</span> ($slug === <span class="string">'app'</span> || $slug === <span class="string">'api'</span>) {
+        <span class="keyword">return</span> $next($request);            <span class="comment">// admin / api — skip</span>
+    }
+
+    $tenant = Client::where(<span class="string">'slug'</span>, $slug)-&gt;firstOrFail();
+    app()-&gt;instance(Client::class, $tenant);
+    app()-&gt;instance(<span class="string">'tenant'</span>, $tenant);
+
+    <span class="keyword">return</span> $next($request);
+}</pre>
+
+      <h3>Konfiguracja Sanctum dla wildcard subdomen</h3>
+
+      <pre><span class="comment"># .env</span>
+SESSION_DOMAIN=.clientops.pl
+SANCTUM_STATEFUL_DOMAINS=app.clientops.pl,*.clientops.pl
+
+<span class="comment"># config/cors.php</span>
+<span class="string">'allowed_origins_patterns'</span> =&gt; [<span class="string">'#^https://[a-z0-9-]+\.clientops\.pl$#'</span>],
+<span class="string">'supports_credentials'</span> =&gt; <span class="keyword">true</span>,</pre>
+
+      <h3>Multi-tenancy — model danych</h3>
+
+      <div class="info-box green">
+        <strong>Wybór: Single Database z Global Scopes</strong>
+        Dla tego projektu wystarczy jedna baza danych z <code>client_id</code> na każdej tabeli oraz
+        automatycznym Global Scope. Prostsze w utrzymaniu i wystarczające na start. DB per tenant to
+        nadmiarowa złożoność bez wymiernych korzyści na tym etapie.
+      </div>
+
+      <pre><span class="comment">// Trait dla wszystkich modeli powiązanych z klientem</span>
+<span class="keyword">trait</span> BelongsToTenant
+{
+    <span class="keyword">protected static function</span> booted(): void
+    {
+        <span class="keyword">static</span>::addGlobalScope(<span class="keyword">new</span> TenantScope);
+
+        <span class="keyword">static</span>::creating(<span class="keyword">function</span> ($model) {
+            $model->client_id ??= app(<span class="string">'tenant'</span>)?->id;
+        });
+    }
+}</pre>
+    </div>
+
+    <!-- SECTION 4: SEO -->
+    <div class="page page-break">
+      <div class="section-header">
+        <div class="section-num">4</div>
+        <div class="section-title-wrap">
+          <div class="section-label">Module</div>
+          <div class="section-title">Moduł SEO z AI</div>
+        </div>
+      </div>
+
+      <p>
+        Najcięższy moduł systemu. Dane napływają z wielu źródeł asynchronicznie, przetwarzane są
+        przez kolejki (Horizon), a wyniki przechowywane w PostgreSQL z rozszerzeniem TimescaleDB dla
+        danych time-series (rankingi).
+      </p>
+
+      <h3>Źródła danych</h3>
+
+      <div class="card-grid-3">
+        <div class="card">
+          <div class="card-title">Google Search Console</div>
+          <div class="card-body">
+            Pozycje, kliknięcia, impressions, CTR per zapytanie i strona. OAuth 2.0.
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">Google Analytics 4</div>
+          <div class="card-body">
+            Ruch organiczny, konwersje, bounce rate, engagement. GA4 Data API.
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">Własny Crawler</div>
+          <div class="card-body">
+            Błędy techniczne: broken links, meta tags, H1, duplicate content, page speed.
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">AI (Claude / GPT)</div>
+          <div class="card-body">
+            Analiza semantyczna treści, sugestie optymalizacji, generowanie rekomendacji.
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">Baza słów kluczowych</div>
+          <div class="card-body">
+            Historia rankingów, trendy sezonowe, analiza konkurencji, wolumen wyszukiwań.
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">PageSpeed Insights</div>
+          <div class="card-body">
+            Core Web Vitals, LCP, CLS, INP — dane bezpośrednio z Google API.
+          </div>
+        </div>
+      </div>
+
+      <h3>Architektura kolejkowa</h3>
+
+      <pre>AuditRequestedEvent
+    ↓
+<span class="tag">CrawlWebsiteJob</span>       <span class="comment">queue: crawlers (dedykowany worker)</span>
+    ↓
+<span class="tag">FetchGSCDataJob</span>       <span class="comment">queue: google-apis</span>
+<span class="tag">FetchGA4DataJob</span>       <span class="comment">queue: google-apis (równolegle)</span>
+<span class="tag">FetchPageSpeedJob</span>     <span class="comment">queue: google-apis (równolegle)</span>
+    ↓
+<span class="tag">AnalyzeKeywordsJob</span>    <span class="comment">queue: ai-processing</span>
+<span class="tag">AnalyzeSemanticsJob</span>   <span class="comment">queue: ai-processing (równolegle)</span>
+    ↓
+<span class="tag">GenerateAuditReportJob</span> <span class="comment">zbiera wyniki, generuje raport</span>
+    ↓
+<span class="tag">NotifyAuditCompleteJob</span> <span class="comment">email + in-app notification</span></pre>
+
+      <h3>Schemat bazy danych</h3>
+
+      <pre><span class="comment">-- Główne tabele modułu SEO</span>
+seo_audits           <span class="comment">-- meta audytu: status, scores (0-100), created_at</span>
+seo_audit_pages      <span class="comment">-- wyniki per strona URL (może być tysiące)</span>
+seo_issues           <span class="comment">-- błędy: type, severity (critical/warning/info), fixed_at</span>
+seo_keywords         <span class="comment">-- słowa kluczowe per klient z target_url</span>
+seo_keyword_ranks    <span class="comment">-- TIME-SERIES: pozycja, volume, date (TimescaleDB)</span>
+seo_recommendations  <span class="comment">-- sugestie AI z priorytetem i statusem wdrożenia</span></pre>
+
+      <div class="info-box orange">
+        <strong>TimescaleDB dla rankingów</strong>
+        Tabela <code>seo_keyword_ranks</code> będzie rosnąć szybko (dziesiątki tysięcy wierszy
+        miesięcznie per klient). TimescaleDB to rozszerzenie PostgreSQL — nie zmieniasz stacku,
+        zyskujesz automatyczne partycjonowanie po czasie i do 100x szybsze zapytania time-series
+        (<code>WHERE date BETWEEN ...</code>).
+      </div>
+    </div>
+
+    <!-- SECTION 5: SLA -->
+    <div class="page page-break">
+      <div class="section-header">
+        <div class="section-num">5</div>
+        <div class="section-title-wrap">
+          <div class="section-label">Module</div>
+          <div class="section-title">System SLA i ticketów</div>
+        </div>
+      </div>
+
+      <p>
+        Dwa powiązane podsystemy: (1) tickety zgłaszane przez klientów z automatycznym SLA tracking
+        oraz (2) deadline monitoring dla projektów. Oba zasilają Kanban admina.
+      </p>
+
+      <h3>Flow ticketu</h3>
+
+      <div class="flow">
+        <div class="flow-step">Klient zgłasza ticket</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">status: new</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">Auto → Kanban task</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">SLA timer start</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">Admin odpowiada</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">Klient powiadomiony</div>
+      </div>
+
+      <h3>Statusy ticketu</h3>
+      <div style="margin: 12px 0">
+        <span class="badge badge-blue">new</span>
+        <span class="badge badge-orange">open</span>
+        <span class="badge badge-purple">in_progress</span>
+        <span class="badge badge-orange">waiting_for_client</span>
+        <span class="badge badge-green">resolved</span>
+        <span class="badge" style="background: #f1f5f9; color: #475569">closed</span>
+      </div>
+
+      <h3>Schemat bazy danych</h3>
+
+      <pre>tickets
+  - id, client_id, project_id
+  - priority: <span class="string">low | medium | high | critical</span>
+  - status: <span class="string">new | open | in_progress | waiting | resolved | closed</span>
+  - sla_response_due_at      <span class="comment">-- deadline pierwszej odpowiedzi</span>
+  - sla_resolution_due_at    <span class="comment">-- deadline rozwiązania</span>
+  - first_responded_at       <span class="comment">-- kiedy SLA response zostało spełnione</span>
+  - kanban_card_id           <span class="comment">-- powiązanie z Kanban</span>
+
+sla_policies
+  - client_id (lub global default)
+  - priority                 <span class="comment">-- per priorytet ticketu</span>
+  - response_time_hours      <span class="comment">-- np. critical=2h, high=8h, low=48h</span>
+  - resolution_time_hours
+  - business_hours_only: bool
+
+ticket_comments
+  - ticket_id, author_id, author_type
+  - is_internal: bool        <span class="comment">-- notatki niewidoczne dla klienta</span>
+  - content</pre>
+
+      <h3>Ujednolicony Kanban</h3>
+      <p>Jedna tabela obsługuje różne typy kart dzięki polymorphic relations:</p>
+
+      <pre>kanban_cards
+  - board_id, column_id, position
+  - cardable_type: <span class="string">"Lead" | "Ticket" | "ProjectTask"</span>
+  - cardable_id
+  - assigned_to
+  - due_at</pre>
+
+      <h3>SLA breach monitoring</h3>
+
+      <pre><span class="comment">// Scheduled job — co 15 minut</span>
+<span class="keyword">class</span> CheckSlaBreachesJob
+{
+    <span class="keyword">public function</span> handle(): void
+    {
+        $breaching = Ticket::query()
+            -&gt;whereNull(<span class="string">'first_responded_at'</span>)
+            -&gt;where(<span class="string">'sla_response_due_at'</span>, <span class="string">'<'</span>, now()-&gt;addMinutes(<span class="string">30</span>))
+            -&gt;get();
+
+        $breaching-&gt;each(fn($ticket) =&gt;
+            $ticket-&gt;assignees-&gt;each-&gt;notify(<span class="keyword">new</span> SlaBreachWarningNotification($ticket))
+        );
+    }
+}</pre>
+    </div>
+
+    <!-- SECTION 6: DOCUMENTS -->
+    <div class="page page-break">
+      <div class="section-header">
+        <div class="section-num">6</div>
+        <div class="section-title-wrap">
+          <div class="section-label">Module</div>
+          <div class="section-title">Dokumenty — edycja online i PDF</div>
+        </div>
+      </div>
+
+      <h3>Stack edytora</h3>
+
+      <div class="card-grid">
+        <div class="card">
+          <div class="card-title">TipTap v2 — edytor</div>
+          <div class="card-body">
+            <p>Najlepszy wybór dla React + TypeScript. Oparty o ProseMirror.</p>
+            Obsługuje: tabele, listy, nagłówki, obrazy, mentions (@user), formatowanie, linki.
+            Rozszerzalny — możesz dodać AI suggestions jako custom extension (np. sugestie treści
+            SEO w dokumentach).
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">Laravel Browsershot — PDF</div>
+          <div class="card-body">
+            <p>Renderuje PDF przez Chromium (Puppeteer). Najwyższa jakość CSS.</p>
+            Wymaga Node.js + Chromium na serwerze. Generowanie asynchroniczne przez kolejkę —
+            użytkownik dostaje powiadomienie gdy PDF jest gotowy.
+          </div>
+        </div>
+      </div>
+
+      <h3>Flow dokumentu</h3>
+
+      <div class="flow">
+        <div class="flow-step">Tworzenie</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">Edycja TipTap</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">Zapis JSON + HTML</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">Wersja snapshot</div>
+      </div>
+      <div class="flow" style="margin-top: 8px">
+        <div class="flow-step">Export PDF</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">GeneratePDFJob</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">S3 / Storage</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">Link + Powiadomienie</div>
+      </div>
+
+      <h3>Schemat bazy danych</h3>
+
+      <pre>documents
+  - documentable_type: <span class="string">"Project" | "Client" | "Ticket"</span>   <span class="comment">-- polymorphic</span>
+  - documentable_id
+  - title, slug
+  - content_json    <span class="comment">-- TipTap JSON format (do edycji)</span>
+  - content_html    <span class="comment">-- wygenerowany HTML (do renderowania)</span>
+  - pdf_path        <span class="comment">-- ścieżka ostatniego PDF w storage</span>
+  - version: int
+  - created_by, updated_by
+
+document_versions
+  - document_id
+  - version: int
+  - content_json    <span class="comment">-- snapshot przy każdym ważnym zapisie</span>
+  - created_by, created_at</pre>
+
+      <h3>Generowanie PDF — kod kolejki</h3>
+
+      <pre><span class="keyword">class</span> GenerateDocumentPdfJob <span class="keyword">implements</span> ShouldQueue
+{
+    <span class="keyword">public function</span> handle(Browsershot $browsershot): void
+    {
+        $html = view(<span class="string">'pdf.document'</span>, [
+            <span class="string">'document'</span> =&gt; $this-&gt;document,
+            <span class="string">'client'</span>   =&gt; $this-&gt;document-&gt;client,
+        ])-&gt;render();
+
+        $path = <span class="string">"documents/{$this->document->id}/v{$this->document->version}.pdf"</span>;
+
+        $browsershot-&gt;html($html)
+            -&gt;format(<span class="string">'A4'</span>)
+            -&gt;margins(<span class="string">20</span>, <span class="string">20</span>, <span class="string">20</span>, <span class="string">20</span>)
+            -&gt;save(storage_path(<span class="string">"app/{$path}"</span>));
+
+        $this-&gt;document-&gt;update([<span class="string">'pdf_path'</span> =&gt; $path]);
+
+        $this-&gt;document-&gt;creator-&gt;notify(<span class="keyword">new</span> PdfReadyNotification($this-&gt;document));
+    }
+}</pre>
+    </div>
+
+    <!-- SECTION 7: NOTIFICATIONS -->
+    <div class="page page-break">
+      <div class="section-header">
+        <div class="section-num">7</div>
+        <div class="section-title-wrap">
+          <div class="section-label">Module</div>
+          <div class="section-title">Powiadomienia wielokanałowe</div>
+        </div>
+      </div>
+
+      <h3>Trzy kanały</h3>
+
+      <div class="card-grid-3">
+        <div class="card">
+          <div class="card-title" style="color: var(--primary)">Email</div>
+          <div class="card-body">
+            Laravel Mail + queued. Szablony Blade per typ zdarzenia. Markdown mail dla prostych,
+            custom HTML dla brandowanych.
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title" style="color: var(--green)">SMS</div>
+          <div class="card-body">
+            SMSAPI.pl (PL) lub Twilio (global). Custom Laravel Notification channel. Quiet hours —
+            brak SMS w nocy. Tylko dla high-priority zdarzeń.
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title" style="color: var(--purple)">In-App (Real-time)</div>
+          <div class="card-body">
+            Laravel Echo + Reverb (WebSocket). Powiadomienia w czasie rzeczywistym. Persist w DB dla
+            historii. Broadcast na prywatnym kanale usera.
+          </div>
+        </div>
+      </div>
+
+      <h3>Typy zdarzeń → kanały</h3>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Zdarzenie</th>
+            <th>Email</th>
+            <th>SMS</th>
+            <th>In-App</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Nowy ticket</td>
+            <td>✅</td>
+            <td>🔶 (critical)</td>
+            <td>✅</td>
+          </tr>
+          <tr>
+            <td>Odpowiedź na ticket</td>
+            <td>✅</td>
+            <td>—</td>
+            <td>✅</td>
+          </tr>
+          <tr>
+            <td>SLA breach warning</td>
+            <td>✅</td>
+            <td>✅</td>
+            <td>✅</td>
+          </tr>
+          <tr>
+            <td>Audyt SEO ukończony</td>
+            <td>✅</td>
+            <td>—</td>
+            <td>✅</td>
+          </tr>
+          <tr>
+            <td>PDF gotowy</td>
+            <td>—</td>
+            <td>—</td>
+            <td>✅</td>
+          </tr>
+          <tr>
+            <td>Deadline projektu (24h)</td>
+            <td>✅</td>
+            <td>✅</td>
+            <td>✅</td>
+          </tr>
+          <tr>
+            <td>Nowy dokument</td>
+            <td>✅</td>
+            <td>—</td>
+            <td>✅</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>Preferencje powiadomień</h3>
+
+      <pre>notification_preferences
+  - user_id
+  - notification_type: <span class="string">ticket_update | sla_breach | audit_complete | ...</span>
+  - channels: <span class="string">['mail', 'sms', 'database']</span>    <span class="comment">-- JSON array</span>
+  - quiet_hours_from: <span class="string">'22:00'</span>
+  - quiet_hours_to:   <span class="string">'08:00'</span>
+  - quiet_hours_timezone: <span class="string">'Europe/Warsaw'</span></pre>
+
+      <h3>Implementacja notyfikacji</h3>
+
+      <pre><span class="keyword">class</span> TicketUpdatedNotification <span class="keyword">extends</span> Notification
+{
+    <span class="keyword">public function</span> via($notifiable): array
+    {
+        <span class="keyword">return</span> $notifiable->activeChannelsFor(<span class="string">'ticket_update'</span>);
+        <span class="comment">// zwraca ['mail', 'database', 'broadcast'] lub ['sms'] itd.</span>
+    }
+
+    <span class="keyword">public function</span> toMail($notifiable): MailMessage { ... }
+    <span class="keyword">public function</span> toSms($notifiable): SmsMessage { ... }
+    <span class="keyword">public function</span> toDatabase($notifiable): array { ... }
+    <span class="keyword">public function</span> toBroadcast($notifiable): BroadcastMessage { ... }
+}</pre>
+    </div>
+
+    <!-- SECTION 8: ROLES -->
+    <div class="page page-break">
+      <div class="section-header">
+        <div class="section-num">8</div>
+        <div class="section-title-wrap">
+          <div class="section-label">Security</div>
+          <div class="section-title">Role i uprawnienia</div>
+        </div>
+      </div>
+
+      <p>
+        System uprawnień oparty o Spatie Laravel Permission (RBAC). Sześć ról z hierarchią dostępu —
+        dwie po stronie admina, cztery po stronie klienta.
+      </p>
+
+      <h3>Hierarchia ról</h3>
+
+      <ul class="role-list">
+        <li class="role-item">
+          <span class="role-name">super-admin</span>
+          <div class="role-desc">
+            Dostęp do wszystkiego. Zarządzanie ustawieniami systemu, konfiguracją subdomen, planami
+            klientów, integracjami API (Google, AI). Tylko właściciel systemu.
+          </div>
+        </li>
+        <li class="role-item">
+          <span class="role-name">admin</span>
+          <div class="role-desc">
+            Pełny dostęp do CRM — leady, klienci, projekty, SEO audyty, dokumenty. Zarządzanie
+            zespołem, przeglądanie wszystkich ticketów, konfiguracja SLA.
+          </div>
+        </li>
+        <li class="role-item">
+          <span class="role-name">manager</span>
+          <div class="role-desc">
+            Zarządza przypisanymi projektami i klientami. Może tworzyć dokumenty i zadania,
+            obsługiwać tickety. Bez dostępu do ustawień systemu i finansów.
+          </div>
+        </li>
+        <li class="role-item">
+          <span class="role-name">employee</span>
+          <div class="role-desc">
+            Widzi tylko przypisane projekty i zadania. Może komentować tickety i tworzyć dokumenty w
+            ramach swoich projektów. Brak dostępu do danych innych klientów.
+          </div>
+        </li>
+        <li class="role-item">
+          <span class="role-name">client-admin</span>
+          <div class="role-desc">
+            <strong>(Panel klienta)</strong> Pełny dostęp do panelu swojego klienta. Widzi projekty,
+            SEO raporty, dokumenty, może zarządzać użytkownikami swojej organizacji i zgłaszać
+            tickety.
+          </div>
+        </li>
+        <li class="role-item">
+          <span class="role-name">client-user</span>
+          <div class="role-desc">
+            <strong>(Panel klienta)</strong> Ograniczony dostęp — tylko podgląd przypisanych
+            projektów i dokumentów, zgłaszanie ticketów. Bez dostępu do raportów finansowych i SEO.
+          </div>
+        </li>
+      </ul>
+
+      <h3>Izolacja danych między klientami</h3>
+
+      <div class="info-box purple">
+        <strong>Global Scope jako pierwsza linia obrony</strong>
+        Każdy model z trait <code>BelongsToTenant</code> automatycznie filtruje dane po
+        <code>client_id</code>. Dodatkowo Gate policies sprawdzają uprawnienia na poziomie
+        pojedynczego zasobu. Dwupoziomowa ochrona: scope na poziomie modelu + policy na poziomie
+        kontrolera.
+      </div>
+
+      <pre><span class="comment">// Przykład Policy</span>
+<span class="keyword">class</span> ProjectPolicy
+{
+    <span class="keyword">public function</span> view(User $user, Project $project): bool
+    {
+        <span class="comment">// Global scope już odfiltrował inne klientów</span>
+        <span class="comment">// Tu sprawdzamy czy user ma dostęp do tego projektu</span>
+        <span class="keyword">return</span> $user->hasRole([<span class="string">'admin'</span>, <span class="string">'manager'</span>])
+            || $project->assignees->contains($user);
+    }
+}</pre>
+    </div>
+
+    <!-- SECTION 9: PRIORITIES -->
+    <div class="page">
+      <div class="section-header">
+        <div class="section-num">9</div>
+        <div class="section-title-wrap">
+          <div class="section-label">Roadmap</div>
+          <div class="section-title">Priorytety i plan wdrożenia</div>
+        </div>
+      </div>
+
+      <p>
+        Rekomendowana kolejność budowania systemu — od fundamentów do modułów specjalistycznych. SEO
+        jako ostatni, bo wymaga działających klientów, projektów i integracji zewnętrznych.
+      </p>
+
+      <ul class="priority-list">
+        <li class="priority-item">
+          <div class="priority-num">1</div>
+          <div class="priority-content">
+            <div class="priority-title">Core — Fundament systemu</div>
+            <div class="priority-desc">
+              Auth (Sanctum + Spatie Permission), multi-tenancy (subdomain middleware + global
+              scope), moduł klientów i projektów, podstawowe CRUD, panel admina (React SPA
+              szkielet), panel klienta (szkielet na subdomenach).
+              <em>Bez tego nic innego nie działa.</em>
+            </div>
+          </div>
+        </li>
+        <li class="priority-item">
+          <div class="priority-num">2</div>
+          <div class="priority-content">
+            <div class="priority-title">CRM — Leady i Kanban</div>
+            <div class="priority-desc">
+              Moduł leadów, pipeline sprzedaży, Kanban board (dnd-kit), historia kontaktów.
+              Ujednolicony model <code>kanban_cards</code> z polymorphic relations — fundament dla
+              ticketów.
+            </div>
+          </div>
+        </li>
+        <li class="priority-item">
+          <div class="priority-num">3</div>
+          <div class="priority-content">
+            <div class="priority-title">SLA i Tickety</div>
+            <div class="priority-desc">
+              System zgłoszeń w panelu klienta, SLA policies, SLA timer, automatyczne tworzenie kart
+              Kanban z ticketów, breach monitoring (scheduled job co 15 min), historia komentarzy z
+              notatkami wewnętrznymi.
+            </div>
+          </div>
+        </li>
+        <li class="priority-item">
+          <div class="priority-num">4</div>
+          <div class="priority-content">
+            <div class="priority-title">Dokumenty</div>
+            <div class="priority-desc">
+              Edytor TipTap, zapis JSON/HTML, wersjonowanie (document_versions), Spatie Media
+              Library dla załączników, asynchroniczne generowanie PDF przez Browsershot + kolejka.
+            </div>
+          </div>
+        </li>
+        <li class="priority-item">
+          <div class="priority-num">5</div>
+          <div class="priority-content">
+            <div class="priority-title">Powiadomienia</div>
+            <div class="priority-desc">
+              Laravel Reverb setup, Laravel Echo na frontendzie, email notifications, SMSAPI.pl
+              custom channel, preferencje powiadomień per użytkownik, quiet hours. Stopniowe
+              wdrażanie: najpierw email → in-app → SMS.
+            </div>
+          </div>
+        </li>
+        <li class="priority-item">
+          <div class="priority-num">6</div>
+          <div class="priority-content">
+            <div class="priority-title">SEO z AI — moduł zaawansowany</div>
+            <div class="priority-desc">
+              TimescaleDB setup, Google Search Console OAuth, Google Analytics 4 API, własny crawler
+              (lub integracja z zewnętrznym API), pipeline kolejkowy (Horizon), integracja AI
+              (Claude API / OpenAI), dashboardy z Recharts, eksport raportów.
+            </div>
+          </div>
+        </li>
+      </ul>
+
+      <div class="info-box blue" style="margin-top: 32px">
+        <strong>Kluczowe decyzje architektoniczne do podjęcia przed startem SEO:</strong>
+        (1) Własny crawler vs zewnętrzne API (ScrapingBee, Screaming Frog API) — wpływa na koszt i
+        złożoność infrastruktury. (2) Dostawca AI — Claude API (Anthropic) dla analizy semantycznej
+        i rekomendacji content; własne modele dla klasyfikacji błędów SEO. (3) Częstotliwość audytów
+        — automatyczne (weekly/monthly) vs on-demand vs oba.
+      </div>
+
+      <h3>Podsumowanie decyzji technicznych</h3>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Decyzja</th>
+            <th>Wybór</th>
+            <th>Uzasadnienie</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>SPA vs Inertia</td>
+            <td><strong>React SPA</strong></td>
+            <td>Client panel na subdomenach wymaga API tak czy inaczej</td>
+          </tr>
+          <tr>
+            <td>Multi-tenancy</td>
+            <td><strong>Single DB + scopes</strong></td>
+            <td>Wystarczające na start, prostsze w utrzymaniu</td>
+          </tr>
+          <tr>
+            <td>Auth</td>
+            <td><strong>Sanctum cookies</strong></td>
+            <td>Bezpieczniejszy niż tokeny dla SPA, działa z subdomenami</td>
+          </tr>
+          <tr>
+            <td>WebSocket</td>
+            <td><strong>Laravel Reverb</strong></td>
+            <td>Natywny, bez zewnętrznych zależności (Pusher)</td>
+          </tr>
+          <tr>
+            <td>PDF</td>
+            <td><strong>Browsershot</strong></td>
+            <td>Najwyższa jakość CSS, async przez kolejkę</td>
+          </tr>
+          <tr>
+            <td>Edytor</td>
+            <td><strong>TipTap v2</strong></td>
+            <td>React, TS, rozszerzalny, dojrzały ekosystem</td>
+          </tr>
+          <tr>
+            <td>SEO time-series</td>
+            <td><strong>TimescaleDB</strong></td>
+            <td>Rozszerzenie PostgreSQL — nie zmienia stacku</td>
+          </tr>
+          <tr>
+            <td>SMS</td>
+            <td><strong>SMSAPI.pl</strong></td>
+            <td>Popularny w PL, dobry API, niski koszt</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div
+        style="
+          margin-top: 48px;
+          padding-top: 24px;
+          border-top: 1px solid var(--border);
+          text-align: center;
+          color: var(--gray-400);
+          font-size: 11px;
+        "
+      >
+        ClientOps CRM — Specyfikacja Techniczna v1.0 &nbsp;·&nbsp; Marzec 2026 &nbsp;·&nbsp; Laravel
+        12 + React 19 + TypeScript
+      </div>
+    </div>
+  </body>
+</html>
