@@ -739,7 +739,7 @@
         </div>
         <div class="cover-meta-item">
           <div class="cover-meta-label">Wersja</div>
-          <div class="cover-meta-value">1.3.0</div>
+          <div class="cover-meta-value">1.4.0</div>
         </div>
         <div class="cover-meta-item">
           <div class="cover-meta-label">Stack</div>
@@ -1734,7 +1734,7 @@ document_versions
 
       <pre>notification_preferences
   - user_id
-  - notification_type: <span class="string">ticket_update | sla_breach | audit_complete | ...</span>
+  - notification_type: <span class="string">ticket_update | sla_breach | audit_complete | pdf_ready | deadline | mention | message | task_assigned | comment_reply</span>
   - channels: <span class="string">['mail', 'sms', 'database']</span>    <span class="comment">-- JSON array</span>
   - quiet_hours_from: <span class="string">'22:00'</span>
   - quiet_hours_to:   <span class="string">'08:00'</span>
@@ -1755,6 +1755,190 @@ document_versions
     <span class="keyword">public function</span> toDatabase($notifiable): array { ... }
     <span class="keyword">public function</span> toBroadcast($notifiable): BroadcastMessage { ... }
 }</pre>
+
+      <h3>Zunifikowany inbox — System 2: wiadomości wewnętrzne</h3>
+
+      <p>
+        Oprócz notyfikacji systemowych (SLA, @mention, ticket) użytkownicy mogą wysyłać
+        wiadomości do innych adminów lub do klientów bezpośrednio w CRM — bez wychodzenia
+        poza system. Oba strumienie trafiają do <strong>jednego inboxu</strong>.
+      </p>
+
+      <div class="card-grid-3" style="margin: 20px 0">
+        <div class="card" style="border-top: 3px solid var(--primary)">
+          <div class="card-title" style="color: var(--primary)">Notyfikacje systemowe</div>
+          <div class="card-body">
+            SLA breach, @mention, nowy ticket, task assigned, odpowiedź na komentarz, PDF gotowy.
+            Generowane automatycznie przez system.
+          </div>
+        </div>
+        <div class="card" style="border-top: 3px solid var(--green)">
+          <div class="card-title" style="color: var(--green)">Wiadomości admin → admin</div>
+          <div class="card-body">
+            Admin wysyła wiadomość do innego admina/managera/pracownika. Zostaje w CRM,
+            opcjonalnie kopia na email.
+          </div>
+        </div>
+        <div class="card" style="border-top: 3px solid var(--purple)">
+          <div class="card-title" style="color: var(--purple)">Wiadomości admin → klient</div>
+          <div class="card-body">
+            Admin wysyła wiadomość do klienta (client-admin lub client-user). Klient widzi
+            ją w swoim panelu na subdomenie.
+          </div>
+        </div>
+      </div>
+
+      <h3>Jak to działa — flow</h3>
+
+      <pre><span class="comment">// Zdarzenie systemowe (np. SLA breach)</span>
+CheckSlaBreachesJob::dispatch()
+  → tworzy SlaIncident
+  → wywołuje SlaBreachNotification
+  → zapisuje do: notifications (type: sla_breach)
+  → broadcast → Reverb → bell w UI
+
+<span class="comment">// Wiadomość admin → klient</span>
+Admin wysyła wiadomość
+  → zapis do: messages (treść, sender, conversation_id)
+  → tworzy: notifications (type: message, notifiable: klient)
+  → broadcast → Reverb → bell klienta w panelu
+  → opcjonalnie: email (wg notification_preferences)
+
+<span class="comment">// @mention w komentarzu do ticketu</span>
+Admin pisze: "@Jan sprawdź proszę"
+  → zapis do: ticket_comments
+  → zapis do: mentions (mentionable: comment, mentioned: Jan)
+  → tworzy: notifications (type: mention, notifiable: Jan)
+  → broadcast → bell Jana</pre>
+
+      <h3>Schematy tabel</h3>
+
+      <pre><span class="comment">-- Główna tabela notyfikacji (Laravel built-in, rozszerzona)</span>
+notifications
+  id, type          <span class="comment">-- sla_breach | mention | message | task_assigned | comment_reply | ...</span>
+  notifiable_type   <span class="comment">-- "User" | "Client"</span>
+  notifiable_id
+  data              <span class="comment">-- JSON: { body, sender_id, link, subject_type, subject_id }</span>
+  read_at, created_at
+
+<span class="comment">-- Wątki wiadomości</span>
+conversations
+  id, subject (nullable), created_by, created_at
+
+conversation_participants
+  conversation_id
+  participable_type  <span class="comment">-- "User" | "Client"</span>
+  participable_id
+  last_read_at       <span class="comment">-- do liczenia nieprzeczytanych</span>
+
+messages
+  id, conversation_id
+  sender_type        <span class="comment">-- "User" | "Client"</span>
+  sender_id, body, created_at
+
+<span class="comment">-- @oznaczenia w komentarzach i wiadomościach</span>
+mentions
+  mentionable_type   <span class="comment">-- "Message" | "TicketComment" | "DocumentComment"</span>
+  mentionable_id
+  mentioned_type     <span class="comment">-- "User" | "Client"</span>
+  mentioned_id, created_at</pre>
+
+      <h3>Jeden inbox w UI — zasada działania</h3>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Źródło</th>
+            <th>Trafia do notifications?</th>
+            <th>Po kliknięciu otwiera</th>
+            <th>Email?</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>SLA breach</td>
+            <td>✅ <code>type: sla_breach</code></td>
+            <td>Widok naruszenia SLA</td>
+            <td>✅ + SMS</td>
+          </tr>
+          <tr>
+            <td>Nowy ticket</td>
+            <td>✅ <code>type: new_ticket</code></td>
+            <td>Widok ticketu</td>
+            <td>✅</td>
+          </tr>
+          <tr>
+            <td>@mention</td>
+            <td>✅ <code>type: mention</code></td>
+            <td>Komentarz w kontekście (ticket/projekt)</td>
+            <td>wg preferencji</td>
+          </tr>
+          <tr>
+            <td>Task assigned</td>
+            <td>✅ <code>type: task_assigned</code></td>
+            <td>Zadanie w projekcie / Kanban</td>
+            <td>wg preferencji</td>
+          </tr>
+          <tr>
+            <td>Wiadomość od admina</td>
+            <td>✅ <code>type: message</code></td>
+            <td>Wątek konwersacji (inbox)</td>
+            <td>wg preferencji</td>
+          </tr>
+          <tr>
+            <td>Wiadomość do klienta</td>
+            <td>✅ <code>type: message</code></td>
+            <td>Wątek w panelu klienta</td>
+            <td>wg preferencji</td>
+          </tr>
+          <tr>
+            <td>PDF gotowy</td>
+            <td>✅ <code>type: pdf_ready</code></td>
+            <td>Link do pobrania PDF</td>
+            <td>—</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>Frontend — biblioteki</h3>
+
+      <table>
+        <thead>
+          <tr>
+            <th style="width:200px">Biblioteka</th>
+            <th>Zastosowanie</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Laravel Echo</strong></td>
+            <td>WebSocket client — nasłuchuje na prywatnym kanale usera (<code>private-user.{id}</code>), odbiera broadcast notyfikacji w czasie rzeczywistym</td>
+          </tr>
+          <tr>
+            <td><strong>Zustand</strong></td>
+            <td>Globalny store: licznik nieprzeczytanych notyfikacji, lista ostatnich alertów — dostępny z bell icon w navbar bez prop drillingu</td>
+          </tr>
+          <tr>
+            <td><strong>TanStack Query</strong></td>
+            <td>Pobieranie listy notyfikacji i wątków konwersacji z API, invalidacja cache po odebraniu broadcast eventu</td>
+          </tr>
+          <tr>
+            <td><strong>@floating-ui/react</strong></td>
+            <td>Dropdown panel notyfikacji przy bell icon (pozycjonowanie, dismiss on outside click)</td>
+          </tr>
+          <tr>
+            <td><strong>TipTap v2</strong> (opcjonalnie)</td>
+            <td>Edytor wiadomości z obsługą @mention — autocomplete użytkowników i klientów, highlight oznaczeń</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="info-box blue">
+        <strong>Kluczowa zasada:</strong> Cokolwiek wymaga uwagi użytkownika → trafia do tabeli
+        <code>notifications</code> → broadcast przez Reverb → pojawia się w jednym bell icon.
+        Różnica jest tylko w tym co otwiera kliknięcie: link do obiektu (ticket, lead)
+        lub wątek konwersacji. Użytkownik ma jedno miejsce — nie kilka "dzwonków".
+      </div>
     </div>
 
     <!-- SECTION 8: ROLES -->
@@ -2114,7 +2298,7 @@ activity_log
           font-size: 11px;
         "
       >
-        ClientOps CRM — Specyfikacja Techniczna v1.3 &nbsp;·&nbsp; Marzec 2026 &nbsp;·&nbsp; Laravel
+        ClientOps CRM — Specyfikacja Techniczna v1.4 &nbsp;·&nbsp; Marzec 2026 &nbsp;·&nbsp; Laravel
         12 + React 19 + TypeScript
       </div>
     </div>

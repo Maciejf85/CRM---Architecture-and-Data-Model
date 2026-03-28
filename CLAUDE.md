@@ -51,6 +51,7 @@ SANCTUM_STATEFUL_DOMAINS=app.clientops.pl,*.clientops.pl
 - **Laravel Policies / Gates** — autoryzacja na poziomie rekordów (nie tylko ról)
 - **Laravel Notifications** — unifikacja email + SMS + in-app w jednym interfejsie
 - **Laravel Reverb** — natywny WebSocket server, skalowanie przez Redis pub/sub
+- **laravel-notification-channels/webpush** — opcjonalny kanał web push (przeglądarki)
 - **Spatie Permission** — RBAC, 6 ról (patrz niżej)
 - **Spatie Activity Log** — audit trail: każda akcja admina i klienta (kto, co, kiedy, diff), tabela `activity_log`
 - **Spatie Media Library** — pliki powiązane z modelami, driver S3/MinIO
@@ -105,6 +106,7 @@ SANCTUM_STATEFUL_DOMAINS=app.clientops.pl,*.clientops.pl
 10. **Panel klienta** — na subdomenach `{slug}.clientops.pl`
 11. **Powiadomienia** — email / SMS / in-app real-time, preferencje per user
 12. **Audit log** — rejestrowanie każdej akcji admina i klienta (`activity_log`)
+13. **Wiadomości wewnętrzne** — zunifikowany inbox: notyfikacje systemowe + wiadomości człowiek→człowiek w jednym miejscu
 
 ---
 
@@ -115,7 +117,7 @@ Warstwa 1 — Tożsamość:  users, clients, contacts
 Warstwa 2 — Sprzedaż:   leads, lead_activities, offers
 Warstwa 3 — Realizacja: projects, documents, seo_analyses, audits,
                         notifications, tickets, sla_policies, sla_incidents,
-                        activity_log
+                        activity_log, conversations, messages, mentions
 ```
 
 ### Kluczowe relacje
@@ -234,9 +236,35 @@ Zmiana statusu leadu automatycznie przesuwa kartę przez event → listener.
 user_id, notification_type, channels (JSON array),
 quiet_hours_from, quiet_hours_to, quiet_hours_timezone
 ```
-Typy zdarzeń: `ticket_update | sla_breach | audit_complete | pdf_ready | deadline`
+Typy zdarzeń: `ticket_update | sla_breach | audit_complete | pdf_ready | deadline | mention | message | task_assigned | comment_reply`
 Kanały: `mail | sms | database | broadcast`
 SMS ma quiet hours — nie wysyłamy np. między 22:00 a 08:00.
+
+### conversations + messages (wiadomości wewnętrzne)
+
+```
+conversations
+  id, subject (nullable), created_by, created_at
+
+conversation_participants
+  conversation_id, participable_type: "User" | "Client", participable_id, last_read_at
+
+messages
+  id, conversation_id,
+  sender_type: "User" | "Client", sender_id,
+  body, created_at
+```
+Każda nowa wiadomość → tworzy wpis w `notifications` dla wszystkich uczestników → broadcast przez Reverb.
+
+### mentions
+
+```
+mentionable_type: "Message" | "TicketComment" | "DocumentComment", mentionable_id,
+mentioned_type: "User" | "Client", mentioned_id,
+created_at
+```
+
+@oznaczenie w dowolnym miejscu → notyfikacja `type: mention` → trafia do tego samego inboxu.
 
 ---
 
