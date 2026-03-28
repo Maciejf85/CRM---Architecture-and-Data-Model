@@ -218,7 +218,7 @@
       .toc-dots { flex: 1; border-bottom: 1px dashed var(--border); margin: 0 12px; height: 1px; align-self: flex-end; margin-bottom: 5px; }
 
       /* CONTENT */
-      .page { padding: 56px 60px 80px; }
+      .page { padding: 56px 60px; }
       .page-break { page-break-after: always; }
 
       /* Section Headers */
@@ -509,19 +509,6 @@
       .test-card ul li::before { content: "✓ "; color: var(--green); }
 
       /* Footer */
-      .footer {
-        position: fixed;
-        bottom: 0; left: 0; right: 0;
-        padding: 8px 60px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        font-size: 10px;
-        color: var(--gray-400);
-        border-top: 1px solid var(--border);
-        background: white;
-      }
-
       /* Cross-doc nav */
       .cross-doc-nav {
         margin-top: 48px;
@@ -1781,11 +1768,6 @@ jobs:
           <a class="cross-doc-link active" href="clientops-implementation.html">Przewodnik Implementacji v1.0</a>
         </div>
       </div>
-    </div>
-
-    <div class="footer">
-      <span>ClientOps CRM — Przewodnik Implementacji v1.0</span>
-      <span>Laravel 12 + React 19 · Marzec 2026</span>
     </div>
 
   </body>
