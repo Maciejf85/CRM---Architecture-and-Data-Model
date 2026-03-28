@@ -743,7 +743,7 @@
         </div>
         <div class="cover-meta-item">
           <div class="cover-meta-label">Wersja</div>
-          <div class="cover-meta-value">1.4.0</div>
+          <div class="cover-meta-value">1.5.0</div>
         </div>
         <div class="cover-meta-item">
           <div class="cover-meta-label">Stack</div>
@@ -1357,6 +1357,92 @@ SANCTUM_STATEFUL_DOMAINS=app.clientops.pl,*.clientops.pl
         });
     }
 }</pre>
+
+      <h3>Autentykacja — metody logowania</h3>
+
+      <p>System obsługuje trzy ścieżki uwierzytelniania, wszystkie oparte na Sanctum (cookies):</p>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Metoda</th>
+            <th>Pakiet</th>
+            <th>Opis</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Email + hasło</strong></td>
+            <td>Laravel Sanctum</td>
+            <td>Standardowe logowanie. Walidacja credentiali, wystawienie sesji cookie.</td>
+          </tr>
+          <tr>
+            <td><strong>Google OAuth</strong></td>
+            <td><code>laravel/socialite</code></td>
+            <td>Redirect do Google → callback → <code>users.google_id</code>. Przy pierwszym logowaniu tworzy konto automatycznie. Konto Google nie wymaga hasła w systemie.</td>
+          </tr>
+          <tr>
+            <td><strong>2FA przez email</strong></td>
+            <td>własna implementacja</td>
+            <td>Opcjonalne, włączane przez użytkownika w Ustawieniach. Po poprawnym haśle — kod 6-cyfrowy wysyłany mailem, ważny 10 min. Wymaga potwierdzenia przed ustawieniem sesji.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>Google OAuth — przepływ</h3>
+
+      <pre><span class="comment">// Przekierowanie do Google</span>
+GET /auth/google/redirect
+→ <span class="keyword">return</span> Socialite::driver(<span class="string">'google'</span>)->redirect();
+
+<span class="comment">// Callback po autoryzacji</span>
+GET /auth/google/callback
+$googleUser = Socialite::driver(<span class="string">'google'</span>)->user();
+
+$user = User::firstOrCreate(
+    [<span class="string">'google_id'</span> => $googleUser->id],
+    [
+        <span class="string">'name'</span>  => $googleUser->name,
+        <span class="string">'email'</span> => $googleUser->email,
+        <span class="string">'password'</span> => <span class="keyword">null</span>,     <span class="comment">// brak hasła dla kont OAuth</span>
+    ]
+);
+
+Auth::login($user);          <span class="comment">// wystawia sesję Sanctum</span>
+<span class="keyword">return</span> redirect(<span class="string">'https://app.clientops.pl/dashboard'</span>);</pre>
+
+      <p>Kolumny dodane do tabeli <code>users</code>: <code>google_id (nullable)</code>, <code>password (nullable)</code>. Użytkownik bez hasła nie może logować się przez formularz — tylko przez Google.</p>
+
+      <h3>2FA przez email — przepływ</h3>
+
+      <pre><span class="comment">// Kolumny w tabeli users:</span>
+two_factor_enabled    boolean   <span class="keyword">default</span> <span class="keyword">false</span>
+two_factor_code       varchar   nullable
+two_factor_expires_at timestamp nullable
+
+<span class="comment">// Krok 1: walidacja hasła → jeśli 2FA włączone</span>
+$code = random_int(<span class="string">100000</span>, <span class="string">999999</span>);
+$user->update([
+    <span class="string">'two_factor_code'</span>       => Hash::make($code),
+    <span class="string">'two_factor_expires_at'</span> => now()->addMinutes(<span class="string">10</span>),
+]);
+Notification::send($user, <span class="keyword">new</span> TwoFactorCodeNotification($code));
+<span class="keyword">return</span> response()->json([<span class="string">'requires_2fa'</span> => <span class="keyword">true</span>]);
+
+<span class="comment">// Krok 2: weryfikacja kodu</span>
+<span class="keyword">if</span> (Hash::check($request->code, $user->two_factor_code)
+    && $user->two_factor_expires_at->isFuture()) {
+    $user->update([<span class="string">'two_factor_code'</span> => <span class="keyword">null</span>, <span class="string">'two_factor_expires_at'</span> => <span class="keyword">null</span>]);
+    Auth::login($user);
+    <span class="keyword">return</span> response()->json([<span class="string">'authenticated'</span> => <span class="keyword">true</span>]);
+}</pre>
+
+      <div class="info-box blue">
+        <strong>2FA jest opcjonalne</strong> — użytkownik włącza je sam w zakładce Ustawienia → Bezpieczeństwo.
+        Po włączeniu przy każdym logowaniu (hasłem) wymagany jest kod email. Logowanie przez Google
+        omija 2FA (Google sam zapewnia MFA). Kod wygasa po 10 minutach; próba użycia wygasłego kodu
+        zwraca błąd i wymaga ponownego logowania.
+      </div>
     </div>
 
     <!-- SECTION 4: SEO -->
@@ -2302,7 +2388,7 @@ activity_log
           font-size: 11px;
         "
       >
-        ClientOps CRM — Specyfikacja Techniczna v1.4 &nbsp;·&nbsp; Marzec 2026 &nbsp;·&nbsp; Laravel
+        ClientOps CRM — Specyfikacja Techniczna v1.5 &nbsp;·&nbsp; Marzec 2026 &nbsp;·&nbsp; Laravel
         12 + React 19 + TypeScript
       </div>
 
@@ -2312,7 +2398,7 @@ activity_log
         <div style="display:flex; gap:16px; flex-wrap:wrap;">
           <div style="background:#eff6ff; border:1px solid #bfdbfe; border-radius:6px; padding:8px 14px;">
             <div style="font-weight:700; color:#1e40af; margin-bottom:2px;">📋 Ten dokument</div>
-            <div style="color:#475569;">Specyfikacja Techniczna v1.4</div>
+            <div style="color:#475569;">Specyfikacja Techniczna v1.5</div>
             <div style="color:#94a3b8; font-size:10px; margin-top:2px;">Stack, moduły, decyzje techniczne</div>
           </div>
           <div style="background:#f0fdfa; border:1px solid #99f6e4; border-radius:6px; padding:8px 14px;">
@@ -2324,6 +2410,11 @@ activity_log
             <div style="font-weight:700; color:#7c3aed; margin-bottom:2px;">🎨 Design System — Biblioteki v1.0</div>
             <div style="color:#475569;">clientops-libraries.html · clientops-structure.html</div>
             <div style="color:#94a3b8; font-size:10px; margin-top:2px;">Mapowanie JS, tokeny CSS, komponenty</div>
+          </div>
+          <div style="background:#ecfdf5; border:1px solid #a7f3d0; border-radius:6px; padding:8px 14px;">
+            <div style="font-weight:700; color:#059669; margin-bottom:2px;">🛠️ Przewodnik Implementacji v1.0</div>
+            <div style="color:#475569;">clientops-implementation.html</div>
+            <div style="color:#94a3b8; font-size:10px; margin-top:2px;">Kontrolery, migracje, testy, CI/CD</div>
           </div>
         </div>
       </div>

@@ -48,6 +48,8 @@ SANCTUM_STATEFUL_DOMAINS=app.clientops.pl,*.clientops.pl
 - **Laravel Queues** — fundament asynchronicznych operacji (driver: Redis)
 - **Laravel Horizon** — dashboard i monitoring kolejek, balansowanie workerów
 - **Laravel Sanctum** — SPA auth przez cookies (stateful), `SESSION_DOMAIN=.clientops.pl`
+- **Laravel Socialite** — OAuth2 login przez Google (`laravel/socialite`); provider Google, callback `/auth/google/callback`; user bez hasła jeśli rejestracja przez Google
+- **2FA przez email** — opcjonalne, włączane per user z ustawień; przy logowaniu generowany 6-cyfrowy kod, wysyłany mailem, ważny 10 min; kolumny `two_factor_enabled`, `two_factor_code`, `two_factor_expires_at` w tabeli `users`
 - **Laravel Policies / Gates** — autoryzacja na poziomie rekordów (nie tylko ról)
 - **Laravel Notifications** — unifikacja email + SMS + in-app w jednym interfejsie
 - **Laravel Reverb** — natywny WebSocket server, skalowanie przez Redis pub/sub

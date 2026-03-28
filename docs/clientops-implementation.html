@@ -1,0 +1,1792 @@
+<!doctype html>
+<html lang="pl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ClientOps CRM — Przewodnik Implementacji</title>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap");
+
+      :root {
+        --primary: #1e40af;
+        --primary-light: #eff6ff;
+        --accent: #0ea5e9;
+        --dark: #0f172a;
+        --gray-800: #1e293b;
+        --gray-700: #334155;
+        --gray-600: #475569;
+        --gray-400: #94a3b8;
+        --gray-200: #e2e8f0;
+        --gray-100: #f1f5f9;
+        --gray-50: #f8fafc;
+        --border: #e2e8f0;
+        --green: #059669;
+        --green-light: #ecfdf5;
+        --orange: #d97706;
+        --orange-light: #fffbeb;
+        --red: #dc2626;
+        --red-light: #fef2f2;
+        --purple: #7c3aed;
+        --purple-light: #f5f3ff;
+        --teal: #0d9488;
+        --teal-light: #f0fdfa;
+      }
+
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+
+      body {
+        font-family: "Inter", -apple-system, sans-serif;
+        color: var(--dark);
+        background: white;
+        font-size: 13px;
+        line-height: 1.6;
+      }
+
+      @page {
+        margin: 14mm 0 10mm;
+        size: A4;
+      }
+      @page :first {
+        margin: 0;
+      }
+
+      /* COVER */
+      .cover {
+        min-height: 100vh;
+        background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 50%, #0f172a 100%);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        padding: 60px 40px;
+        page-break-after: always;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .cover::before {
+        content: "";
+        position: absolute;
+        width: 600px; height: 600px;
+        background: radial-gradient(circle, rgba(14, 165, 233, 0.15) 0%, transparent 70%);
+        top: -100px; right: -100px;
+        border-radius: 50%;
+      }
+
+      .cover::after {
+        content: "";
+        position: absolute;
+        width: 400px; height: 400px;
+        background: radial-gradient(circle, rgba(124, 58, 237, 0.1) 0%, transparent 70%);
+        bottom: -50px; left: -50px;
+        border-radius: 50%;
+      }
+
+      .cover-badge {
+        background: rgba(14, 165, 233, 0.2);
+        border: 1px solid rgba(14, 165, 233, 0.4);
+        color: #7dd3fc;
+        padding: 6px 18px;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: 500;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        margin-bottom: 32px;
+        position: relative;
+        z-index: 1;
+      }
+
+      .cover-logo {
+        font-size: 52px;
+        font-weight: 700;
+        color: white;
+        letter-spacing: -2px;
+        margin-bottom: 8px;
+        position: relative;
+        z-index: 1;
+      }
+      .cover-logo span { color: #38bdf8; }
+
+      .cover-subtitle {
+        font-size: 18px;
+        color: #94a3b8;
+        font-weight: 300;
+        margin-bottom: 48px;
+        position: relative;
+        z-index: 1;
+      }
+
+      .cover-divider {
+        width: 60px; height: 2px;
+        background: linear-gradient(90deg, #0ea5e9, #7c3aed);
+        margin: 0 auto 48px;
+        position: relative;
+        z-index: 1;
+      }
+
+      .cover-title {
+        font-size: 32px;
+        font-weight: 700;
+        color: white;
+        margin-bottom: 16px;
+        position: relative;
+        z-index: 1;
+        max-width: 600px;
+        line-height: 1.2;
+      }
+
+      .cover-desc {
+        font-size: 14px;
+        color: #94a3b8;
+        max-width: 480px;
+        line-height: 1.7;
+        margin-bottom: 64px;
+        position: relative;
+        z-index: 1;
+      }
+
+      .cover-meta {
+        display: flex;
+        gap: 48px;
+        justify-content: center;
+        position: relative;
+        z-index: 1;
+      }
+
+      .cover-meta-item { text-align: center; }
+
+      .cover-meta-label {
+        font-size: 10px;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        color: #64748b;
+        margin-bottom: 4px;
+      }
+
+      .cover-meta-value {
+        font-size: 22px;
+        font-weight: 700;
+        color: white;
+      }
+
+      /* TOC */
+      .toc-page {
+        padding: 60px;
+        page-break-after: always;
+      }
+
+      .toc-title {
+        font-size: 28px;
+        font-weight: 700;
+        color: var(--dark);
+        margin-bottom: 4px;
+      }
+
+      .toc-subtitle {
+        font-size: 13px;
+        color: var(--gray-400);
+        margin-bottom: 40px;
+      }
+
+      .toc-list { list-style: none; }
+
+      .toc-item {
+        display: flex;
+        align-items: center;
+        padding: 10px 0;
+        border-bottom: 1px solid var(--gray-100);
+        gap: 16px;
+        cursor: pointer;
+      }
+
+      .toc-num {
+        width: 32px; height: 32px;
+        background: var(--primary);
+        color: white;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 13px;
+        font-weight: 700;
+        flex-shrink: 0;
+      }
+
+      .toc-text { font-weight: 500; color: var(--dark); flex: 1; }
+      .toc-dots { flex: 1; border-bottom: 1px dashed var(--border); margin: 0 12px; height: 1px; align-self: flex-end; margin-bottom: 5px; }
+
+      /* CONTENT */
+      .page { padding: 56px 60px; }
+      .page-break { page-break-after: always; }
+
+      /* Section Headers */
+      .section-header {
+        display: flex;
+        align-items: flex-start;
+        gap: 16px;
+        margin-bottom: 32px;
+        padding-bottom: 20px;
+        border-bottom: 2px solid var(--border);
+      }
+
+      .section-num {
+        width: 48px; height: 48px;
+        background: var(--primary);
+        color: white;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+        font-weight: 700;
+        flex-shrink: 0;
+      }
+
+      .section-title-wrap { }
+
+      .section-label {
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        color: var(--primary);
+        font-weight: 600;
+        margin-bottom: 2px;
+      }
+
+      .section-title {
+        font-size: 24px;
+        font-weight: 700;
+        color: var(--dark);
+        line-height: 1.2;
+      }
+
+      h3 {
+        font-size: 15px;
+        font-weight: 600;
+        color: var(--dark);
+        margin: 28px 0 12px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        break-after: avoid;
+      }
+
+      h3::before {
+        content: "";
+        display: inline-block;
+        width: 3px; height: 16px;
+        background: var(--primary);
+        border-radius: 2px;
+      }
+
+      h4 {
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--gray-600);
+        margin: 20px 0 8px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      p {
+        color: var(--gray-600);
+        margin-bottom: 12px;
+        line-height: 1.7;
+      }
+
+      /* Code blocks */
+      pre {
+        background: var(--gray-800);
+        border-radius: 10px;
+        padding: 18px 20px;
+        margin: 12px 0 20px;
+        overflow: hidden;
+        font-family: "JetBrains Mono", "Courier New", monospace;
+        font-size: 11px;
+        line-height: 1.75;
+        color: #e2e8f0;
+        break-inside: avoid;
+      }
+
+      code {
+        font-family: "JetBrains Mono", "Courier New", monospace;
+        font-size: 11px;
+        background: var(--gray-100);
+        padding: 2px 6px;
+        border-radius: 4px;
+        color: var(--primary);
+      }
+
+      pre code { background: none; padding: 0; color: inherit; }
+
+      .comment { color: #64748b; }
+      .keyword { color: #7dd3fc; }
+      .string { color: #86efac; }
+      .method { color: #fde68a; }
+      .class-name { color: #c4b5fd; }
+      .var { color: #f9a8d4; }
+
+      /* Tables */
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 12px 0 20px;
+        font-size: 12.5px;
+      }
+
+      th {
+        background: var(--primary);
+        color: white;
+        padding: 10px 14px;
+        text-align: left;
+        font-weight: 600;
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      th:first-child { border-radius: 8px 0 0 0; }
+      th:last-child  { border-radius: 0 8px 0 0; }
+
+      td {
+        padding: 10px 14px;
+        border-bottom: 1px solid var(--border);
+        color: var(--gray-600);
+        vertical-align: top;
+      }
+
+      tbody tr { break-inside: avoid; }
+      thead { break-after: avoid; }
+
+      tr:nth-child(even) td { background: var(--gray-50); }
+      tr:last-child td { border-bottom: none; }
+
+      /* Info boxes */
+      .info-box {
+        border-radius: 10px;
+        padding: 16px 20px;
+        margin: 16px 0;
+        font-size: 13px;
+        line-height: 1.6;
+        color: var(--gray-700);
+        break-inside: avoid;
+      }
+
+      .info-box strong { display: block; margin-bottom: 6px; font-size: 13px; }
+      .info-box.blue  { background: #eff6ff; border-left: 4px solid #3b82f6; }
+      .info-box.green { background: var(--green-light); border-left: 4px solid var(--green); }
+      .info-box.orange { background: var(--orange-light); border-left: 4px solid var(--orange); }
+      .info-box.red   { background: var(--red-light); border-left: 4px solid var(--red); }
+      .info-box.purple { background: var(--purple-light); border-left: 4px solid var(--purple); }
+      .info-box.teal  { background: var(--teal-light); border-left: 4px solid var(--teal); }
+
+      /* Phase cards */
+      .phase-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 14px;
+        margin: 20px 0;
+      }
+
+      .phase-card {
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 16px;
+        break-inside: avoid;
+      }
+
+      .phase-num {
+        font-size: 10px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: var(--primary);
+        margin-bottom: 6px;
+      }
+
+      .phase-title {
+        font-size: 14px;
+        font-weight: 700;
+        color: var(--dark);
+        margin-bottom: 8px;
+      }
+
+      .phase-items {
+        list-style: none;
+        font-size: 11.5px;
+        color: var(--gray-600);
+        line-height: 1.8;
+      }
+
+      .phase-items li::before {
+        content: "→ ";
+        color: var(--primary);
+        font-weight: 600;
+      }
+
+      /* Step list */
+      .step-list {
+        list-style: none;
+        counter-reset: steps;
+        margin: 16px 0;
+      }
+
+      .step-list li {
+        counter-increment: steps;
+        display: flex;
+        gap: 14px;
+        margin-bottom: 14px;
+        break-inside: avoid;
+      }
+
+      .step-list li::before {
+        content: counter(steps);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 26px; height: 26px;
+        background: var(--primary);
+        color: white;
+        border-radius: 50%;
+        font-size: 12px;
+        font-weight: 700;
+        flex-shrink: 0;
+        margin-top: 1px;
+      }
+
+      .step-content { color: var(--gray-600); line-height: 1.6; }
+      .step-content strong { color: var(--dark); }
+
+      /* Badges */
+      .badge {
+        display: inline-block;
+        padding: 2px 8px;
+        border-radius: 10px;
+        font-size: 11px;
+        font-weight: 600;
+      }
+      .badge-blue   { background: #eff6ff; color: #1e40af; }
+      .badge-green  { background: var(--green-light); color: var(--green); }
+      .badge-orange { background: var(--orange-light); color: var(--orange); }
+      .badge-red    { background: var(--red-light); color: var(--red); }
+      .badge-purple { background: var(--purple-light); color: var(--purple); }
+      .badge-gray   { background: var(--gray-100); color: var(--gray-600); }
+
+      /* Test priority */
+      .test-matrix {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 14px;
+        margin: 16px 0;
+      }
+
+      .test-card {
+        border-radius: 10px;
+        padding: 16px;
+        break-inside: avoid;
+      }
+
+      .test-card.unit    { background: #eff6ff; border: 1px solid #bfdbfe; }
+      .test-card.feature { background: var(--green-light); border: 1px solid #a7f3d0; }
+      .test-card.e2e     { background: var(--orange-light); border: 1px solid #fde68a; }
+
+      .test-card-title {
+        font-size: 13px;
+        font-weight: 700;
+        margin-bottom: 10px;
+        color: var(--dark);
+      }
+
+      .test-card ul {
+        list-style: none;
+        font-size: 11.5px;
+        color: var(--gray-600);
+        line-height: 1.8;
+      }
+
+      .test-card ul li::before { content: "✓ "; color: var(--green); }
+
+      /* Footer */
+      .footer {
+        position: fixed;
+        bottom: 0; left: 0; right: 0;
+        padding: 8px 60px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 10px;
+        color: var(--gray-400);
+        border-top: 1px solid var(--border);
+        background: white;
+      }
+
+      /* Cross-doc nav */
+      .cross-doc-nav {
+        margin-top: 48px;
+        padding: 20px 24px;
+        background: var(--gray-50);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        break-inside: avoid;
+      }
+
+      .cross-doc-nav-title {
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: var(--gray-400);
+        margin-bottom: 12px;
+      }
+
+      .cross-doc-links {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+
+      .cross-doc-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 14px;
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        font-size: 12px;
+        font-weight: 500;
+        color: var(--primary);
+        text-decoration: none;
+        background: white;
+      }
+
+      .cross-doc-link.active {
+        background: var(--primary);
+        color: white;
+        border-color: var(--primary);
+      }
+    </style>
+  </head>
+  <body>
+
+    <!-- COVER -->
+    <div class="cover">
+      <div class="cover-badge">ClientOps CRM</div>
+      <div class="cover-logo">Client<span>Ops</span></div>
+      <div class="cover-subtitle">Multi-tenant CRM SaaS — Laravel 12 + React 19</div>
+      <div class="cover-divider"></div>
+      <div class="cover-title">Przewodnik Implementacji</div>
+      <div class="cover-desc">
+        Krok po kroku jak wdrażać poszczególne moduły systemu — migracje, modele,
+        kontrolery, requesty, testy. Strategia testowania i częstotliwość.
+      </div>
+      <div class="cover-meta">
+        <div class="cover-meta-item">
+          <div class="cover-meta-label">Wersja</div>
+          <div class="cover-meta-value">1.0.0</div>
+        </div>
+        <div class="cover-meta-item">
+          <div class="cover-meta-label">Data</div>
+          <div class="cover-meta-value">Marzec 2026</div>
+        </div>
+        <div class="cover-meta-item">
+          <div class="cover-meta-label">Fazy</div>
+          <div class="cover-meta-value">6</div>
+        </div>
+        <div class="cover-meta-item">
+          <div class="cover-meta-label">Sekcji</div>
+          <div class="cover-meta-value">9</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TOC -->
+    <div class="toc-page">
+      <div class="toc-title">Spis treści</div>
+      <div class="toc-subtitle">Dokument zawiera 9 sekcji</div>
+      <ul class="toc-list">
+        <li class="toc-section">
+          <div class="toc-item">
+            <div class="toc-num">1</div>
+            <span class="toc-text">Wprowadzenie — jak korzystać z tego dokumentu</span>
+            <div class="toc-dots"></div>
+          </div>
+        </li>
+        <li class="toc-section">
+          <div class="toc-item">
+            <div class="toc-num">2</div>
+            <span class="toc-text">Środowisko deweloperskie</span>
+            <div class="toc-dots"></div>
+          </div>
+        </li>
+        <li class="toc-section">
+          <div class="toc-item">
+            <div class="toc-num">3</div>
+            <span class="toc-text">Faza 1 — Auth, role, multi-tenancy</span>
+            <div class="toc-dots"></div>
+          </div>
+        </li>
+        <li class="toc-section">
+          <div class="toc-item">
+            <div class="toc-num">4</div>
+            <span class="toc-text">Faza 2 — CRM: klienci, leady, Kanban, oferty</span>
+            <div class="toc-dots"></div>
+          </div>
+        </li>
+        <li class="toc-section">
+          <div class="toc-item">
+            <div class="toc-num">5</div>
+            <span class="toc-text">Faza 3 — Tickety i SLA</span>
+            <div class="toc-dots"></div>
+          </div>
+        </li>
+        <li class="toc-section">
+          <div class="toc-item">
+            <div class="toc-num">6</div>
+            <span class="toc-text">Faza 4 — Dokumenty i PDF</span>
+            <div class="toc-dots"></div>
+          </div>
+        </li>
+        <li class="toc-section">
+          <div class="toc-item">
+            <div class="toc-num">7</div>
+            <span class="toc-text">Faza 5 — Powiadomienia i wiadomości wewnętrzne</span>
+            <div class="toc-dots"></div>
+          </div>
+        </li>
+        <li class="toc-section">
+          <div class="toc-item">
+            <div class="toc-num">8</div>
+            <span class="toc-text">Faza 6 — SEO z AI</span>
+            <div class="toc-dots"></div>
+          </div>
+        </li>
+        <li class="toc-section">
+          <div class="toc-item">
+            <div class="toc-num">9</div>
+            <span class="toc-text">Strategia testowania</span>
+            <div class="toc-dots"></div>
+          </div>
+        </li>
+      </ul>
+    </div>
+
+    <!-- SECTION 1: INTRODUCTION -->
+    <div class="page page-break">
+      <div class="section-header">
+        <div class="section-num">1</div>
+        <div class="section-title-wrap">
+          <div class="section-label">Guide</div>
+          <div class="section-title">Wprowadzenie — jak korzystać z tego dokumentu</div>
+        </div>
+      </div>
+
+      <p>
+        Ten dokument to przewodnik dla developera implementującego ClientOps od zera. Każda sekcja
+        odpowiada jednej fazie wdrożenia — od fundamentów auth i multi-tenancy, przez CRM, tickety,
+        dokumenty i powiadomienia, aż po SEO z AI. Podzielone jest to celowo: każda faza jest
+        deployowalna osobno i działa bez kolejnej.
+      </p>
+
+      <h3>Konwencje w tym dokumencie</h3>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Element</th>
+            <th>Znaczenie</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>kod inline</code></td>
+            <td>Nazwy plików, klas, metod, kolumn bazy danych</td>
+          </tr>
+          <tr>
+            <td>Bloki kodu</td>
+            <td>Przykładowe implementacje — nie kopiuj ślepo, dostosuj do kontekstu</td>
+          </tr>
+          <tr>
+            <td><span class="badge badge-green">✓ Unit</span></td>
+            <td>Typ testu rekomendowany dla danej funkcjonalności</td>
+          </tr>
+          <tr>
+            <td><span class="badge badge-orange">Horizon</span></td>
+            <td>Operacja asynchroniczna — wymaga działającego workera kolejki</td>
+          </tr>
+          <tr>
+            <td><span class="badge badge-red">Breaking</span></td>
+            <td>Zmiana, która wymaga migracji danych lub zmiany kontraktów API</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>Plan faz — przegląd</h3>
+
+      <div class="phase-grid">
+        <div class="phase-card">
+          <div class="phase-num">Faza 1</div>
+          <div class="phase-title">Fundament</div>
+          <ul class="phase-items">
+            <li>Auth (hasło, Google, 2FA)</li>
+            <li>Role (Spatie)</li>
+            <li>Multi-tenancy</li>
+            <li>Panel admina / klienta</li>
+          </ul>
+        </div>
+        <div class="phase-card">
+          <div class="phase-num">Faza 2</div>
+          <div class="phase-title">CRM</div>
+          <ul class="phase-items">
+            <li>Klienci i kontakty</li>
+            <li>Leady + lead_activities</li>
+            <li>Kanban 7 kolumn</li>
+            <li>Oferty + konwersja</li>
+          </ul>
+        </div>
+        <div class="phase-card">
+          <div class="phase-num">Faza 3</div>
+          <div class="phase-title">Tickety + SLA</div>
+          <ul class="phase-items">
+            <li>Tickety + komentarze</li>
+            <li>SLA policies</li>
+            <li>SLA incidents (job)</li>
+            <li>Kanban ticketów</li>
+          </ul>
+        </div>
+        <div class="phase-card">
+          <div class="phase-num">Faza 4</div>
+          <div class="phase-title">Dokumenty</div>
+          <ul class="phase-items">
+            <li>TipTap editor</li>
+            <li>Wersjonowanie</li>
+            <li>PDF (Browsershot)</li>
+            <li>Spatie Media Library</li>
+          </ul>
+        </div>
+        <div class="phase-card">
+          <div class="phase-num">Faza 5</div>
+          <div class="phase-title">Powiadomienia</div>
+          <ul class="phase-items">
+            <li>Email → in-app</li>
+            <li>SMS (SMSAPI)</li>
+            <li>Reverb WebSocket</li>
+            <li>Wiadomości wewnętrzne</li>
+          </ul>
+        </div>
+        <div class="phase-card">
+          <div class="phase-num">Faza 6</div>
+          <div class="phase-title">SEO z AI</div>
+          <ul class="phase-items">
+            <li>GSC + GA4 API</li>
+            <li>Crawler + PageSpeed</li>
+            <li>AI (Claude/OpenAI)</li>
+            <li>TimescaleDB pipeline</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="info-box blue">
+        <strong>Zasada: każda faza jest niezależna</strong>
+        System po Fazie 1 działa i można go wdrożyć. Faza 2 rozszerza go o CRM, ale nie wymaga
+        Fazy 3 ani dalszych. Dzięki temu można iterować i dostarczać wartość wcześniej zamiast
+        czekać na kompletny system.
+      </div>
+    </div>
+
+    <!-- SECTION 2: ENVIRONMENT -->
+    <div class="page page-break">
+      <div class="section-header">
+        <div class="section-num">2</div>
+        <div class="section-title-wrap">
+          <div class="section-label">Setup</div>
+          <div class="section-title">Środowisko deweloperskie</div>
+        </div>
+      </div>
+
+      <h3>Wymagania</h3>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Technologia</th>
+            <th>Wersja</th>
+            <th>Uwagi</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>PHP</strong></td>
+            <td>8.3+</td>
+            <td>Rozszerzenia: pdo_pgsql, redis, gd, zip, pcntl</td>
+          </tr>
+          <tr>
+            <td><strong>PostgreSQL</strong></td>
+            <td>16+</td>
+            <td>Z rozszerzeniem TimescaleDB (faza 6)</td>
+          </tr>
+          <tr>
+            <td><strong>Redis</strong></td>
+            <td>7+</td>
+            <td>Cache, sesje, kolejki, pub/sub dla Reverb</td>
+          </tr>
+          <tr>
+            <td><strong>Node.js</strong></td>
+            <td>20+</td>
+            <td>Vite + React build; Puppeteer dla PDF</td>
+          </tr>
+          <tr>
+            <td><strong>Composer</strong></td>
+            <td>2.x</td>
+            <td>—</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>Inicjalizacja projektu Laravel</h3>
+
+      <pre><span class="comment"># Nowy projekt Laravel</span>
+composer create-project laravel/laravel clientops-api
+
+<span class="comment"># Kluczowe pakiety backend</span>
+composer require laravel/sanctum laravel/socialite
+composer require spatie/laravel-permission spatie/laravel-activitylog
+composer require spatie/laravel-media-library spatie/browsershot
+composer require laravel/scout laravel/reverb laravel/horizon
+composer require league/flysystem-aws-s3-v3
+
+<span class="comment"># Konfiguracja</span>
+php artisan vendor:publish --provider="Laravel\Sanctum\SanctumServiceProvider"
+php artisan vendor:publish --provider="Spatie\Permission\PermissionServiceProvider"
+php artisan vendor:publish --provider="Spatie\Activitylog\ActivitylogServiceProvider"
+php artisan reverb:install
+php artisan horizon:install</pre>
+
+      <h3>Inicjalizacja projektu React (panel admina)</h3>
+
+      <pre><span class="comment"># Nowy projekt React + TypeScript + Vite</span>
+npm create vite@latest clientops-admin -- --template react-ts
+
+<span class="comment"># Kluczowe pakiety frontend</span>
+npm install @tanstack/react-query react-hook-form zod
+npm install react-router-dom zustand
+npm install @dnd-kit/core @dnd-kit/sortable @dnd-kit/utilities
+npm install @tiptap/react @tiptap/starter-kit @tiptap/extension-mention
+npm install echarts echarts-for-react
+npm install laravel-echo pusher-js
+npm install lucide-react react-select react-dropzone react-day-picker
+npm install @fullcalendar/react @fullcalendar/daygrid @fullcalendar/timegrid
+npm install dayjs lodash-es class-variance-authority
+npm install -D tailwindcss @tailwindcss/vite</pre>
+
+      <h3>Konfiguracja .env (backend)</h3>
+
+      <pre>APP_URL=https://api.clientops.pl
+
+DB_CONNECTION=pgsql
+DB_HOST=127.0.0.1
+DB_PORT=5432
+DB_DATABASE=clientops
+
+REDIS_HOST=127.0.0.1
+REDIS_PORT=6379
+
+SESSION_DRIVER=redis
+SESSION_DOMAIN=.clientops.pl
+QUEUE_CONNECTION=redis
+CACHE_STORE=redis
+
+SANCTUM_STATEFUL_DOMAINS=app.clientops.pl,*.clientops.pl
+
+<span class="comment"># Google OAuth</span>
+GOOGLE_CLIENT_ID=
+GOOGLE_CLIENT_SECRET=
+GOOGLE_REDIRECT_URI=https://api.clientops.pl/auth/google/callback
+
+<span class="comment"># Reverb WebSocket</span>
+REVERB_APP_ID=
+REVERB_APP_KEY=
+REVERB_APP_SECRET=
+REVERB_HOST=api.clientops.pl
+REVERB_PORT=8080
+
+<span class="comment"># MinIO / S3</span>
+FILESYSTEM_DISK=s3
+AWS_ACCESS_KEY_ID=
+AWS_SECRET_ACCESS_KEY=
+AWS_DEFAULT_REGION=eu-central-1
+AWS_BUCKET=clientops</pre>
+
+      <h3>Struktura katalogów Laravel (rekomendowana)</h3>
+
+      <pre>app/
+  Http/
+    Controllers/
+      Auth/        <span class="comment">AuthController, TwoFactorController, GoogleController</span>
+      Admin/       <span class="comment">LeadController, ClientController, TicketController...</span>
+      Client/      <span class="comment">Portal/ — endpointy dla panelu klienta</span>
+    Middleware/
+      IdentifyTenant.php
+      EnsureTenantContext.php
+    Requests/      <span class="comment">FormRequest per operacja</span>
+  Models/          <span class="comment">User, Client, Lead, Ticket...</span>
+  Policies/        <span class="comment">LeadPolicy, ProjectPolicy, TicketPolicy...</span>
+  Services/        <span class="comment">logika biznesowa wyciągnięta z kontrolerów</span>
+  Jobs/            <span class="comment">SLA checks, PDF generation, SEO pipeline</span>
+  Events/          <span class="comment">LeadStatusChangedEvent, TicketCreatedEvent...</span>
+  Listeners/       <span class="comment">MoveKanbanCardListener, CreateSlaDeadlineListener...</span>
+  Notifications/   <span class="comment">TwoFactorCode, TicketUpdated, SlaBreachAlert...</span></pre>
+    </div>
+
+    <!-- SECTION 3: PHASE 1 — AUTH -->
+    <div class="page page-break">
+      <div class="section-header">
+        <div class="section-num">3</div>
+        <div class="section-title-wrap">
+          <div class="section-label">Phase 1</div>
+          <div class="section-title">Auth, role, multi-tenancy</div>
+        </div>
+      </div>
+
+      <p>
+        Fundament całego systemu. Bez tej fazy nie ma nic. Implementuj w kolejności:
+        migracje → modele → auth → role → multi-tenancy → testy.
+      </p>
+
+      <h3>1. Migracje — tabela users (rozszerzona)</h3>
+
+      <pre><span class="comment">// database/migrations/xxxx_create_users_table.php</span>
+Schema::create(<span class="string">'users'</span>, <span class="keyword">function</span> (Blueprint $table) {
+    $table->id();
+    $table->string(<span class="string">'name'</span>);
+    $table->string(<span class="string">'email'</span>)->unique();
+    $table->string(<span class="string">'password'</span>)->nullable();          <span class="comment">// null dla kont OAuth</span>
+    $table->string(<span class="string">'google_id'</span>)->nullable()->unique();
+    $table->boolean(<span class="string">'two_factor_enabled'</span>)->default(<span class="keyword">false</span>);
+    $table->string(<span class="string">'two_factor_code'</span>)->nullable();
+    $table->timestamp(<span class="string">'two_factor_expires_at'</span>)->nullable();
+    $table->timestamp(<span class="string">'email_verified_at'</span>)->nullable();
+    $table->timestamps();
+    $table->softDeletes();
+});</pre>
+
+      <h3>2. AuthController — logowanie email/hasło</h3>
+
+      <pre><span class="comment">// app/Http/Controllers/Auth/AuthController.php</span>
+<span class="keyword">class</span> <span class="class-name">AuthController</span> <span class="keyword">extends</span> Controller
+{
+    <span class="keyword">public function</span> <span class="method">login</span>(LoginRequest $request): JsonResponse
+    {
+        <span class="keyword">if</span> (!Auth::attempt($request->only(<span class="string">'email'</span>, <span class="string">'password'</span>))) {
+            <span class="keyword">return</span> response()->json([<span class="string">'message'</span> => <span class="string">'Nieprawidłowe dane logowania'</span>], <span class="string">401</span>);
+        }
+
+        $user = Auth::user();
+
+        <span class="comment">// Jeśli 2FA włączone — nie tworzymy sesji, zwracamy flagę</span>
+        <span class="keyword">if</span> ($user->two_factor_enabled) {
+            Auth::logout();
+            app(<span class="class-name">TwoFactorService</span>::class)->sendCode($user);
+            <span class="keyword">return</span> response()->json([
+                <span class="string">'requires_2fa'</span> => <span class="keyword">true</span>,
+                <span class="string">'email'</span>        => $user->email,
+            ]);
+        }
+
+        $request->session()->regenerate();
+        activity(<span class="string">'auth'</span>)->causedBy($user)->log(<span class="string">'login'</span>);
+        <span class="keyword">return</span> response()->json([<span class="string">'user'</span> => $user->load(<span class="string">'roles'</span>)]);
+    }
+
+    <span class="keyword">public function</span> <span class="method">logout</span>(Request $request): JsonResponse
+    {
+        activity(<span class="string">'auth'</span>)->causedBy(Auth::user())->log(<span class="string">'logout'</span>);
+        Auth::logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+        <span class="keyword">return</span> response()->json([<span class="string">'message'</span> => <span class="string">'Wylogowano'</span>]);
+    }
+
+    <span class="keyword">public function</span> <span class="method">me</span>(): JsonResponse
+    {
+        <span class="keyword">return</span> response()->json(Auth::user()->load([<span class="string">'roles'</span>, <span class="string">'permissions'</span>]));
+    }
+}</pre>
+
+      <h3>3. GoogleController — OAuth przez Socialite</h3>
+
+      <pre><span class="comment">// app/Http/Controllers/Auth/GoogleController.php</span>
+<span class="keyword">class</span> <span class="class-name">GoogleController</span> <span class="keyword">extends</span> Controller
+{
+    <span class="keyword">public function</span> <span class="method">redirect</span>(): RedirectResponse
+    {
+        <span class="keyword">return</span> Socialite::driver(<span class="string">'google'</span>)->redirect();
+    }
+
+    <span class="keyword">public function</span> <span class="method">callback</span>(Request $request): RedirectResponse
+    {
+        <span class="keyword">try</span> {
+            $googleUser = Socialite::driver(<span class="string">'google'</span>)->user();
+        } <span class="keyword">catch</span> (<span class="class-name">Exception</span> $e) {
+            <span class="keyword">return</span> redirect(<span class="string">'https://app.clientops.pl/login?error=oauth_failed'</span>);
+        }
+
+        $user = User::updateOrCreate(
+            [<span class="string">'google_id'</span> => $googleUser->id],
+            [
+                <span class="string">'name'</span>  => $googleUser->name,
+                <span class="string">'email'</span> => $googleUser->email,
+            ]
+        );
+
+        <span class="comment">// Domyślna rola dla nowych kont przez Google</span>
+        <span class="keyword">if</span> ($user->wasRecentlyCreated) {
+            $user->assignRole(<span class="string">'employee'</span>);
+        }
+
+        Auth::login($user);
+        activity(<span class="string">'auth'</span>)->causedBy($user)->log(<span class="string">'login_google'</span>);
+        <span class="keyword">return</span> redirect(<span class="string">'https://app.clientops.pl/dashboard'</span>);
+    }
+}</pre>
+
+      <h3>4. TwoFactorController — weryfikacja kodu 2FA</h3>
+
+      <pre><span class="comment">// app/Http/Controllers/Auth/TwoFactorController.php</span>
+<span class="keyword">class</span> <span class="class-name">TwoFactorController</span> <span class="keyword">extends</span> Controller
+{
+    <span class="keyword">public function</span> <span class="method">verify</span>(TwoFactorRequest $request): JsonResponse
+    {
+        $user = User::where(<span class="string">'email'</span>, $request->email)->firstOrFail();
+
+        <span class="keyword">if</span> (
+            !Hash::check($request->code, $user->two_factor_code) ||
+            !$user->two_factor_expires_at?->isFuture()
+        ) {
+            <span class="keyword">return</span> response()->json([<span class="string">'message'</span> => <span class="string">'Nieprawidłowy lub wygasły kod'</span>], <span class="string">422</span>);
+        }
+
+        $user->update([
+            <span class="string">'two_factor_code'</span>       => <span class="keyword">null</span>,
+            <span class="string">'two_factor_expires_at'</span> => <span class="keyword">null</span>,
+        ]);
+
+        Auth::login($user);
+        $request->session()->regenerate();
+        activity(<span class="string">'auth'</span>)->causedBy($user)->log(<span class="string">'login_2fa'</span>);
+        <span class="keyword">return</span> response()->json([<span class="string">'user'</span> => $user->load(<span class="string">'roles'</span>)]);
+    }
+
+    <span class="comment">// Włączanie / wyłączanie 2FA z ustawień użytkownika</span>
+    <span class="keyword">public function</span> <span class="method">toggle</span>(Request $request): JsonResponse
+    {
+        $user = Auth::user();
+        $user->update([<span class="string">'two_factor_enabled'</span> => !$user->two_factor_enabled]);
+        activity(<span class="string">'settings'</span>)->causedBy($user)->log(
+            $user->two_factor_enabled ? <span class="string">'2fa_enabled'</span> : <span class="string">'2fa_disabled'</span>
+        );
+        <span class="keyword">return</span> response()->json([<span class="string">'two_factor_enabled'</span> => $user->two_factor_enabled]);
+    }
+}</pre>
+
+      <h3>5. Spatie Permission — setup ról</h3>
+
+      <pre><span class="comment">// database/seeders/RolesSeeder.php</span>
+$roles = [<span class="string">'super-admin'</span>, <span class="string">'admin'</span>, <span class="string">'manager'</span>, <span class="string">'employee'</span>, <span class="string">'client-admin'</span>, <span class="string">'client-user'</span>];
+<span class="keyword">foreach</span> ($roles <span class="keyword">as</span> $role) {
+    Role::firstOrCreate([<span class="string">'name'</span> => $role, <span class="string">'guard_name'</span> => <span class="string">'web'</span>]);
+}
+
+<span class="comment">// W modelu User — sprawdzanie roli</span>
+$user->hasRole(<span class="string">'admin'</span>);            <span class="comment">// true/false</span>
+$user->can(<span class="string">'update-lead'</span>, $lead);  <span class="comment">// przez Policy</span>
+
+<span class="comment">// Middleware per route group</span>
+Route::middleware([<span class="string">'auth:sanctum'</span>, <span class="string">'role:admin|manager'</span>])->group(<span class="keyword">function</span> () {
+    Route::apiResource(<span class="string">'leads'</span>, LeadController::class);
+});</pre>
+
+      <h3>6. BelongsToTenant trait</h3>
+
+      <pre><span class="comment">// app/Traits/BelongsToTenant.php</span>
+<span class="keyword">trait</span> <span class="class-name">BelongsToTenant</span>
+{
+    <span class="keyword">protected static function</span> <span class="method">booted</span>(): void
+    {
+        <span class="keyword">static</span>::addGlobalScope(<span class="keyword">new</span> <span class="class-name">TenantScope</span>);
+        <span class="keyword">static</span>::creating(<span class="keyword">function</span> ($model) {
+            $model->client_id ??= app(<span class="string">'tenant'</span>)?->id;
+        });
+    }
+}
+
+<span class="comment">// app/Models/Scopes/TenantScope.php</span>
+<span class="keyword">class</span> <span class="class-name">TenantScope</span> <span class="keyword">implements</span> Scope
+{
+    <span class="keyword">public function</span> <span class="method">apply</span>(Builder $builder, Model $model): void
+    {
+        <span class="keyword">if</span> ($tenant = app(<span class="string">'tenant'</span>)) {
+            $builder->where($model->getTable() . <span class="string">'.client_id'</span>, $tenant->id);
+        }
+    }
+}</pre>
+
+      <div class="info-box green">
+        <strong>Routes dla auth</strong>
+        <code>POST /auth/login</code> · <code>POST /auth/logout</code> · <code>GET /auth/me</code><br>
+        <code>GET /auth/google/redirect</code> · <code>GET /auth/google/callback</code><br>
+        <code>POST /auth/2fa/verify</code> · <code>POST /auth/2fa/toggle</code> (wymaga auth)
+      </div>
+    </div>
+
+    <!-- SECTION 4: PHASE 2 — CRM -->
+    <div class="page page-break">
+      <div class="section-header">
+        <div class="section-num">4</div>
+        <div class="section-title-wrap">
+          <div class="section-label">Phase 2</div>
+          <div class="section-title">CRM — klienci, leady, Kanban, oferty</div>
+        </div>
+      </div>
+
+      <h3>Kolejność implementacji</h3>
+
+      <ul class="step-list">
+        <li><div class="step-content"><strong>Clients + Contacts</strong> — baza CRM. Migracje, modele z BelongsToTenant, ClientPolicy.</div></li>
+        <li><div class="step-content"><strong>Leads + lead_activities</strong> — enum LeadStatus, relacje, LeadPolicy.</div></li>
+        <li><div class="step-content"><strong>Kanban boards + cards</strong> — polimorficzny model KanbanCard, seed kolumn.</div></li>
+        <li><div class="step-content"><strong>Events + Listeners</strong> — LeadStatusChangedEvent → MoveKanbanCardListener + ActivityLog.</div></li>
+        <li><div class="step-content"><strong>Offers</strong> — relacja Lead → Offer, statusy, konwersja do Client.</div></li>
+        <li><div class="step-content"><strong>Konwersja leadu</strong> — LeadWonListener: tworzy Client, kopiuje kontakty, loguje.</div></li>
+      </ul>
+
+      <h3>LeadController</h3>
+
+      <pre><span class="comment">// app/Http/Controllers/Admin/LeadController.php</span>
+<span class="keyword">class</span> <span class="class-name">LeadController</span> <span class="keyword">extends</span> Controller
+{
+    <span class="keyword">public function</span> <span class="method">index</span>(Request $request): JsonResponse
+    {
+        $leads = Lead::with([<span class="string">'contact'</span>, <span class="string">'assignedTo'</span>, <span class="string">'kanbanCard'</span>])
+            ->filter($request->only([<span class="string">'status'</span>, <span class="string">'assigned_to'</span>, <span class="string">'search'</span>]))
+            ->paginate(<span class="string">25</span>);
+
+        <span class="keyword">return</span> response()->json($leads);
+    }
+
+    <span class="keyword">public function</span> <span class="method">store</span>(StoreLeadRequest $request): JsonResponse
+    {
+        $lead = Lead::create($request->validated());
+        <span class="keyword">return</span> response()->json($lead->load(<span class="string">'contact'</span>), <span class="string">201</span>);
+    }
+
+    <span class="keyword">public function</span> <span class="method">updateStatus</span>(Lead $lead, UpdateLeadStatusRequest $request): JsonResponse
+    {
+        $this->authorize(<span class="string">'update'</span>, $lead);
+
+        $oldStatus = $lead->status;
+        $lead->update([<span class="string">'status'</span> => $request->status]);
+
+        <span class="comment">// Event uruchamia MoveKanbanCardListener + ActivityLog listener</span>
+        event(<span class="keyword">new</span> LeadStatusChangedEvent($lead, $oldStatus, $lead->status));
+
+        <span class="keyword">return</span> response()->json($lead->fresh([<span class="string">'kanbanCard'</span>]));
+    }
+
+    <span class="keyword">public function</span> <span class="method">convert</span>(Lead $lead): JsonResponse
+    {
+        $this->authorize(<span class="string">'convert'</span>, $lead);
+
+        <span class="keyword">if</span> ($lead->status !== <span class="class-name">LeadStatus</span>::Won) {
+            <span class="keyword">return</span> response()->json([<span class="string">'message'</span> => <span class="string">'Lead musi mieć status won'</span>], <span class="string">422</span>);
+        }
+
+        $client = app(<span class="class-name">LeadConversionService</span>::class)->convert($lead);
+        <span class="keyword">return</span> response()->json($client, <span class="string">201</span>);
+    }
+}</pre>
+
+      <h3>LeadConversionService</h3>
+
+      <pre><span class="comment">// app/Services/LeadConversionService.php</span>
+<span class="keyword">class</span> <span class="class-name">LeadConversionService</span>
+{
+    <span class="keyword">public function</span> <span class="method">convert</span>(Lead $lead): Client
+    {
+        <span class="keyword">return</span> DB::transaction(<span class="keyword">function</span> () <span class="keyword">use</span> ($lead) {
+            $client = Client::create([
+                <span class="string">'name'</span>       => $lead->company_name ?? $lead->contact->full_name,
+                <span class="string">'email'</span>      => $lead->contact->email,
+                <span class="string">'slug'</span>       => Str::slug($lead->company_name ?? $lead->contact->full_name),
+                <span class="string">'created_by'</span> => Auth::id(),
+            ]);
+
+            <span class="comment">// Przepisz kontakty do nowego klienta</span>
+            $lead->contacts->each(<span class="keyword">fn</span>($c) => $c->update([<span class="string">'client_id'</span> => $client->id]));
+
+            $lead->update([
+                <span class="string">'client_id'</span>    => $client->id,
+                <span class="string">'converted_at'</span> => now(),
+            ]);
+
+            activity(<span class="string">'crm'</span>)->causedBy(Auth::user())
+                ->performedOn($lead)
+                ->withProperties([<span class="string">'client_id'</span> => $client->id])
+                ->log(<span class="string">'converted_to_client'</span>);
+
+            <span class="keyword">return</span> $client;
+        });
+    }
+}</pre>
+
+      <h3>PHP Enum LeadStatus</h3>
+
+      <pre><span class="comment">// app/Enums/LeadStatus.php</span>
+<span class="keyword">enum</span> <span class="class-name">LeadStatus</span>: <span class="keyword">string</span>
+{
+    <span class="keyword">case</span> New          = <span class="string">'new'</span>;
+    <span class="keyword">case</span> Contacted    = <span class="string">'contacted'</span>;
+    <span class="keyword">case</span> NoResponse   = <span class="string">'no_response'</span>;
+    <span class="keyword">case</span> InDiscussion = <span class="string">'in_discussion'</span>;
+    <span class="keyword">case</span> OfferSent    = <span class="string">'offer_sent'</span>;
+    <span class="keyword">case</span> Won          = <span class="string">'won'</span>;
+    <span class="keyword">case</span> Lost         = <span class="string">'lost'</span>;
+
+    <span class="keyword">public function</span> <span class="method">isTerminal</span>(): bool
+    {
+        <span class="keyword">return</span> <span class="keyword">match</span>($this) {
+            self::Won, self::Lost => <span class="keyword">true</span>,
+            <span class="keyword">default</span>              => <span class="keyword">false</span>,
+        };
+    }
+}</pre>
+    </div>
+
+    <!-- SECTION 5: PHASE 3 — TICKETS & SLA -->
+    <div class="page page-break">
+      <div class="section-header">
+        <div class="section-num">5</div>
+        <div class="section-title-wrap">
+          <div class="section-label">Phase 3</div>
+          <div class="section-title">Tickety i SLA</div>
+        </div>
+      </div>
+
+      <h3>TicketController</h3>
+
+      <pre><span class="comment">// app/Http/Controllers/Admin/TicketController.php</span>
+<span class="keyword">class</span> <span class="class-name">TicketController</span> <span class="keyword">extends</span> Controller
+{
+    <span class="keyword">public function</span> <span class="method">store</span>(StoreTicketRequest $request): JsonResponse
+    {
+        $policy = SlaPolicy::forClient($request->client_id)
+            ->forPriority($request->priority)
+            ->first();
+
+        $ticket = Ticket::create([
+            ...$request->validated(),
+            <span class="string">'sla_policy_id'</span>        => $policy?->id,
+            <span class="string">'sla_response_due_at'</span>  => $policy?->responseDeadline(),
+            <span class="string">'sla_resolution_due_at'</span>=> $policy?->resolutionDeadline(),
+        ]);
+
+        event(<span class="keyword">new</span> <span class="class-name">TicketCreatedEvent</span>($ticket));
+        <span class="keyword">return</span> response()->json($ticket->load([<span class="string">'client'</span>, <span class="string">'project'</span>, <span class="string">'slaPolicy'</span>]), <span class="string">201</span>);
+    }
+
+    <span class="keyword">public function</span> <span class="method">addComment</span>(Ticket $ticket, StoreCommentRequest $request): JsonResponse
+    {
+        $this->authorize(<span class="string">'addComment'</span>, $ticket);
+
+        $comment = $ticket->comments()->create([
+            ...$request->validated(),
+            <span class="string">'author_id'</span>   => Auth::id(),
+            <span class="string">'author_type'</span> => get_class(Auth::user()),
+        ]);
+
+        <span class="comment">// Pierwsza odpowiedź admina — zapisz czas</span>
+        <span class="keyword">if</span> (!$ticket->first_responded_at && Auth::user() instanceof <span class="class-name">User</span>) {
+            $ticket->update([<span class="string">'first_responded_at'</span> => now()]);
+        }
+
+        event(<span class="keyword">new</span> <span class="class-name">TicketCommentedEvent</span>($ticket, $comment));
+        <span class="keyword">return</span> response()->json($comment, <span class="string">201</span>);
+    }
+}</pre>
+
+      <h3>CheckSlaBreachesJob — job co 5 minut</h3>
+
+      <pre><span class="comment">// app/Jobs/CheckSlaBreachesJob.php</span>
+<span class="keyword">class</span> <span class="class-name">CheckSlaBreachesJob</span> <span class="keyword">implements</span> ShouldQueue
+{
+    <span class="keyword">public function</span> <span class="method">handle</span>(): void
+    {
+        <span class="comment">// Naruszenia response time</span>
+        Ticket::whereNull(<span class="string">'first_responded_at'</span>)
+            ->where(<span class="string">'sla_response_due_at'</span>, <span class="string">'<'</span>, now())
+            ->whereDoesntHave(<span class="string">'slaIncidents'</span>, <span class="keyword">fn</span>($q) => $q->where(<span class="string">'breach_type'</span>, <span class="string">'response'</span>))
+            ->each(<span class="keyword">function</span> (Ticket $ticket) {
+                SlaIncident::create([
+                    <span class="string">'subject_type'</span> => <span class="string">'Ticket'</span>,
+                    <span class="string">'subject_id'</span>   => $ticket->id,
+                    <span class="string">'breach_type'</span>  => <span class="string">'response'</span>,
+                    <span class="string">'breached_at'</span>  => $ticket->sla_response_due_at,
+                    <span class="string">'detected_at'</span>  => now(),
+                ]);
+                Notification::send(
+                    User::role([<span class="string">'admin'</span>, <span class="string">'manager'</span>])->get(),
+                    <span class="keyword">new</span> <span class="class-name">SlaBreachAlert</span>($ticket, <span class="string">'response'</span>)
+                );
+            });
+    }
+}
+
+<span class="comment">// Rejestracja w routes/console.php lub Kernel.php</span>
+Schedule::job(<span class="keyword">new</span> <span class="class-name">CheckSlaBreachesJob</span>)->everyFiveMinutes();</pre>
+    </div>
+
+    <!-- SECTION 6: PHASE 4 — DOCUMENTS -->
+    <div class="page page-break">
+      <div class="section-header">
+        <div class="section-num">6</div>
+        <div class="section-title-wrap">
+          <div class="section-label">Phase 4</div>
+          <div class="section-title">Dokumenty i PDF</div>
+        </div>
+      </div>
+
+      <h3>DocumentController</h3>
+
+      <pre><span class="comment">// app/Http/Controllers/Admin/DocumentController.php</span>
+<span class="keyword">class</span> <span class="class-name">DocumentController</span> <span class="keyword">extends</span> Controller
+{
+    <span class="keyword">public function</span> <span class="method">update</span>(Document $document, UpdateDocumentRequest $request): JsonResponse
+    {
+        $this->authorize(<span class="string">'update'</span>, $document);
+
+        <span class="comment">// Zapisz wersję przed nadpisaniem</span>
+        DocumentVersion::create([
+            <span class="string">'document_id'</span>  => $document->id,
+            <span class="string">'version'</span>      => $document->version,
+            <span class="string">'content_json'</span> => $document->content_json,
+            <span class="string">'created_by'</span>   => Auth::id(),
+        ]);
+
+        $document->update([
+            <span class="string">'content_json'</span> => $request->content_json,
+            <span class="string">'content_html'</span> => $request->content_html,
+            <span class="string">'version'</span>      => $document->version + <span class="string">1</span>,
+        ]);
+
+        activity(<span class="string">'documents'</span>)->causedBy(Auth::user())->performedOn($document)->log(<span class="string">'updated'</span>);
+        <span class="keyword">return</span> response()->json($document->fresh());
+    }
+
+    <span class="keyword">public function</span> <span class="method">generatePdf</span>(Document $document): JsonResponse
+    {
+        $this->authorize(<span class="string">'view'</span>, $document);
+        <span class="class-name">GenerateDocumentPdfJob</span>::dispatch($document);
+        <span class="keyword">return</span> response()->json([<span class="string">'message'</span> => <span class="string">'PDF jest generowany asynchronicznie'</span>]);
+    }
+}</pre>
+
+      <h3>GenerateDocumentPdfJob</h3>
+
+      <pre><span class="comment">// app/Jobs/GenerateDocumentPdfJob.php</span>
+<span class="keyword">class</span> <span class="class-name">GenerateDocumentPdfJob</span> <span class="keyword">implements</span> ShouldQueue
+{
+    <span class="keyword">public function</span> <span class="method">__construct</span>(<span class="keyword">public</span> Document $document) {}
+
+    <span class="keyword">public function</span> <span class="method">handle</span>(): void
+    {
+        $html = view(<span class="string">'pdf.document'</span>, [<span class="string">'document'</span> => $this->document])->render();
+
+        $path = Browsershot::html($html)
+            ->format(<span class="string">'A4'</span>)
+            ->margins(<span class="string">15</span>, <span class="string">15</span>, <span class="string">15</span>, <span class="string">15</span>)
+            ->pdf();   <span class="comment">// zwraca binarnie</span>
+
+        $filename = <span class="string">"document-{$this->document->id}-v{$this->document->version}.pdf"</span>;
+        Storage::disk(<span class="string">'s3'</span>)->put(<span class="string">"documents/{$filename}"</span>, $path);
+
+        $this->document->update([<span class="string">'pdf_path'</span> => $filename]);
+
+        <span class="comment">// Powiadomienie dla autora</span>
+        Notification::send(
+            $this->document->createdBy,
+            <span class="keyword">new</span> <span class="class-name">PdfReadyNotification</span>($this->document)
+        );
+    }
+}</pre>
+
+      <div class="info-box orange">
+        <strong>Browsershot wymaga Node.js i Puppeteer</strong>
+        Na serwerze produkcyjnym: <code>npm install puppeteer</code> w katalogu dostępnym dla PHP.
+        Ustaw <code>Browsershot::html(...)->setNodeBinary('/usr/bin/node')->setNpmBinary('/usr/bin/npm')</code>
+        jeśli binarne nie są w PATH.
+      </div>
+    </div>
+
+    <!-- SECTION 7: PHASE 5 — NOTIFICATIONS -->
+    <div class="page page-break">
+      <div class="section-header">
+        <div class="section-num">7</div>
+        <div class="section-title-wrap">
+          <div class="section-label">Phase 5</div>
+          <div class="section-title">Powiadomienia i wiadomości wewnętrzne</div>
+        </div>
+      </div>
+
+      <p>
+        Wszystkie zdarzenia — systemowe (SLA, ticket) i ludzkie (wiadomości, @oznaczenia) — trafiają do
+        tabeli <code>notifications</code> jako wspólna warstwa dostarczenia. Jednocześnie wysyłany jest
+        broadcast przez Reverb (WebSocket) dla powiadomień real-time.
+      </p>
+
+      <h3>Klasa notyfikacji (przykład: TicketUpdated)</h3>
+
+      <pre><span class="comment">// app/Notifications/TicketUpdatedNotification.php</span>
+<span class="keyword">class</span> <span class="class-name">TicketUpdatedNotification</span> <span class="keyword">extends</span> Notification
+{
+    <span class="keyword">public function</span> <span class="method">__construct</span>(<span class="keyword">public</span> Ticket $ticket) {}
+
+    <span class="keyword">public function</span> <span class="method">via</span>(object $notifiable): array
+    {
+        $prefs = $notifiable->notificationPreferences
+            ->firstWhere(<span class="string">'notification_type'</span>, <span class="string">'ticket_update'</span>);
+
+        $channels = $prefs?->channels ?? [<span class="string">'database'</span>, <span class="string">'broadcast'</span>];
+
+        <span class="comment">// SMS nie w ciszy nocnej</span>
+        <span class="keyword">if</span> (in_array(<span class="string">'sms'</span>, $channels) && $prefs?->isQuietHours()) {
+            $channels = array_diff($channels, [<span class="string">'sms'</span>]);
+        }
+
+        <span class="keyword">return</span> $channels;
+    }
+
+    <span class="keyword">public function</span> <span class="method">toMail</span>(object $notifiable): MailMessage
+    {
+        <span class="keyword">return</span> (<span class="keyword">new</span> <span class="class-name">MailMessage</span>)
+            ->subject(<span class="string">"Aktualizacja zgłoszenia: {$this->ticket->title}"</span>)
+            ->line(<span class="string">"Zgłoszenie zostało zaktualizowane."</span>)
+            ->action(<span class="string">'Zobacz zgłoszenie'</span>, url(<span class="string">"/tickets/{$this->ticket->id}"</span>));
+    }
+
+    <span class="keyword">public function</span> <span class="method">toArray</span>(object $notifiable): array
+    {
+        <span class="keyword">return</span> [
+            <span class="string">'type'</span>      => <span class="string">'ticket_update'</span>,
+            <span class="string">'ticket_id'</span> => $this->ticket->id,
+            <span class="string">'title'</span>     => $this->ticket->title,
+        ];
+    }
+
+    <span class="keyword">public function</span> <span class="method">toBroadcast</span>(object $notifiable): BroadcastMessage
+    {
+        <span class="keyword">return</span> <span class="keyword">new</span> <span class="class-name">BroadcastMessage</span>($this->toArray($notifiable));
+    }
+}</pre>
+
+      <h3>ConversationController — wiadomości wewnętrzne</h3>
+
+      <pre><span class="comment">// app/Http/Controllers/Admin/ConversationController.php</span>
+<span class="keyword">class</span> <span class="class-name">ConversationController</span> <span class="keyword">extends</span> Controller
+{
+    <span class="keyword">public function</span> <span class="method">sendMessage</span>(Conversation $conversation, Request $request): JsonResponse
+    {
+        $this->authorize(<span class="string">'participate'</span>, $conversation);
+
+        $message = $conversation->messages()->create([
+            <span class="string">'sender_id'</span>   => Auth::id(),
+            <span class="string">'sender_type'</span> => get_class(Auth::user()),
+            <span class="string">'body'</span>        => $request->body,
+        ]);
+
+        <span class="comment">// Wyślij notyfikację do wszystkich uczestników (poza nadawcą)</span>
+        $participants = $conversation->participants()
+            ->where(<span class="string">'participable_id'</span>, <span class="string">'!='</span>, Auth::id())
+            ->get();
+
+        $participants->each(<span class="keyword">fn</span>($p) => $p->participable->notify(
+            <span class="keyword">new</span> <span class="class-name">NewMessageNotification</span>($message)
+        ));
+
+        <span class="comment">// Wykryj @mentions i utwórz wpisy</span>
+        app(<span class="class-name">MentionService</span>::class)->detectAndNotify($message);
+
+        <span class="keyword">return</span> response()->json($message->load(<span class="string">'sender'</span>), <span class="string">201</span>);
+    }
+}</pre>
+    </div>
+
+    <!-- SECTION 8: PHASE 6 — SEO -->
+    <div class="page page-break">
+      <div class="section-header">
+        <div class="section-num">8</div>
+        <div class="section-title-wrap">
+          <div class="section-label">Phase 6</div>
+          <div class="section-title">SEO z AI — pipeline asynchroniczny</div>
+        </div>
+      </div>
+
+      <p>
+        Najcięższy moduł. Dane z wielu źródeł (GSC, GA4, crawler, AI, PageSpeed) spływają
+        asynchronicznie przez kolejki Horizon. Dopiero po zebraniu wszystkich wyników generowany
+        jest raport audytu i powiadomienie.
+      </p>
+
+      <h3>Pipeline — kolejność Jobów</h3>
+
+      <pre><span class="comment">// app/Listeners/StartAuditPipelineListener.php</span>
+<span class="keyword">class</span> <span class="class-name">StartAuditPipelineListener</span>
+{
+    <span class="keyword">public function</span> <span class="method">handle</span>(<span class="class-name">AuditRequestedEvent</span> $event): void
+    {
+        $audit = $event->audit;
+
+        <span class="comment">// Krok 1: crawler i API zaczynają równolegle</span>
+        Bus::chain([
+            <span class="keyword">new</span> <span class="class-name">CrawlWebsiteJob</span>($audit),
+        ])->catch(<span class="keyword">function</span> () <span class="keyword">use</span> ($audit) {
+            $audit->update([<span class="string">'status'</span> => <span class="string">'failed'</span>]);
+        })->dispatch();
+
+        <span class="comment">// Google APIs równolegle z crawlem</span>
+        Bus::batch([
+            <span class="keyword">new</span> <span class="class-name">FetchGSCDataJob</span>($audit),
+            <span class="keyword">new</span> <span class="class-name">FetchGA4DataJob</span>($audit),
+            <span class="keyword">new</span> <span class="class-name">FetchPageSpeedJob</span>($audit),
+        ])->then(<span class="keyword">function</span> (<span class="class-name">Batch</span> $batch) <span class="keyword">use</span> ($audit) {
+            Bus::chain([
+                <span class="keyword">new</span> <span class="class-name">AnalyzeKeywordsJob</span>($audit),
+                <span class="keyword">new</span> <span class="class-name">AnalyzeSemanticsJob</span>($audit),   <span class="comment">// AI</span>
+                <span class="keyword">new</span> <span class="class-name">GenerateAuditReportJob</span>($audit),
+                <span class="keyword">new</span> <span class="class-name">NotifyAuditCompleteJob</span>($audit),
+            ])->dispatch();
+        })->dispatch();
+    }
+}</pre>
+
+      <h3>Konfiguracja kolejek w Horizon</h3>
+
+      <pre><span class="comment">// config/horizon.php</span>
+<span class="string">'environments'</span> => [
+    <span class="string">'production'</span> => [
+        <span class="string">'supervisor-default'</span> => [
+            <span class="string">'queue'</span>      => [<span class="string">'default'</span>, <span class="string">'notifications'</span>],
+            <span class="string">'processes'</span>  => <span class="string">5</span>,
+        ],
+        <span class="string">'supervisor-crawlers'</span> => [
+            <span class="string">'queue'</span>      => [<span class="string">'crawlers'</span>],
+            <span class="string">'processes'</span>  => <span class="string">3</span>,
+            <span class="string">'timeout'</span>    => <span class="string">300</span>,
+        ],
+        <span class="string">'supervisor-ai'</span> => [
+            <span class="string">'queue'</span>      => [<span class="string">'ai-processing'</span>, <span class="string">'google-apis'</span>],
+            <span class="string">'processes'</span>  => <span class="string">2</span>,
+            <span class="string">'timeout'</span>    => <span class="string">600</span>,
+        ],
+    ],
+],</pre>
+
+      <div class="info-box purple">
+        <strong>TimescaleDB dla seo_keyword_ranks</strong>
+        Po migracji tabeli: <code>SELECT create_hypertable('seo_keyword_ranks', 'time');</code>
+        Partycjonuje dane time-series automatycznie. Zapytania o rankingi per słowo kluczowe per okres
+        są 10-100x szybsze niż na zwykłej tabeli PostgreSQL przy dużych danych historycznych.
+      </div>
+    </div>
+
+    <!-- SECTION 9: TESTING STRATEGY -->
+    <div class="page page-break">
+      <div class="section-header">
+        <div class="section-num">9</div>
+        <div class="section-title-wrap">
+          <div class="section-label">Quality</div>
+          <div class="section-title">Strategia testowania</div>
+        </div>
+      </div>
+
+      <h3>Czy warto pisać testy?</h3>
+
+      <p>
+        Tak — szczególnie w tym projekcie, gdzie logika biznesowa jest złożona (konwersja leadów,
+        SLA incydenty, multi-tenancy). Bez testów każda zmiana w BelongsToTenant albo CheckSlaBreachesJob
+        może zepsuć produkcję w sposób niewidoczny. Testy nie muszą pokrywać 100% kodu — pokryj 100%
+        krytycznych ścieżek.
+      </p>
+
+      <h3>Trzy poziomy testów</h3>
+
+      <div class="test-matrix">
+        <div class="test-card unit">
+          <div class="test-card-title">Unit Tests</div>
+          <ul>
+            <li>LeadStatus::isTerminal()</li>
+            <li>SlaPolicy::responseDeadline()</li>
+            <li>NotificationPreferences::isQuietHours()</li>
+            <li>TwoFactorService::sendCode()</li>
+            <li>LeadConversionService::convert()</li>
+          </ul>
+        </div>
+        <div class="test-card feature">
+          <div class="test-card-title">Feature Tests (HTTP)</div>
+          <ul>
+            <li>POST /auth/login z 2FA</li>
+            <li>GET /auth/google/callback</li>
+            <li>PATCH /leads/{id}/status</li>
+            <li>POST /tickets (z SLA)</li>
+            <li>POST /auth/2fa/toggle</li>
+            <li>Tenant isolation (Cross-tenant)</li>
+          </ul>
+        </div>
+        <div class="test-card e2e">
+          <div class="test-card-title">Integration Tests</div>
+          <ul>
+            <li>Pełny flow konwersji leadu</li>
+            <li>CheckSlaBreachesJob end-to-end</li>
+            <li>Notification channels dispatch</li>
+            <li>PDF generation (Browsershot)</li>
+            <li>SEO pipeline (Batch jobs)</li>
+          </ul>
+        </div>
+      </div>
+
+      <h3>Przykład testu feature — logowanie z 2FA</h3>
+
+      <pre><span class="comment">// tests/Feature/Auth/TwoFactorLoginTest.php</span>
+<span class="keyword">it</span>(<span class="string">'sends 2FA code and blocks session when 2FA is enabled'</span>, <span class="keyword">function</span> () {
+    $user = User::factory()->create([
+        <span class="string">'two_factor_enabled'</span> => <span class="keyword">true</span>,
+        <span class="string">'password'</span>           => Hash::make(<span class="string">'secret'</span>),
+    ]);
+
+    Notification::fake();
+
+    $response = $this->postJson(<span class="string">'/auth/login'</span>, [
+        <span class="string">'email'</span>    => $user->email,
+        <span class="string">'password'</span> => <span class="string">'secret'</span>,
+    ]);
+
+    $response->assertOk()
+             ->assertJson([<span class="string">'requires_2fa'</span> => <span class="keyword">true</span>]);
+
+    $this->assertGuest(); <span class="comment">// sesja NIE powinna być wystawiona</span>
+    Notification::assertSentTo($user, <span class="class-name">TwoFactorCodeNotification</span>::class);
+});
+
+<span class="keyword">it</span>(<span class="string">'logs in after valid 2FA code'</span>, <span class="keyword">function</span> () {
+    $user = User::factory()->create([
+        <span class="string">'two_factor_enabled'</span>    => <span class="keyword">true</span>,
+        <span class="string">'two_factor_code'</span>       => Hash::make(<span class="string">'123456'</span>),
+        <span class="string">'two_factor_expires_at'</span> => now()->addMinutes(<span class="string">5</span>),
+    ]);
+
+    $this->postJson(<span class="string">'/auth/2fa/verify'</span>, [
+        <span class="string">'email'</span> => $user->email,
+        <span class="string">'code'</span>  => <span class="string">'123456'</span>,
+    ])->assertOk()->assertJsonPath(<span class="string">'authenticated'</span>, <span class="keyword">true</span>);
+
+    $this->assertAuthenticatedAs($user);
+});</pre>
+
+      <h3>Przykład testu — izolacja tenanta</h3>
+
+      <pre><span class="keyword">it</span>(<span class="string">'cannot access another tenant leads'</span>, <span class="keyword">function</span> () {
+    [$tenant1, $tenant2] = Client::factory()->count(<span class="string">2</span>)->create();
+    $user  = User::factory()->create()->assignRole(<span class="string">'admin'</span>);
+    $lead  = Lead::factory()->create([<span class="string">'client_id'</span> => $tenant2->id]);
+
+    <span class="comment">// Zaloguj jako user z tenant1</span>
+    app()->instance(<span class="string">'tenant'</span>, $tenant1);
+    $this->actingAs($user);
+
+    $this->getJson(<span class="string">"/leads/{$lead->id}"</span>)->assertNotFound();
+});</pre>
+
+      <h3>Jak często przeprowadzać testy?</h3>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Kiedy</th>
+            <th>Jakie testy</th>
+            <th>Sposób</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Przed każdym commitem</strong></td>
+            <td>Unit tests (szybkie, &lt;5s)</td>
+            <td>git pre-commit hook: <code>php artisan test --filter=Unit</code></td>
+          </tr>
+          <tr>
+            <td><strong>Przy push / PR</strong></td>
+            <td>Unit + Feature tests</td>
+            <td>CI (GitHub Actions): pełna suita, baza testowa</td>
+          </tr>
+          <tr>
+            <td><strong>Przed deployem na prod</strong></td>
+            <td>Wszystkie testy (+ integration)</td>
+            <td>CI pipeline — blokuje deploy jeśli testy nie przechodzą</td>
+          </tr>
+          <tr>
+            <td><strong>Raz w tygodniu (cron)</strong></td>
+            <td>Integration tests (wolne, zasoby)</td>
+            <td>Nocny job CI — pełny pipeline SEO, Browsershot PDF</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="info-box green">
+        <strong>Rekomendowane narzędzia</strong>
+        <strong>Pest PHP</strong> (składnia testów jak w przykładach powyżej) — nowocześniejszy niż PHPUnit, czytelniejszy.
+        <strong>GitHub Actions</strong> — darmowe CI dla publicznych repozytoriów, konfiguracja w <code>.github/workflows/tests.yml</code>.
+        <strong>Paratest</strong> — uruchamianie testów równolegle na wielu CPU, skraca czas z minut do sekund.
+      </div>
+
+      <h3>GitHub Actions — przykład workflow</h3>
+
+      <pre><span class="comment"># .github/workflows/tests.yml</span>
+name: Tests
+on: [push, pull_request]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env: { POSTGRES_DB: clientops_test, POSTGRES_PASSWORD: secret }
+      redis:
+        image: redis:7
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with: { php-version: '8.3' }
+      - run: composer install --no-interaction
+      - run: cp .env.testing .env
+      - run: php artisan key:generate
+      - run: php artisan migrate --force
+      - run: php artisan test --parallel</pre>
+
+      <div class="cross-doc-nav">
+        <div class="cross-doc-nav-title">Dokumentacja projektu</div>
+        <div class="cross-doc-links">
+          <a class="cross-doc-link" href="clientops-crm-spec.html">Specyfikacja Techniczna v1.5</a>
+          <a class="cross-doc-link" href="clientops-architecture.html">Architektura i Model Danych v2.0</a>
+          <a class="cross-doc-link" href="clientops-libraries.html">Mapowanie Bibliotek v1.0</a>
+          <a class="cross-doc-link" href="clientops-structure.html">Struktura Frontend v1.0</a>
+          <a class="cross-doc-link active" href="clientops-implementation.html">Przewodnik Implementacji v1.0</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer">
+      <span>ClientOps CRM — Przewodnik Implementacji v1.0</span>
+      <span>Laravel 12 + React 19 · Marzec 2026</span>
+    </div>
+
+  </body>
+</html>
