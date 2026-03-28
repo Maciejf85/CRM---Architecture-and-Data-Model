@@ -1,0 +1,1198 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ClientOps CRM — Architektura i Model Danych</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+  :root {
+    --primary: #1e40af;
+    --primary-light: #eff6ff;
+    --accent: #0ea5e9;
+    --dark: #0f172a;
+    --gray-800: #1e293b;
+    --gray-600: #475569;
+    --gray-400: #94a3b8;
+    --gray-200: #e2e8f0;
+    --gray-100: #f1f5f9;
+    --gray-50: #f8fafc;
+    --green: #059669;
+    --green-light: #ecfdf5;
+    --orange: #d97706;
+    --orange-light: #fffbeb;
+    --red: #dc2626;
+    --red-light: #fef2f2;
+    --purple: #7c3aed;
+    --purple-light: #f5f3ff;
+    --teal: #0d9488;
+    --teal-light: #f0fdfa;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', -apple-system, sans-serif;
+    color: var(--dark);
+    background: white;
+    font-size: 13px;
+    line-height: 1.6;
+  }
+
+  /* COVER */
+  .cover {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #0f172a 0%, #1a2f4e 50%, #0f172a 100%);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 60px 40px;
+    page-break-after: always;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .cover::before {
+    content: '';
+    position: absolute;
+    width: 500px; height: 500px;
+    background: radial-gradient(circle, rgba(13,148,136,0.12) 0%, transparent 70%);
+    top: -80px; right: -80px;
+    border-radius: 50%;
+  }
+
+  .cover::after {
+    content: '';
+    position: absolute;
+    width: 400px; height: 400px;
+    background: radial-gradient(circle, rgba(30,64,175,0.15) 0%, transparent 70%);
+    bottom: -60px; left: -60px;
+    border-radius: 50%;
+  }
+
+  .cover-badge {
+    background: rgba(13,148,136,0.2);
+    border: 1px solid rgba(13,148,136,0.4);
+    color: #5eead4;
+    padding: 6px 18px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-bottom: 24px;
+    position: relative; z-index: 1;
+  }
+
+  .draft-badge {
+    position: relative; z-index: 1;
+    margin-bottom: 20px;
+  }
+
+  .draft-badge span {
+    background: rgba(220,38,38,0.25);
+    border: 2px solid rgba(220,38,38,0.6);
+    color: #fca5a5;
+    padding: 8px 28px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+  }
+
+  .cover-logo {
+    font-size: 48px;
+    font-weight: 700;
+    color: white;
+    letter-spacing: -2px;
+    margin-bottom: 6px;
+    position: relative; z-index: 1;
+  }
+
+  .cover-logo span { color: #2dd4bf; }
+
+  .cover-subtitle {
+    font-size: 16px;
+    color: #64748b;
+    font-weight: 300;
+    margin-bottom: 40px;
+    position: relative; z-index: 1;
+  }
+
+  .cover-divider {
+    width: 60px;
+    height: 2px;
+    background: linear-gradient(90deg, #0d9488, #1e40af);
+    margin: 0 auto 40px;
+    position: relative; z-index: 1;
+  }
+
+  .cover-title {
+    font-size: 28px;
+    font-weight: 700;
+    color: white;
+    margin-bottom: 14px;
+    line-height: 1.2;
+    position: relative; z-index: 1;
+  }
+
+  .cover-desc {
+    font-size: 14px;
+    color: #475569;
+    max-width: 500px;
+    margin-bottom: 56px;
+    position: relative; z-index: 1;
+    line-height: 1.7;
+  }
+
+  .cover-meta {
+    display: flex;
+    gap: 48px;
+    justify-content: center;
+    position: relative; z-index: 1;
+  }
+
+  .cover-meta-item { text-align: center; }
+  .cover-meta-label { font-size: 10px; text-transform: uppercase; letter-spacing: 1px; color: #334155; margin-bottom: 4px; }
+  .cover-meta-value { font-size: 13px; color: #cbd5e1; font-weight: 500; }
+
+  /* TOC */
+  .toc-page {
+    padding: 60px;
+    page-break-after: always;
+    min-height: 100vh;
+  }
+
+  .toc-title { font-size: 26px; font-weight: 700; color: var(--dark); margin-bottom: 6px; }
+  .toc-subtitle { color: var(--gray-400); font-size: 12px; margin-bottom: 36px; }
+
+  .toc-list { list-style: none; }
+
+  .toc-item {
+    display: flex;
+    align-items: center;
+    padding: 10px 14px;
+    border-radius: 8px;
+    margin-bottom: 4px;
+  }
+
+  .toc-num {
+    width: 28px; height: 28px;
+    background: var(--primary);
+    color: white;
+    border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 700;
+    margin-right: 14px; flex-shrink: 0;
+  }
+
+  .toc-text { font-size: 13px; font-weight: 500; color: var(--gray-800); flex: 1; }
+  .toc-dots { flex: 1; border-bottom: 1px dashed var(--gray-200); margin: 0 12px; height: 1px; align-self: flex-end; margin-bottom: 5px; }
+
+  /* PAGES */
+  .page { padding: 52px 60px; }
+  .page-break { page-break-after: always; }
+
+  .section-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    margin-bottom: 28px;
+    padding-bottom: 18px;
+    border-bottom: 2px solid var(--gray-200);
+  }
+
+  .section-num {
+    width: 44px; height: 44px;
+    background: var(--primary);
+    color: white;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 17px; font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  .section-label { font-size: 10px; text-transform: uppercase; letter-spacing: 1.5px; color: var(--primary); font-weight: 600; margin-bottom: 2px; }
+  .section-title { font-size: 22px; font-weight: 700; color: var(--dark); line-height: 1.2; }
+
+  h3 {
+    font-size: 14px; font-weight: 600; color: var(--dark);
+    margin: 24px 0 10px;
+    display: flex; align-items: center; gap: 8px;
+  }
+
+  h3::before {
+    content: '';
+    display: inline-block;
+    width: 3px; height: 14px;
+    background: var(--primary);
+    border-radius: 2px;
+  }
+
+  p { color: var(--gray-600); margin-bottom: 10px; line-height: 1.7; }
+
+  pre {
+    background: var(--gray-800);
+    border-radius: 10px;
+    padding: 16px 18px;
+    margin: 10px 0 18px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    line-height: 1.7;
+    color: #e2e8f0;
+    overflow: hidden;
+  }
+
+  code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    background: var(--gray-100);
+    padding: 2px 6px;
+    border-radius: 4px;
+    color: var(--primary);
+  }
+
+  pre code { background: none; padding: 0; color: inherit; }
+
+  .c  { color: #475569; }
+  .k  { color: #93c5fd; }
+  .s  { color: #6ee7b7; }
+  .t  { color: #fca5a5; }
+  .y  { color: #fbbf24; }
+  .p  { color: #c084fc; }
+
+  table { width: 100%; border-collapse: collapse; margin: 10px 0 18px; font-size: 12px; }
+  th { background: var(--primary); color: white; padding: 9px 13px; text-align: left; font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; }
+  th:first-child { border-radius: 8px 0 0 0; }
+  th:last-child { border-radius: 0 8px 0 0; }
+  td { padding: 9px 13px; border-bottom: 1px solid var(--gray-200); color: var(--gray-600); vertical-align: top; }
+  tr:nth-child(even) td { background: var(--gray-50); }
+  tr:last-child td { border-bottom: none; }
+
+  .badge {
+    display: inline-flex; align-items: center;
+    padding: 2px 9px; border-radius: 20px;
+    font-size: 10px; font-weight: 600; margin: 2px;
+  }
+  .badge-blue   { background: var(--primary-light); color: var(--primary); }
+  .badge-green  { background: var(--green-light);   color: var(--green); }
+  .badge-orange { background: var(--orange-light);  color: var(--orange); }
+  .badge-red    { background: var(--red-light);     color: var(--red); }
+  .badge-purple { background: var(--purple-light);  color: var(--purple); }
+  .badge-teal   { background: var(--teal-light);    color: var(--teal); }
+  .badge-gray   { background: var(--gray-100);      color: var(--gray-600); }
+
+  .info-box {
+    border-left: 4px solid;
+    padding: 12px 16px;
+    border-radius: 0 8px 8px 0;
+    margin: 14px 0;
+    font-size: 12px;
+  }
+  .info-box.blue   { border-color: var(--accent);  background: #f0f9ff; color: #0c4a6e; }
+  .info-box.green  { border-color: var(--green);   background: var(--green-light); color: #064e3b; }
+  .info-box.orange { border-color: var(--orange);  background: var(--orange-light); color: #78350f; }
+  .info-box.teal   { border-color: var(--teal);    background: var(--teal-light); color: #134e4a; }
+  .info-box strong { display: block; font-weight: 600; margin-bottom: 3px; }
+
+  .card-grid   { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin: 12px 0; }
+  .card-grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 12px 0; }
+
+  .card {
+    background: var(--gray-50);
+    border: 1px solid var(--gray-200);
+    border-radius: 10px;
+    padding: 16px;
+  }
+
+  .card-title { font-size: 12px; font-weight: 600; color: var(--dark); margin-bottom: 6px; }
+  .card-body  { font-size: 11.5px; color: var(--gray-600); line-height: 1.6; }
+
+  /* LAYER DIAGRAM */
+  .layers { margin: 16px 0; }
+
+  .layer {
+    border-radius: 10px;
+    padding: 14px 18px;
+    margin-bottom: 10px;
+    border: 1px solid;
+  }
+
+  .layer-1 { background: #eff6ff; border-color: #bfdbfe; }
+  .layer-2 { background: #fff7ed; border-color: #fed7aa; }
+  .layer-3 { background: #f0fdf4; border-color: #bbf7d0; }
+
+  .layer-title {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 10px;
+  }
+
+  .layer-1 .layer-title { color: var(--primary); }
+  .layer-2 .layer-title { color: var(--orange); }
+  .layer-3 .layer-title { color: var(--green); }
+
+  .layer-tables { display: flex; flex-wrap: wrap; gap: 8px; }
+
+  .layer-table {
+    background: white;
+    border: 1px solid;
+    border-radius: 6px;
+    padding: 5px 12px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+  }
+
+  .layer-1 .layer-table { border-color: #bfdbfe; color: var(--primary); }
+  .layer-2 .layer-table { border-color: #fed7aa; color: var(--orange); }
+  .layer-3 .layer-table { border-color: #bbf7d0; color: var(--green); }
+
+  /* FLOW */
+  .flow {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin: 12px 0;
+    padding: 14px 16px;
+    background: var(--gray-50);
+    border-radius: 10px;
+    border: 1px solid var(--gray-200);
+  }
+
+  .flow-step {
+    background: white;
+    border: 1px solid var(--gray-200);
+    border-radius: 8px;
+    padding: 7px 13px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--dark);
+    white-space: nowrap;
+  }
+
+  .flow-step.highlight {
+    background: var(--primary-light);
+    border-color: #bfdbfe;
+    color: var(--primary);
+    font-weight: 600;
+  }
+
+  .flow-step.new {
+    background: var(--green-light);
+    border-color: #bbf7d0;
+    color: var(--green);
+    font-weight: 600;
+  }
+
+  .flow-arrow { color: var(--gray-400); font-size: 14px; flex-shrink: 0; }
+
+  /* KANBAN */
+  .kanban {
+    display: flex;
+    gap: 8px;
+    margin: 14px 0;
+    overflow: hidden;
+  }
+
+  .kanban-col {
+    flex: 1;
+    border-radius: 8px;
+    padding: 10px 8px;
+    text-align: center;
+    font-size: 11px;
+    font-weight: 600;
+    border: 1px solid;
+  }
+
+  .kb-new      { background: #f8fafc; border-color: var(--gray-200); color: var(--gray-600); }
+  .kb-contact  { background: #eff6ff; border-color: #bfdbfe; color: var(--primary); }
+  .kb-noresp   { background: #fff7ed; border-color: #fed7aa; color: var(--orange); }
+  .kb-talk     { background: #f0f9ff; border-color: #bae6fd; color: #0369a1; }
+  .kb-offer    { background: var(--purple-light); border-color: #ddd6fe; color: var(--purple); }
+  .kb-won      { background: var(--green-light); border-color: #bbf7d0; color: var(--green); }
+  .kb-lost     { background: var(--red-light); border-color: #fecaca; color: var(--red); }
+
+  .kanban-col-label { margin-bottom: 8px; }
+  .kanban-card-mock {
+    background: white;
+    border-radius: 6px;
+    padding: 6px 8px;
+    margin: 4px 0;
+    font-size: 10px;
+    font-weight: 400;
+    color: var(--gray-600);
+    border: 1px solid var(--gray-200);
+    text-align: left;
+  }
+
+  /* RELATION DIAGRAM */
+  .rel-diagram {
+    background: var(--gray-50);
+    border: 1px solid var(--gray-200);
+    border-radius: 10px;
+    padding: 24px;
+    margin: 14px 0;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11.5px;
+    line-height: 2;
+    color: var(--gray-600);
+  }
+
+  .rel-entity {
+    display: inline-block;
+    background: white;
+    border: 1.5px solid var(--primary);
+    color: var(--primary);
+    border-radius: 6px;
+    padding: 2px 10px;
+    font-weight: 600;
+    font-size: 11px;
+  }
+
+  .rel-entity.orange { border-color: var(--orange); color: var(--orange); }
+  .rel-entity.green  { border-color: var(--green);  color: var(--green); }
+  .rel-entity.purple { border-color: var(--purple); color: var(--purple); }
+  .rel-entity.teal   { border-color: var(--teal);   color: var(--teal); }
+  .rel-entity.gray   { border-color: var(--gray-400); color: var(--gray-600); }
+
+  /* UI MENU */
+  .ui-panels { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 14px 0; }
+
+  .ui-panel {
+    border: 1px solid var(--gray-200);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+
+  .ui-panel-header {
+    padding: 12px 16px;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .ui-panel-header.admin  { background: var(--primary); color: white; }
+  .ui-panel-header.client { background: var(--teal); color: white; }
+
+  .ui-menu-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 16px;
+    border-bottom: 1px solid var(--gray-100);
+    font-size: 12px;
+    color: var(--gray-600);
+  }
+
+  .ui-menu-item:last-child { border-bottom: none; }
+
+  .ui-menu-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .admin  .ui-menu-dot { background: var(--primary); }
+  .client .ui-menu-dot { background: var(--teal); }
+
+  /* SLA vs TICKETS */
+  .comparison {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin: 14px 0;
+  }
+
+  .comparison-box {
+    border-radius: 10px;
+    padding: 16px;
+    border: 1px solid;
+  }
+
+  .comparison-box.human  { background: #eff6ff; border-color: #bfdbfe; }
+  .comparison-box.system { background: var(--teal-light); border-color: #99f6e4; }
+
+  .comparison-box-title {
+    font-size: 12px;
+    font-weight: 700;
+    margin-bottom: 10px;
+  }
+
+  .comparison-box.human  .comparison-box-title { color: var(--primary); }
+  .comparison-box.system .comparison-box-title { color: var(--teal); }
+
+  .comparison-item {
+    font-size: 11.5px;
+    color: var(--gray-600);
+    padding: 3px 0;
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+    display: flex;
+    gap: 8px;
+  }
+
+  .comparison-item:last-child { border-bottom: none; }
+  .comparison-item-label { font-weight: 600; color: var(--dark); min-width: 90px; }
+
+  @media print {
+    body { font-size: 12px; }
+    .page { padding: 38px 48px; }
+    pre { font-size: 10px; }
+  }
+
+  @page { margin: 0; size: A4; }
+</style>
+</head>
+<body>
+
+<!-- COVER -->
+<div class="cover">
+  <div class="cover-badge">Architektura i Model Danych v1.0</div>
+  <div class="draft-badge"><span>DRAFT</span></div>
+  <div class="cover-logo">Client<span>Ops</span></div>
+  <div class="cover-subtitle">Platforma CRM nowej generacji</div>
+  <div class="cover-divider"></div>
+  <div class="cover-title">Diagram logiczny, modele danych i UI</div>
+  <div class="cover-desc">
+    Szczegółowa architektura systemu: warstwy danych, relacje między bytami,
+    flow sprzedaży, Kanban leadów, podział tickets/sla_incidents
+    oraz struktura UI panelu admina i klienta.
+  </div>
+  <div class="cover-meta">
+    <div class="cover-meta-item">
+      <div class="cover-meta-label">Data</div>
+      <div class="cover-meta-value">Marzec 2026</div>
+    </div>
+    <div class="cover-meta-item">
+      <div class="cover-meta-label">Wersja</div>
+      <div class="cover-meta-value">1.0.0</div>
+    </div>
+    <div class="cover-meta-item">
+      <div class="cover-meta-label">Dokument</div>
+      <div class="cover-meta-value">Architektura</div>
+    </div>
+    <div class="cover-meta-item">
+      <div class="cover-meta-label">Powiązany z</div>
+      <div class="cover-meta-value">Spec v1.0.0</div>
+    </div>
+  </div>
+</div>
+
+<!-- TOC -->
+<div class="toc-page">
+  <div class="toc-title">Spis treści</div>
+  <div class="toc-subtitle">Dokument zawiera 7 sekcji</div>
+  <ul class="toc-list">
+    <li><div class="toc-item"><div class="toc-num">1</div><span class="toc-text">Podział systemu na warstwy</span><div class="toc-dots"></div></div></li>
+    <li><div class="toc-item"><div class="toc-num">2</div><span class="toc-text">Diagram relacji między bytami</span><div class="toc-dots"></div></div></li>
+    <li><div class="toc-item"><div class="toc-num">3</div><span class="toc-text">Flow sprzedaży</span><div class="toc-dots"></div></div></li>
+    <li><div class="toc-item"><div class="toc-num">4</div><span class="toc-text">Kanban leadów — kolumny i statusy</span><div class="toc-dots"></div></div></li>
+    <li><div class="toc-item"><div class="toc-num">5</div><span class="toc-text">Tickets vs SLA Incidents</span><div class="toc-dots"></div></div></li>
+    <li><div class="toc-item"><div class="toc-num">6</div><span class="toc-text">Audyty i analizy SEO — relacja</span><div class="toc-dots"></div></div></li>
+    <li><div class="toc-item"><div class="toc-num">7</div><span class="toc-text">UI — struktura menu</span><div class="toc-dots"></div></div></li>
+  </ul>
+</div>
+
+<!-- SECTION 1: LAYERS -->
+<div class="page page-break">
+  <div class="section-header">
+    <div class="section-num">1</div>
+    <div class="section-title-wrap">
+      <div class="section-label">Architecture</div>
+      <div class="section-title">Podział systemu na warstwy</div>
+    </div>
+  </div>
+
+  <p>System podzielony na trzy warstwy logiczne. Każda warstwa obsługuje inny obszar biznesowy i zależy od warstwy poprzedniej — nie można mieć projektu bez klienta, nie można mieć klienta bez kontaktu.</p>
+
+  <div class="layers">
+    <div class="layer layer-1">
+      <div class="layer-title">Warstwa 1 — Tożsamość</div>
+      <div class="layer-tables">
+        <div class="layer-table">users</div>
+        <div class="layer-table">clients</div>
+        <div class="layer-table">contacts</div>
+      </div>
+    </div>
+    <div class="layer layer-2">
+      <div class="layer-title">Warstwa 2 — Sprzedaż</div>
+      <div class="layer-tables">
+        <div class="layer-table">leads</div>
+        <div class="layer-table">lead_activities</div>
+        <div class="layer-table">offers</div>
+      </div>
+    </div>
+    <div class="layer layer-3">
+      <div class="layer-title">Warstwa 3 — Realizacja</div>
+      <div class="layer-tables">
+        <div class="layer-table">projects</div>
+        <div class="layer-table">documents</div>
+        <div class="layer-table">seo_analyses</div>
+        <div class="layer-table">audits</div>
+        <div class="layer-table">notifications</div>
+        <div class="layer-table">tickets</div>
+        <div class="layer-table">sla_policies</div>
+        <div class="layer-table">sla_incidents</div>
+      </div>
+    </div>
+  </div>
+
+  <h3>Minimalny zestaw tabel na start</h3>
+  <p>Kolejność wdrożenia odpowiada warstwom — nie można tworzyć tabeli wyższej warstwy bez fundament niższej.</p>
+
+  <table>
+    <thead><tr><th>Tabela</th><th>Warstwa</th><th>Opis</th></tr></thead>
+    <tbody>
+      <tr><td><code>users</code></td><td><span class="badge badge-blue">1</span></td><td>Użytkownicy systemu — admini, managerowie, pracownicy, klienci</td></tr>
+      <tr><td><code>clients</code></td><td><span class="badge badge-blue">1</span></td><td>Firmy / organizacje — główny byt systemu CRM</td></tr>
+      <tr><td><code>contacts</code></td><td><span class="badge badge-blue">1</span></td><td>Osoby kontaktowe w firmach klientów (wiele per klient)</td></tr>
+      <tr><td><code>leads</code></td><td><span class="badge badge-orange">2</span></td><td>Szanse sprzedażowe powiązane z firmą lub kontaktem</td></tr>
+      <tr><td><code>lead_activities</code></td><td><span class="badge badge-orange">2</span></td><td>Log aktywności na leadzie: telefon, email, spotkanie, notatka</td></tr>
+      <tr><td><code>offers</code></td><td><span class="badge badge-orange">2</span></td><td>Oferty handlowe — krok między leadem a klientem</td></tr>
+      <tr><td><code>projects</code></td><td><span class="badge badge-green">3</span></td><td>Realizacje dla klientów — agregują wszystkie zasoby operacyjne</td></tr>
+      <tr><td><code>documents</code></td><td><span class="badge badge-green">3</span></td><td>Dokumenty powiązane z projektami / klientami</td></tr>
+      <tr><td><code>seo_analyses</code></td><td><span class="badge badge-green">3</span></td><td>Analizy SEO — samodzielne lub jako składowa audytu</td></tr>
+      <tr><td><code>audits</code></td><td><span class="badge badge-green">3</span></td><td>Audyty (SEO, techniczne, UX) — byt nadrzędny grupujący analizy</td></tr>
+      <tr><td><code>notifications</code></td><td><span class="badge badge-green">3</span></td><td>Powiadomienia systemowe dla użytkowników</td></tr>
+      <tr><td><code>tickets</code></td><td><span class="badge badge-green">3</span></td><td>Zgłoszenia tworzone przez klientów (sfera ludzka)</td></tr>
+      <tr><td><code>sla_policies</code></td><td><span class="badge badge-green">3</span></td><td>Polityki SLA — czasy odpowiedzi i rozwiązania per priorytet</td></tr>
+      <tr><td><code>sla_incidents</code></td><td><span class="badge badge-green">3</span></td><td>Naruszenia SLA wykryte automatycznie przez system</td></tr>
+    </tbody>
+  </table>
+
+  <div class="info-box teal">
+    <strong>Kluczowa zasada architektury</strong>
+    Nie łącz wszystkiego w jeden byt. Lead, klient i projekt to trzy oddzielne stany relacji biznesowej.
+    Lead staje się klientem przez konwersję — projekt jest tworzony dla klienta, nigdy dla leadu.
+  </div>
+</div>
+
+<!-- SECTION 2: RELATIONS -->
+<div class="page page-break">
+  <div class="section-header">
+    <div class="section-num">2</div>
+    <div class="section-title-wrap">
+      <div class="section-label">Data Model</div>
+      <div class="section-title">Diagram relacji między bytami</div>
+    </div>
+  </div>
+
+  <h3>Relacje główne</h3>
+
+  <table>
+    <thead><tr><th>Relacja</th><th>Typ</th><th>Opis</th></tr></thead>
+    <tbody>
+      <tr><td><code>clients</code> → <code>contacts</code></td><td><span class="badge badge-blue">1:N</span></td><td>Jedna firma ma wiele osób kontaktowych</td></tr>
+      <tr><td><code>clients</code> → <code>projects</code></td><td><span class="badge badge-blue">1:N</span></td><td>Jeden klient ma wiele projektów</td></tr>
+      <tr><td><code>clients</code> → <code>leads</code></td><td><span class="badge badge-blue">1:N</span></td><td>Firma może mieć wiele szans sprzedażowych</td></tr>
+      <tr><td><code>contacts</code> → <code>leads</code></td><td><span class="badge badge-blue">1:N</span></td><td>Konkretna osoba może być powiązana z leadem</td></tr>
+      <tr><td><code>leads</code> → <code>lead_activities</code></td><td><span class="badge badge-blue">1:N</span></td><td>Historia aktywności na leadzie</td></tr>
+      <tr><td><code>leads</code> → <code>offers</code></td><td><span class="badge badge-blue">1:N</span></td><td>Lead może mieć wiele wersji oferty</td></tr>
+      <tr><td><code>leads</code> → <code>clients</code></td><td><span class="badge badge-orange">konwersja</span></td><td>Wygrany lead przekształca się w klienta</td></tr>
+      <tr><td><code>projects</code> → <code>documents</code></td><td><span class="badge badge-blue">1:N</span></td><td>Projekt agreguje dokumenty</td></tr>
+      <tr><td><code>projects</code> → <code>seo_analyses</code></td><td><span class="badge badge-blue">1:N</span></td><td>Projekt agreguje analizy SEO</td></tr>
+      <tr><td><code>projects</code> → <code>audits</code></td><td><span class="badge badge-blue">1:N</span></td><td>Projekt agreguje audyty</td></tr>
+      <tr><td><code>audits</code> → <code>seo_analyses</code></td><td><span class="badge badge-blue">1:N (opcja)</span></td><td>Audyt może grupować wiele analiz SEO</td></tr>
+      <tr><td><code>projects</code> → <code>tickets</code></td><td><span class="badge badge-blue">1:N</span></td><td>Zgłoszenia dotyczą konkretnych projektów</td></tr>
+      <tr><td><code>tickets</code> → <code>sla_incidents</code></td><td><span class="badge badge-blue">1:N</span></td><td>Ticket może wygenerować wiele naruszeń SLA</td></tr>
+      <tr><td><code>projects</code> → <code>sla_incidents</code></td><td><span class="badge badge-blue">1:N</span></td><td>Naruszenie deadline projektu też tworzy incydent</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Schemat wizualny</h3>
+
+  <div class="rel-diagram">
+    <div style="margin-bottom:12px">
+      <span class="rel-entity">users</span>
+      <span style="margin:0 8px;color:#94a3b8">──────────────────────────────── zarządza wszystkim</span>
+    </div>
+    <div style="margin-bottom:8px">
+      <span class="rel-entity">clients</span>
+      <span style="margin:0 8px;color:#94a3b8">1:N ──→</span>
+      <span class="rel-entity">contacts</span>
+      <span style="margin:0 8px;color:#94a3b8">,</span>
+      <span class="rel-entity">projects</span>
+      <span style="margin:0 8px;color:#94a3b8">,</span>
+      <span class="rel-entity orange">leads</span>
+    </div>
+    <div style="margin-bottom:8px;padding-left:24px">
+      <span class="rel-entity orange">leads</span>
+      <span style="margin:0 8px;color:#94a3b8">1:N ──→</span>
+      <span class="rel-entity orange">lead_activities</span>
+      <span style="margin:0 8px;color:#94a3b8">,</span>
+      <span class="rel-entity orange">offers</span>
+    </div>
+    <div style="margin-bottom:8px;padding-left:24px">
+      <span class="rel-entity orange">leads</span>
+      <span style="margin:0 8px;color:#fbbf24">── konwersja ──→</span>
+      <span class="rel-entity">clients</span>
+    </div>
+    <div style="margin-bottom:8px;padding-left:24px">
+      <span class="rel-entity">projects</span>
+      <span style="margin:0 8px;color:#94a3b8">1:N ──→</span>
+      <span class="rel-entity green">documents</span>
+      <span style="margin:0 8px;color:#94a3b8">,</span>
+      <span class="rel-entity green">seo_analyses</span>
+      <span style="margin:0 8px;color:#94a3b8">,</span>
+      <span class="rel-entity green">audits</span>
+      <span style="margin:0 8px;color:#94a3b8">,</span>
+      <span class="rel-entity purple">tickets</span>
+    </div>
+    <div style="padding-left:48px">
+      <span class="rel-entity purple">tickets</span>
+      <span style="margin:0 8px;color:#94a3b8">── system ──→</span>
+      <span class="rel-entity teal">sla_incidents</span>
+    </div>
+  </div>
+</div>
+
+<!-- SECTION 3: SALES FLOW -->
+<div class="page page-break">
+  <div class="section-header">
+    <div class="section-num">3</div>
+    <div class="section-title-wrap">
+      <div class="section-label">Process</div>
+      <div class="section-title">Flow sprzedaży</div>
+    </div>
+  </div>
+
+  <p>Kompletny proces od pierwszego kontaktu do aktywnej realizacji projektu. Każdy krok to osobny byt w systemie — nie skróty, nie aliasy.</p>
+
+  <h3>Główny flow</h3>
+
+  <div class="flow">
+    <div class="flow-step">Kontakt / firma</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">Lead (zimny)</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">Lead (ciepły)</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step new">Oferta</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step highlight">Klient</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">Projekt</div>
+  </div>
+
+  <div class="flow" style="margin-top:6px">
+    <div class="flow-step">Projekt</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">Dokumenty</div>
+    <div class="flow-arrow">+</div>
+    <div class="flow-step">Analizy SEO</div>
+    <div class="flow-arrow">+</div>
+    <div class="flow-step">Audyty</div>
+    <div class="flow-arrow">+</div>
+    <div class="flow-step">SLA</div>
+    <div class="flow-arrow">+</div>
+    <div class="flow-step">Powiadomienia</div>
+  </div>
+
+  <div class="info-box green" style="margin-top:16px">
+    <strong>Krok "Oferta" — nowy element względem spec v1.0.0</strong>
+    Oferta to osobny byt między leadem a klientem. Lead może mieć wiele wersji oferty (renegocjacje).
+    Akceptacja oferty wyzwala konwersję leadu na klienta i opcjonalne automatyczne utworzenie projektu.
+  </div>
+
+  <h3>Schematy tabel nowych bytów</h3>
+
+  <div class="card-grid">
+    <div>
+      <pre><span class="c">-- Kontakty (osoby w firmach)</span>
+contacts
+  - client_id
+  - first_name, last_name
+  - email, phone
+  - position          <span class="c">-- stanowisko</span>
+  - is_primary: bool  <span class="c">-- główny kontakt</span>
+  - notes</pre>
+    </div>
+    <div>
+      <pre><span class="c">-- Aktywności na leadzie</span>
+lead_activities
+  - lead_id
+  - user_id           <span class="c">-- kto wykonał</span>
+  - type: call | email
+       | meeting | note
+       | status_change
+  - description
+  - occurred_at</pre>
+    </div>
+  </div>
+
+  <pre><span class="c">-- Oferty handlowe</span>
+offers
+  - lead_id
+  - client_id (nullable)   <span class="c">-- wypełniane przy konwersji</span>
+  - title
+  - status: draft | sent | accepted | rejected | expired
+  - valid_until
+  - document_id (nullable) <span class="c">-- powiązanie z edytorem dokumentów (TipTap)</span>
+  - accepted_at
+  - converted_to_client_at</pre>
+
+  <h3>Flow admina krok po kroku</h3>
+
+  <table>
+    <thead><tr><th>Krok</th><th>Akcja admina</th><th>Co się dzieje w systemie</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td>Tworzy lead</td><td>Rekord w <code>leads</code>, status: new, opcjonalne powiązanie z <code>contacts</code></td></tr>
+      <tr><td>2</td><td>Kontaktuje się</td><td>Wpis w <code>lead_activities</code> (type: call/email), zmiana statusu leadu</td></tr>
+      <tr><td>3</td><td>Wysyła ofertę</td><td>Rekord w <code>offers</code> (status: sent), opcjonalnie dokument TipTap jako PDF</td></tr>
+      <tr><td>4</td><td>Oferta zaakceptowana</td><td><code>offers.status</code> → accepted, lead → status: wygrany</td></tr>
+      <tr><td>5</td><td>Konwertuje lead → klient</td><td>Tworzony <code>clients</code>, <code>leads.converted_at</code>, kopiowane kontakty</td></tr>
+      <tr><td>6</td><td>Tworzy projekt</td><td>Rekord w <code>projects</code> z <code>client_id</code>, przypisanie SLA policy</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- SECTION 4: KANBAN -->
+<div class="page page-break">
+  <div class="section-header">
+    <div class="section-num">4</div>
+    <div class="section-title-wrap">
+      <div class="section-label">UI / Process</div>
+      <div class="section-title">Kanban leadów — kolumny i statusy</div>
+    </div>
+  </div>
+
+  <p>Kanban leadów ma 7 kolumn odzwierciedlających pełny cykl sprzedażowy. Statusy są enumeracją w tabeli <code>leads</code> — zmiana kolumny to zmiana statusu.</p>
+
+  <div class="kanban">
+    <div class="kanban-col kb-new">
+      <div class="kanban-col-label">Nowy</div>
+      <div class="kanban-card-mock">Firma ABC</div>
+      <div class="kanban-card-mock">Jan Kowalski</div>
+    </div>
+    <div class="kanban-col kb-contact">
+      <div class="kanban-col-label">Skontaktowany</div>
+      <div class="kanban-card-mock">XYZ Sp. z o.o.</div>
+    </div>
+    <div class="kanban-col kb-noresp">
+      <div class="kanban-col-label">Brak odpowiedzi</div>
+      <div class="kanban-card-mock">Alpha Sp. k.</div>
+    </div>
+    <div class="kanban-col kb-talk">
+      <div class="kanban-col-label">W rozmowie</div>
+      <div class="kanban-card-mock">Beta Corp</div>
+      <div class="kanban-card-mock">Gamma Ltd</div>
+    </div>
+    <div class="kanban-col kb-offer">
+      <div class="kanban-col-label">Oferta</div>
+      <div class="kanban-card-mock">Delta S.A.</div>
+    </div>
+    <div class="kanban-col kb-won">
+      <div class="kanban-col-label">Wygrany</div>
+      <div class="kanban-card-mock">Epsilon</div>
+    </div>
+    <div class="kanban-col kb-lost">
+      <div class="kanban-col-label">Utracony</div>
+      <div class="kanban-card-mock">Zeta Inc.</div>
+    </div>
+  </div>
+
+  <h3>Statusy jako enum w bazie</h3>
+
+<pre><span class="c">-- leads.status</span>
+<span class="k">enum</span> LeadStatus {
+    new,           <span class="c">// Nowy</span>
+    contacted,     <span class="c">// Skontaktowany</span>
+    no_response,   <span class="c">// Brak odpowiedzi</span>
+    in_discussion, <span class="c">// W rozmowie</span>
+    offer_sent,    <span class="c">// Oferta</span>
+    won,           <span class="c">// Wygrany → wyzwala konwersję do klienta</span>
+    lost           <span class="c">// Utracony</span>
+}</pre>
+
+  <h3>Ujednolicony model Kanban</h3>
+  <p>Ten sam board obsługuje trzy typy kart dzięki polymorphic relations. Zmiana statusu leadu na "won" lub "lost" to jedyna kolumna terminalna — karta znika z głównego widoku.</p>
+
+<pre>kanban_cards
+  - board_id, column_id, position
+  - cardable_type: <span class="s">"Lead" | "Ticket" | "ProjectTask"</span>
+  - cardable_id
+  - assigned_to, due_at
+
+<span class="c">-- Zmiana statusu leadu automatycznie przesuwa kartę:</span>
+<span class="c">-- LeadStatusChanged event → MoveKanbanCardListener</span></pre>
+
+  <h3>Aktywności na leadzie w widoku karty</h3>
+
+  <table>
+    <thead><tr><th>Typ aktywności</th><th>Ikona</th><th>Co zapisuje</th></tr></thead>
+    <tbody>
+      <tr><td><code>call</code></td><td>📞</td><td>Data, czas trwania, notatka z rozmowy</td></tr>
+      <tr><td><code>email</code></td><td>✉️</td><td>Temat, kierunek (wysłany/odebrany), notatka</td></tr>
+      <tr><td><code>meeting</code></td><td>🤝</td><td>Data spotkania, miejsce/link, uczestnicy, notatka</td></tr>
+      <tr><td><code>note</code></td><td>📝</td><td>Dowolna notatka tekstowa</td></tr>
+      <tr><td><code>status_change</code></td><td>🔄</td><td>Poprzedni i nowy status, automatycznie przez system</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- SECTION 5: TICKETS VS SLA -->
+<div class="page page-break">
+  <div class="section-header">
+    <div class="section-num">5</div>
+    <div class="section-title-wrap">
+      <div class="section-label">Architecture</div>
+      <div class="section-title">Tickets vs SLA Incidents</div>
+    </div>
+  </div>
+
+  <p>Dwa osobne byty o różnym źródle pochodzenia i celu. Powiązane — ale niezależne.</p>
+
+  <div class="comparison">
+    <div class="comparison-box human">
+      <div class="comparison-box-title">tickets — sfera ludzka</div>
+      <div class="comparison-item"><span class="comparison-item-label">Twórca</span>klient (ręcznie)</div>
+      <div class="comparison-item"><span class="comparison-item-label">Wyzwalacz</span>człowiek klika "zgłoś"</div>
+      <div class="comparison-item"><span class="comparison-item-label">Cel</span>obsługa zgłoszenia</div>
+      <div class="comparison-item"><span class="comparison-item-label">Widoczny dla</span>klient + admin</div>
+      <div class="comparison-item"><span class="comparison-item-label">Komentarze</span>tak (+ wewnętrzne)</div>
+      <div class="comparison-item"><span class="comparison-item-label">Kanban</span>tak → karta admina</div>
+    </div>
+    <div class="comparison-box system">
+      <div class="comparison-box-title">sla_incidents — sfera systemowa</div>
+      <div class="comparison-item"><span class="comparison-item-label">Twórca</span>system (automatycznie)</div>
+      <div class="comparison-item"><span class="comparison-item-label">Wyzwalacz</span>upływ czasu / brak akcji</div>
+      <div class="comparison-item"><span class="comparison-item-label">Cel</span>alert o naruszeniu umowy</div>
+      <div class="comparison-item"><span class="comparison-item-label">Widoczny dla</span>admin / manager</div>
+      <div class="comparison-item"><span class="comparison-item-label">Komentarze</span>nie</div>
+      <div class="comparison-item"><span class="comparison-item-label">Kanban</span>zmiana koloru ticketu</div>
+    </div>
+  </div>
+
+  <h3>Co wyzwala sla_incident</h3>
+
+  <table>
+    <thead><tr><th>breach_type</th><th>Podmiot</th><th>Warunek</th></tr></thead>
+    <tbody>
+      <tr><td><code>response</code></td><td>Ticket</td><td><code>sla_response_due_at &lt; now()</code> AND brak pierwszej odpowiedzi</td></tr>
+      <tr><td><code>resolution</code></td><td>Ticket</td><td><code>sla_resolution_due_at &lt; now()</code> AND ticket nie zamknięty</td></tr>
+      <tr><td><code>deadline</code></td><td>Project</td><td><code>projects.deadline &lt; now()</code> AND status != completed</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Schemat tabel</h3>
+
+  <div class="card-grid">
+    <div>
+<pre><span class="c">-- Zgłoszenia klientów</span>
+tickets
+  - client_id, project_id
+  - created_by
+  - title, description
+  - priority: low|medium
+              |high|critical
+  - status: new|open|in_progress
+            |waiting|resolved|closed
+  - sla_policy_id
+  - sla_response_due_at
+  - sla_resolution_due_at
+  - first_responded_at
+  - resolved_at
+  - kanban_card_id</pre>
+    </div>
+    <div>
+<pre><span class="c">-- Naruszenia SLA (system)</span>
+sla_incidents
+  - subject_type:
+      <span class="s">"Ticket" | "Project"</span>
+  - subject_id
+  - breach_type:
+      response | resolution
+      | deadline
+  - breached_at
+  - detected_at
+  - notified: bool
+  - acknowledged_by
+  - acknowledged_at
+  - resolved_at</pre>
+    </div>
+  </div>
+
+  <h3>Scheduled job — monitoring co 5 minut</h3>
+
+<pre><span class="c">// app/Console/Commands/CheckSlaBreaches.php</span>
+Schedule::job(CheckSlaBreachesJob::class)->everyFiveMinutes();
+
+<span class="c">CheckSlaBreachesJob skanuje:</span>
+├── tickets: sla_response_due_at &lt; now() AND first_responded_at IS NULL
+│     → nowy sla_incident (response) + SMS do admina (jeśli critical)
+│     → ticket na Kanban → kolor czerwony
+│
+├── tickets: sla_resolution_due_at &lt; now() AND resolved_at IS NULL
+│     → nowy sla_incident (resolution) + email do managera
+│
+└── projects: deadline &lt; now() AND status != 'completed'
+      → nowy sla_incident (deadline) + powiadomienie in-app</pre>
+
+  <div class="info-box orange">
+    <strong>Jeden ticket może mieć wiele sla_incidents</strong>
+    Np. najpierw <code>response_breach</code> (nie odpowiedziano w czasie), potem <code>resolution_breach</code>
+    (nie rozwiązano w czasie). Każdy incydent jest osobnym rekordem z własnym <code>detected_at</code>.
+  </div>
+</div>
+
+<!-- SECTION 6: AUDITS vs SEO -->
+<div class="page page-break">
+  <div class="section-header">
+    <div class="section-num">6</div>
+    <div class="section-title-wrap">
+      <div class="section-label">Module</div>
+      <div class="section-title">Audyty i analizy SEO — relacja</div>
+    </div>
+  </div>
+
+  <p>Analiza SEO może być bytem samodzielnym (uruchamianym ad hoc) lub składową audytu (grupowaną razem z innymi typami analiz). Obie ścieżki są obsługiwane przez jeden model z opcjonalnym <code>audit_id</code>.</p>
+
+  <h3>Dwa tryby użycia</h3>
+
+  <div class="card-grid">
+    <div class="card">
+      <div class="card-title">Analiza SEO — samodzielna</div>
+      <div class="card-body">
+        Admin uruchamia analizę dla projektu bez tworzenia audytu.
+        <code>seo_analyses.audit_id = null</code>.
+        Widoczna w sekcji "Analizy SEO" projektu.
+        Typowy przypadek: miesięczny monitoring pozycji.
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Analiza SEO — składowa audytu</div>
+      <div class="card-body">
+        Audit grupuje wiele analiz i typów (SEO + techniczne + UX).
+        <code>seo_analyses.audit_id = 42</code>.
+        Wyniki agregowane w raporcie audytu z jednym scoringiem.
+        Typowy przypadek: kompleksowy audyt kwartalny.
+      </div>
+    </div>
+  </div>
+
+  <h3>Schemat tabel</h3>
+
+<pre><span class="c">-- Byt nadrzędny — grupuje analizy różnych typów</span>
+audits
+  - project_id
+  - type: <span class="s">seo | technical | ux | security | full</span>
+  - status: pending | running | completed | failed
+  - overall_score     <span class="c">-- 0-100, agregat wszystkich składowych</span>
+  - started_at, completed_at
+  - created_by
+
+<span class="c">-- Analiza SEO — samodzielna LUB składowa audytu</span>
+seo_analyses
+  - project_id
+  - audit_id (nullable)  <span class="c">-- null = samodzielna, int = część audytu</span>
+  - status: pending | running | completed | failed
+  - score               <span class="c">-- 0-100</span>
+  - keywords_count
+  - issues_count
+  - gsc_connected: bool <span class="c">-- czy dane z Google Search Console</span>
+  - ga4_connected: bool <span class="c">-- czy dane z Google Analytics 4</span>
+  - completed_at
+
+<span class="c">-- Błędy wykryte w analizie</span>
+seo_issues
+  - seo_analysis_id
+  - type: missing_meta | broken_link | duplicate_content | ...
+  - severity: critical | warning | info
+  - url
+  - description
+  - fixed_at (nullable)</pre>
+
+  <h3>Flow uruchamiania</h3>
+
+  <div class="flow">
+    <div class="flow-step">Admin klika "Uruchom analizę"</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">Tworzony seo_analyses</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">Pipeline jobów (Horizon)</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">Wyniki zapisane</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">Powiadomienie</div>
+  </div>
+
+  <div class="info-box blue" style="margin-top:16px">
+    <strong>Dlaczego nie jeden model "seo_audits"?</strong>
+    Rozdzielenie <code>audits</code> od <code>seo_analyses</code> pozwala w przyszłości dodać inne typy analiz
+    (UX, security, performance) bez zmiany struktury. Audyt staje się "folderem" — analiza SEO to jeden z dokumentów w tym folderze.
+  </div>
+</div>
+
+<!-- SECTION 7: UI -->
+<div class="page">
+  <div class="section-header">
+    <div class="section-num">7</div>
+    <div class="section-title-wrap">
+      <div class="section-label">UI</div>
+      <div class="section-title">Struktura menu — panel admina i klienta</div>
+    </div>
+  </div>
+
+  <div class="ui-panels">
+    <div class="ui-panel admin">
+      <div class="ui-panel-header admin">Panel admina — app.clientops.pl</div>
+      <div class="ui-menu-item admin"><div class="ui-menu-dot"></div>Dashboard</div>
+      <div class="ui-menu-item admin"><div class="ui-menu-dot"></div>Leady</div>
+      <div class="ui-menu-item admin"><div class="ui-menu-dot"></div>Klienci</div>
+      <div class="ui-menu-item admin"><div class="ui-menu-dot"></div>Kontakty</div>
+      <div class="ui-menu-item admin"><div class="ui-menu-dot"></div>Projekty</div>
+      <div class="ui-menu-item admin"><div class="ui-menu-dot"></div>Oferty</div>
+      <div class="ui-menu-item admin"><div class="ui-menu-dot"></div>Dokumenty</div>
+      <div class="ui-menu-item admin"><div class="ui-menu-dot"></div>Analizy SEO</div>
+      <div class="ui-menu-item admin"><div class="ui-menu-dot"></div>Audyty</div>
+      <div class="ui-menu-item admin"><div class="ui-menu-dot"></div>Zgłoszenia (Tickets)</div>
+      <div class="ui-menu-item admin"><div class="ui-menu-dot"></div>SLA / Naruszenia</div>
+      <div class="ui-menu-item admin"><div class="ui-menu-dot"></div>Powiadomienia</div>
+      <div class="ui-menu-item admin"><div class="ui-menu-dot"></div>Użytkownicy</div>
+      <div class="ui-menu-item admin"><div class="ui-menu-dot"></div>Ustawienia</div>
+    </div>
+
+    <div class="ui-panel client">
+      <div class="ui-panel-header client">Panel klienta — {slug}.clientops.pl</div>
+      <div class="ui-menu-item client"><div class="ui-menu-dot"></div>Dashboard</div>
+      <div class="ui-menu-item client"><div class="ui-menu-dot"></div>Moje projekty</div>
+      <div class="ui-menu-item client"><div class="ui-menu-dot"></div>Dokumenty</div>
+      <div class="ui-menu-item client"><div class="ui-menu-dot"></div>Analizy SEO</div>
+      <div class="ui-menu-item client"><div class="ui-menu-dot"></div>Audyty</div>
+      <div class="ui-menu-item client"><div class="ui-menu-dot"></div>Zgłoszenia</div>
+      <div class="ui-menu-item client"><div class="ui-menu-dot"></div>SLA — status umowy</div>
+      <div class="ui-menu-item client"><div class="ui-menu-dot"></div>Powiadomienia</div>
+      <div class="ui-menu-item client"><div class="ui-menu-dot"></div>Profil</div>
+    </div>
+  </div>
+
+  <h3>Różnice w widokach</h3>
+
+  <table>
+    <thead><tr><th>Sekcja</th><th>Admin widzi</th><th>Klient widzi</th></tr></thead>
+    <tbody>
+      <tr><td>Leady</td><td>Wszystkie leady, Kanban, aktywności</td><td>— (niedostępne)</td></tr>
+      <tr><td>Oferty</td><td>Pełne zarządzanie ofertami</td><td>— (niedostępne)</td></tr>
+      <tr><td>Kontakty</td><td>Wszystkie kontakty per klient</td><td>Własne dane kontaktowe</td></tr>
+      <tr><td>Projekty</td><td>Wszystkich klientów, pełne dane</td><td>Tylko swoje, ograniczony widok</td></tr>
+      <tr><td>Zgłoszenia</td><td>Wszystkie tickets, komentarze wewnętrzne</td><td>Tylko swoje, bez wewnętrznych</td></tr>
+      <tr><td>SLA</td><td>Incydenty, konfiguracja polityk</td><td>Status umowy, czy SLA jest spełniane</td></tr>
+      <tr><td>SEO / Audyty</td><td>Pełne dane, uruchamianie analiz</td><td>Wyniki i raporty (read-only)</td></tr>
+    </tbody>
+  </table>
+
+  <div style="margin-top:48px; padding-top:20px; border-top:1px solid var(--gray-200); text-align:center; color:var(--gray-400); font-size:11px;">
+    ClientOps CRM — Architektura i Model Danych v1.0.0 &nbsp;·&nbsp; Marzec 2026 &nbsp;·&nbsp; Dokument uzupełniający do Spec v1.0.0
+  </div>
+</div>
+
+</body>
+</html>
