@@ -1358,6 +1358,63 @@ SANCTUM_STATEFUL_DOMAINS=app.clientops.pl,*.clientops.pl
     }
 }</pre>
 
+      <h3>Slug — identyfikator zamiast ID w URL</h3>
+
+      <p>
+        W całym systemie zasoby są identyfikowane przez <strong>slug</strong> zamiast numerycznego ID.
+        Dotyczy to klientów, projektów, leadów, ofert, dokumentów i audytów.
+      </p>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Encja</th>
+            <th>Przykład URL</th>
+            <th>Unique scope</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>clients</strong></td>
+            <td><code>/clients/dcg-wroclaw</code></td>
+            <td>globalnie (subdomena)</td>
+          </tr>
+          <tr>
+            <td><strong>projects</strong></td>
+            <td><code>/projects/strona-www-2026</code></td>
+            <td>per <code>client_id</code></td>
+          </tr>
+          <tr>
+            <td><strong>leads</strong></td>
+            <td><code>/leads/dcg-wroclaw</code></td>
+            <td>per <code>client_id</code> (tenant)</td>
+          </tr>
+          <tr>
+            <td><strong>offers</strong></td>
+            <td><code>/offers/oferta-seo-q1-2026</code></td>
+            <td>per <code>client_id</code></td>
+          </tr>
+          <tr>
+            <td><strong>documents</strong></td>
+            <td><code>/documents/umowa-o-wspolpracy</code></td>
+            <td>per <code>documentable</code> (projekt/klient)</td>
+          </tr>
+          <tr>
+            <td><strong>audits</strong></td>
+            <td><code>/audits/audyt-seo-marzec-2026</code></td>
+            <td>per <code>project_id</code></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="info-box blue">
+        <strong>Polityka slug — 4 zasady</strong>
+        1. Slug generowany automatycznie z tytułu/nazwy przy tworzeniu rekordu — <code>spatie/laravel-sluggable</code><br>
+        2. Slug jest <strong>immutable</strong> — zmiana tytułu nie aktualizuje slugu<br>
+        3. Kolizja w tym samym scope → auto-suffix: <code>umowa</code> → <code>umowa-2</code> → <code>umowa-3</code><br>
+        4. Ręczna zmiana slugu (admin) → stary slug zapisywany w <code>slug_redirects</code> → <code>301 Redirect</code>
+      </div>
+
       <h3>Autentykacja — metody logowania</h3>
 
       <p>System obsługuje trzy ścieżki uwierzytelniania, wszystkie oparte na Sanctum (cookies):</p>

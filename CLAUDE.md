@@ -395,12 +395,29 @@ Zgłoszenia, SLA — status umowy, Powiadomienia, Profil
 
 ---
 
+## Polityka slug
+
+Zasoby w URL identyfikowane są przez **slug** zamiast numerycznego ID.
+
+- Dotyczy: `clients`, `projects`, `leads`, `offers`, `documents`, `audits`
+- Nie dotyczy: `tickets` (numery sekwencyjne `#142`), `contacts` (brak własnych URL)
+- Slug generowany z tytułu/nazwy przy tworzeniu (`spatie/laravel-sluggable`, `onUpdate = false`)
+- **Immutable** — zmiana tytułu nie aktualizuje slugu
+- Kolizja w scope → auto-suffix: `umowa` → `umowa-2` → `umowa-3`
+- Ręczna zmiana slugu → stary slug do `slug_redirects` → middleware `301 Redirect`
+- Unique constraint: `clients.slug` globalnie; pozostałe per `client_id` lub per `documentable`
+
+---
+
 ## Dokumentacja projektu
 
 Pliki źródłowe (HTML) w `docs/` — edytuj tu, potem generuj PDF:
 
-- `docs/clientops-crm-spec.html` — specyfikacja techniczna (aktualna: v1.1.0)
-- `docs/clientops-architecture.html` — architektura i model danych (aktualna: v1.0.0)
+- `docs/clientops-crm-spec.html` — specyfikacja techniczna (aktualna: v1.5.0)
+- `docs/clientops-architecture.html` — architektura i model danych (aktualna: v2.0.0)
+- `docs/clientops-implementation.html` — przewodnik implementacji (aktualna: v1.0.0)
+- `docs/clientops-libraries.html` — mapowanie bibliotek JS (aktualna: v1.0.0)
+- `docs/clientops-structure.html` — struktura frontend (aktualna: v1.0.0)
 
 Wersjonowane PDF w `docs/pdf/`.
 

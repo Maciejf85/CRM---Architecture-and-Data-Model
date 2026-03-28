@@ -1127,6 +1127,157 @@ Route::middleware([<span class="string">'auth:sanctum'</span>, <span class="stri
       </div>
     </div>
 
+    <!-- SECTION 3b: SLUG POLICY -->
+    <div class="page page-break">
+      <div class="section-header">
+        <div class="section-num">3</div>
+        <div class="section-title-wrap">
+          <div class="section-label">Phase 1 — cont.</div>
+          <div class="section-title">Slug — polityka, generowanie, redirect</div>
+        </div>
+      </div>
+
+      <p>
+        Każdy zasób w systemie identyfikowany jest przez <strong>slug</strong> zamiast numerycznego ID w URL.
+        Dotyczy to: <code>clients</code>, <code>projects</code>, <code>leads</code>, <code>offers</code>,
+        <code>documents</code>, <code>audits</code>. Tickety używają numerów sekwencyjnych (<code>#142</code>) —
+        to standard w helpdesk. Kontakty nie mają własnych URL.
+      </p>
+
+      <h3>Instalacja i konfiguracja</h3>
+
+      <pre><span class="comment"># Pakiet do automatycznego generowania slugów</span>
+composer require spatie/laravel-sluggable</pre>
+
+      <h3>Implementacja per model — przykład Document</h3>
+
+      <pre><span class="comment">// app/Models/Document.php</span>
+<span class="keyword">use</span> Spatie\Sluggable\HasSlug;
+<span class="keyword">use</span> Spatie\Sluggable\SlugOptions;
+
+<span class="keyword">class</span> <span class="class-name">Document</span> <span class="keyword">extends</span> Model
+{
+    <span class="keyword">use</span> HasSlug;
+
+    <span class="keyword">public function</span> <span class="method">getSlugOptions</span>(): SlugOptions
+    {
+        <span class="keyword">return</span> SlugOptions::create()
+            ->generateSlugsFrom(<span class="string">'title'</span>)
+            ->saveSlugsTo(<span class="string">'slug'</span>)
+            ->doNotGenerateSlugsOnUpdate()    <span class="comment">// immutable — zmiana tytułu nie zmienia slugu</span>
+            ->usingSeparator(<span class="string">'-'</span>);
+    }
+
+    <span class="comment">// Scope unikalności: tylko w obrębie tego samego documentable (projekt / klient / ticket)</span>
+    <span class="keyword">public function</span> <span class="method">scopeWithUniqueSlugConstraints</span>(Builder $query, Model $model): Builder
+    {
+        <span class="keyword">return</span> $query
+            ->where(<span class="string">'documentable_type'</span>, $model->documentable_type)
+            ->where(<span class="string">'documentable_id'</span>,   $model->documentable_id);
+    }
+}
+
+<span class="comment">// Migracja — unique constraint per scope</span>
+$table->string(<span class="string">'slug'</span>)->index();
+$table->unique([<span class="string">'slug'</span>, <span class="string">'documentable_type'</span>, <span class="string">'documentable_id'</span>]);</pre>
+
+      <h3>Unique scope per encja</h3>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Encja</th>
+            <th>Unique constraint</th>
+            <th>Collision → auto-suffix</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>clients</strong></td>
+            <td><code>slug</code> globalnie</td>
+            <td><code>dcg-wroclaw-2</code></td>
+          </tr>
+          <tr>
+            <td><strong>projects</strong></td>
+            <td><code>(slug, client_id)</code></td>
+            <td><code>strona-www-2</code></td>
+          </tr>
+          <tr>
+            <td><strong>leads</strong></td>
+            <td><code>(slug, client_id)</code></td>
+            <td><code>dcg-wroclaw-2</code></td>
+          </tr>
+          <tr>
+            <td><strong>offers</strong></td>
+            <td><code>(slug, client_id)</code></td>
+            <td><code>oferta-seo-2</code></td>
+          </tr>
+          <tr>
+            <td><strong>documents</strong></td>
+            <td><code>(slug, documentable_type, documentable_id)</code></td>
+            <td><code>umowa-2</code>, <code>umowa-3</code></td>
+          </tr>
+          <tr>
+            <td><strong>audits</strong></td>
+            <td><code>(slug, project_id)</code></td>
+            <td><code>audyt-seo-marzec-2</code></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>Slug immutable — co się dzieje przy zmianie tytułu?</h3>
+
+      <pre><span class="comment">// Tytuł zmienia się swobodnie. Slug NIE zmienia się automatycznie.</span>
+$document->update([<span class="string">'title'</span> => <span class="string">'Umowa o współpracy — wersja finalna'</span>]);
+<span class="comment">// document->slug nadal: "umowa-o-wspolpracy"</span>
+
+<span class="comment">// Ręczna zmiana slugu (tylko admin) → zapisz stary slug przed nadpisaniem</span>
+<span class="keyword">if</span> ($request->has(<span class="string">'slug'</span>) && $request->slug !== $document->slug) {
+    SlugRedirect::create([
+        <span class="string">'sluggable_type'</span> => <span class="string">'Document'</span>,
+        <span class="string">'sluggable_id'</span>   => $document->id,
+        <span class="string">'old_slug'</span>       => $document->slug,
+        <span class="string">'changed_by'</span>     => Auth::id(),
+    ]);
+    $document->update([<span class="string">'slug'</span> => $request->slug]);
+}</pre>
+
+      <h3>Middleware — 301 redirect dla zmienionych slugów</h3>
+
+      <pre><span class="comment">// app/Http/Middleware/RedirectOldSlugs.php</span>
+<span class="keyword">public function</span> <span class="method">handle</span>(Request $request, Closure $next): Response
+{
+    $response = $next($request);
+
+    <span class="keyword">if</span> ($response->status() === <span class="string">404</span>) {
+        $slug     = $request->route(<span class="string">'slug'</span>);
+        $type     = $this->resolveType($request);  <span class="comment">// np. 'Document' z route name</span>
+        $redirect = SlugRedirect::where(<span class="string">'sluggable_type'</span>, $type)
+                                ->where(<span class="string">'old_slug'</span>, $slug)
+                                ->with(<span class="string">'sluggable'</span>)
+                                ->first();
+
+        <span class="keyword">if</span> ($redirect) {
+            <span class="keyword">return</span> redirect(
+                str_replace($slug, $redirect->sluggable->slug, $request->url()),
+                <span class="string">301</span>
+            );
+        }
+    }
+
+    <span class="keyword">return</span> $response;
+}</pre>
+
+      <div class="info-box green">
+        <strong>Zasady slug — podsumowanie</strong>
+        1. Generowany automatycznie z tytułu/nazwy przy tworzeniu (<code>onCreate</code> only)<br>
+        2. Zmiana tytułu = slug się <strong>nie zmienia</strong><br>
+        3. Kolizja w scope → Spatie auto-suffix <code>-2</code>, <code>-3</code><br>
+        4. Ręczna zmiana przez admina → stary slug do <code>slug_redirects</code> → <code>301</code><br>
+        5. Tickety: numery sekwencyjne (<code>#142</code>), nie slugi
+      </div>
+    </div>
+
     <!-- SECTION 4: PHASE 2 — CRM -->
     <div class="page page-break">
       <div class="section-header">

@@ -409,6 +409,7 @@ erDiagram
         bigint client_id FK
         bigint contact_id FK
         bigint assigned_to FK
+        string slug "unique per client_id"
         string status
         bigint converted_to_client_id FK
     }
@@ -424,6 +425,7 @@ erDiagram
         bigint lead_id FK
         bigint client_id FK
         bigint document_id FK
+        string slug "unique per client_id"
         string status
     }
     projects {
@@ -431,6 +433,7 @@ erDiagram
         bigint client_id FK
         bigint sla_policy_id FK
         bigint assigned_to FK
+        string slug "unique per client_id"
         string status
         date deadline
     }
@@ -469,6 +472,7 @@ erDiagram
         string documentable_type
         bigint documentable_id
         bigint created_by FK
+        string slug "unique per documentable"
         int version
     }
     kanban_cards {
@@ -605,6 +609,7 @@ erDiagram
   <span class="fk">assigned_to</span>             bigint nullable FK → users.id
   <span class="f">title</span>                   varchar(255)                      <span class="c">-- np. "SEO dla firmy ABC"</span>
   <span class="f">company_name</span>            varchar(255) nullable             <span class="c">-- przed konwersją do clients</span>
+  <span class="f">slug</span>                    varchar(100)                      <span class="c">-- URL identifier, unique per client_id</span>
   <span class="f">status</span>                  enum('new','contacted','no_response',
                                'in_discussion','offer_sent','won','lost')
                           default 'new'
@@ -618,7 +623,8 @@ erDiagram
   <span class="f">created_at</span>              timestamp
   <span class="f">updated_at</span>              timestamp
 
-<span class="c">  -- Index: (status), (assigned_to), (client_id)</span></pre>
+<span class="c">  -- Index: (status), (assigned_to), (client_id)</span>
+<span class="c">  -- UNIQUE: (slug, client_id)</span></pre>
 
   <h3>lead_activities</h3>
   <pre><span class="t">lead_activities</span>
@@ -640,6 +646,7 @@ erDiagram
   <span class="fk">lead_id</span>                 bigint FK → leads.id
   <span class="fk">client_id</span>               bigint nullable FK → clients.id  <span class="c">-- wypełniane przy konwersji</span>
   <span class="f">title</span>                   varchar(255)
+  <span class="f">slug</span>                    varchar(100)                      <span class="c">-- URL identifier, unique per client_id</span>
   <span class="f">status</span>                  enum('draft','sent','accepted','rejected','expired')
                           default 'draft'
   <span class="f">value</span>                   decimal(12,2) nullable
@@ -651,7 +658,9 @@ erDiagram
   <span class="f">converted_to_client_at</span>  timestamp nullable
   <span class="fk">created_by</span>              bigint FK → users.id
   <span class="f">created_at</span>              timestamp
-  <span class="f">updated_at</span>              timestamp</pre>
+  <span class="f">updated_at</span>              timestamp
+
+<span class="c">  -- UNIQUE: (slug, client_id)</span></pre>
 </div>
 
 <!-- SECTION 5: SCHEMAS LAYER 3a -->
@@ -669,6 +678,7 @@ erDiagram
   <span class="pk">id</span>              bigint PK auto_increment
   <span class="fk">client_id</span>       bigint FK → clients.id
   <span class="f">name</span>            varchar(255)
+  <span class="f">slug</span>            varchar(100)                   <span class="c">-- URL identifier, unique per client_id</span>
   <span class="f">description</span>     text nullable
   <span class="f">status</span>          enum('planning','active','on_hold','completed','cancelled')
                   default 'planning'
@@ -679,7 +689,9 @@ erDiagram
   <span class="f">completed_at</span>    timestamp nullable
   <span class="fk">created_by</span>      bigint FK → users.id
   <span class="f">created_at</span>      timestamp
-  <span class="f">updated_at</span>      timestamp</pre>
+  <span class="f">updated_at</span>      timestamp
+
+<span class="c">  -- UNIQUE: (slug, client_id)</span></pre>
 
   <h3>documents</h3>
   <pre><span class="t">documents</span>
@@ -687,6 +699,7 @@ erDiagram
   <span class="f">documentable_type</span>  <span class="poly-tag">polymorphic</span> varchar(255)  <span class="c">-- "Project" | "Client" | "Ticket"</span>
   <span class="f">documentable_id</span>    bigint
   <span class="f">title</span>              varchar(255)
+  <span class="f">slug</span>               varchar(100)                  <span class="c">-- URL identifier, unique per documentable</span>
   <span class="f">content_json</span>       longtext nullable              <span class="c">-- TipTap JSON format</span>
   <span class="f">content_html</span>       longtext nullable              <span class="c">-- wygenerowany HTML (cache)</span>
   <span class="f">pdf_path</span>           varchar(255) nullable          <span class="c">-- ścieżka do S3/MinIO</span>
@@ -696,7 +709,8 @@ erDiagram
   <span class="f">created_at</span>         timestamp
   <span class="f">updated_at</span>         timestamp
 
-<span class="c">  -- Index: (documentable_type, documentable_id)</span></pre>
+<span class="c">  -- Index: (documentable_type, documentable_id)</span>
+<span class="c">  -- UNIQUE: (slug, documentable_type, documentable_id)</span></pre>
 
   <h3>document_versions</h3>
   <pre><span class="t">document_versions</span>
@@ -923,6 +937,25 @@ erDiagram
   <span class="f">properties</span>     json nullable
   <span class="c">                  -- { "old": { "status": "new" }, "attributes": { "status": "contacted" } }</span>
   <span class="f">created_at</span>     timestamp</pre>
+
+  <h3>slug_redirects</h3>
+  <pre><span class="t">slug_redirects</span>
+  <span class="pk">id</span>               bigint PK auto_increment
+  <span class="f">sluggable_type</span>   varchar(100)        <span class="c">-- "Client" | "Project" | "Lead" | "Document" | ...</span>
+  <span class="f">sluggable_id</span>     bigint
+  <span class="f">old_slug</span>         varchar(100)        <span class="c">-- poprzedni slug przed zmianą</span>
+  <span class="fk">changed_by</span>       bigint FK → users.id
+  <span class="f">created_at</span>       timestamp
+
+  <span class="c">-- Index: (sluggable_type, old_slug)  ← używany przez middleware redirect</span></pre>
+
+  <div class="info-box blue">
+    <strong>Polityka slug w systemie</strong>
+    Slug generowany automatycznie przy tworzeniu rekordu (<code>spatie/laravel-sluggable</code>, <code>onUpdate = false</code>).
+    Zmiana tytułu/nazwy nie aktualizuje slugu. Ręczna zmiana slugu przez admina zapisuje stary slug
+    do <code>slug_redirects</code> — middleware zwraca <code>301 Redirect</code> na aktualny URL.
+    Kolizja slugu w tym samym scope → auto-suffix: <code>umowa</code> → <code>umowa-2</code> → <code>umowa-3</code>.
+  </div>
 
   <h3>seo_analyses / seo_issues / seo_keyword_ranks</h3>
   <div class="schema-grid">
