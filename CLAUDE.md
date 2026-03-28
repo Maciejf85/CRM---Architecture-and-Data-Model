@@ -52,6 +52,7 @@ SANCTUM_STATEFUL_DOMAINS=app.clientops.pl,*.clientops.pl
 - **Laravel Notifications** — unifikacja email + SMS + in-app w jednym interfejsie
 - **Laravel Reverb** — natywny WebSocket server, skalowanie przez Redis pub/sub
 - **Spatie Permission** — RBAC, 6 ról (patrz niżej)
+- **Spatie Activity Log** — audit trail: każda akcja admina i klienta (kto, co, kiedy, diff), tabela `activity_log`
 - **Spatie Media Library** — pliki powiązane z modelami, driver S3/MinIO
 - **S3 / MinIO** — object storage (MinIO self-hosted na start, S3 bez zmiany kodu)
 - **Laravel Browsershot** — PDF przez headless Chromium (Puppeteer), async w kolejce
@@ -103,6 +104,7 @@ SANCTUM_STATEFUL_DOMAINS=app.clientops.pl,*.clientops.pl
 9. **SLA** — polityki + automatyczne naruszenia `sla_incidents` (sfera systemowa)
 10. **Panel klienta** — na subdomenach `{slug}.clientops.pl`
 11. **Powiadomienia** — email / SMS / in-app real-time, preferencje per user
+12. **Audit log** — rejestrowanie każdej akcji admina i klienta (`activity_log`)
 
 ---
 
@@ -112,7 +114,8 @@ SANCTUM_STATEFUL_DOMAINS=app.clientops.pl,*.clientops.pl
 Warstwa 1 — Tożsamość:  users, clients, contacts
 Warstwa 2 — Sprzedaż:   leads, lead_activities, offers
 Warstwa 3 — Realizacja: projects, documents, seo_analyses, audits,
-                        notifications, tickets, sla_policies, sla_incidents
+                        notifications, tickets, sla_policies, sla_incidents,
+                        activity_log
 ```
 
 ### Kluczowe relacje

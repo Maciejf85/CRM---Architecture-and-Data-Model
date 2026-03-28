@@ -739,7 +739,7 @@
         </div>
         <div class="cover-meta-item">
           <div class="cover-meta-label">Wersja</div>
-          <div class="cover-meta-value">1.0.0</div>
+          <div class="cover-meta-value">1.3.0</div>
         </div>
         <div class="cover-meta-item">
           <div class="cover-meta-label">Stack</div>
@@ -755,7 +755,7 @@
     <!-- TOC -->
     <div class="toc-page">
       <div class="toc-title">Spis treści</div>
-      <div class="toc-subtitle">Dokument zawiera 9 sekcji</div>
+      <div class="toc-subtitle">Dokument zawiera 10 sekcji</div>
       <ul class="toc-list">
         <li class="toc-section">
           <div class="toc-item">
@@ -816,6 +816,13 @@
         <li class="toc-section">
           <div class="toc-item">
             <div class="toc-num">9</div>
+            <span class="toc-text">Audit log — rejestrowanie aktywności</span>
+            <div class="toc-dots"></div>
+          </div>
+        </li>
+        <li class="toc-section">
+          <div class="toc-item">
+            <div class="toc-num">10</div>
             <span class="toc-text">Priorytety i plan wdrożenia</span>
             <div class="toc-dots"></div>
           </div>
@@ -1057,6 +1064,14 @@
             <td>
               Object storage do przechowywania plików: dokumenty, załączniki, eksportowane PDF, dane SEO. S3 (AWS) lub kompatybilny self-hosted MinIO — identyczne API, wymienne bez zmiany kodu. Laravel Filesystem abstrahuje storage przez ten sam interfejs niezależnie od wybranego drivera. Spatie Media Library korzysta z tego storage dla wszystkich mediów.
               <div class="why">Przechowywanie plików na dysku serwera nie skaluje się i komplikuje deployment. S3/MinIO to standard — pliki są poza aplikacją, dostępne z CDN, łatwe do backupu. MinIO na start (self-hosted, zero kosztów), migracja do S3 bez zmiany kodu gdy zajdzie potrzeba.</div>
+            </td>
+          </tr>
+          <tr>
+            <td><strong>Spatie Activity Log</strong></td>
+            <td>—</td>
+            <td>
+              Pakiet do rejestrowania każdej akcji w systemie — zarówno adminów jak i klientów. Zapisuje kto (causer), co (subject), kiedy i jaka była zmiana (diff old/new w JSON). Tabela <code>activity_log</code> jest wspólna dla całego systemu, logowane zdarzenia: auth (login/logout), CRM (create/update/delete/convert), Kanban (zmiana statusu), dokumenty, tickety, powiadomienia, role.
+              <div class="why">Bez audit logu nie wiadomo kto usunął kontakt, kto zmienił SLA policy, kiedy klient po raz pierwszy zalogował się do panelu. Spatie Activity Log jest de facto standardem w Laravel — działa przez trait na modelu, zero custom kodu dla podstawowych operacji CRUD.</div>
             </td>
           </tr>
           <tr>
@@ -1828,10 +1843,120 @@ document_versions
 }</pre>
     </div>
 
-    <!-- SECTION 9: PRIORITIES -->
-    <div class="page">
+    <!-- SECTION 9: ACTIVITY LOG -->
+    <div class="page page-break">
       <div class="section-header">
         <div class="section-num">9</div>
+        <div class="section-title-wrap">
+          <div class="section-label">Audit Trail</div>
+          <div class="section-title">Audit log — rejestrowanie aktywności</div>
+        </div>
+      </div>
+
+      <p>
+        Każda akcja wykonana przez admina lub klienta jest zapisywana w tabeli <code>activity_log</code>.
+        Log rejestruje kto wykonał akcję, na jakim obiekcie, kiedy i co się zmieniło (diff).
+        Używany do audytu bezpieczeństwa, historii zmian i debugowania.
+      </p>
+
+      <h3>Schemat tabeli activity_log</h3>
+      <pre><span class="comment">-- Tabela zarządzana przez spatie/laravel-activitylog</span>
+activity_log
+  id
+  log_name          <span class="comment">-- "auth" | "crm" | "client" | "notifications" | "system"</span>
+  description       <span class="comment">-- "created" | "updated" | "deleted" | "login" | "converted_to_client" | ...</span>
+  subject_type      <span class="comment">-- polymorphic: "Lead" | "Client" | "Contact" | "Offer" | ...</span>
+  subject_id
+  causer_type       <span class="comment">-- "User" (admin/manager/employee) | "Client" (client-admin/client-user)</span>
+  causer_id
+  properties        <span class="comment">-- JSON: { old: {...}, attributes: {...} } — diff zmian</span>
+  created_at</pre>
+
+      <h3>Co jest logowane — panel admina</h3>
+      <table>
+        <thead>
+          <tr>
+            <th style="width:140px">log_name</th>
+            <th>Zdarzenia</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>auth</strong></td>
+            <td>login, logout, nieudane logowanie, zmiana hasła, nadanie/odebranie roli, założenie konta użytkownika</td>
+          </tr>
+          <tr>
+            <td><strong>crm</strong></td>
+            <td>
+              Tworzenie/edycja/usuwanie: Lead, Client, Contact, Offer, Project<br>
+              Zmiana statusu leadu (Kanban — kolumna źródłowa i docelowa)<br>
+              Konwersja leadu na klienta (<code>converted_to_client</code>)<br>
+              Przypisanie SLA Policy do klienta/projektu
+            </td>
+          </tr>
+          <tr>
+            <td><strong>documents</strong></td>
+            <td>Utworzenie dokumentu, zapis wersji, eksport do PDF (kto, kiedy), usunięcie dokumentu</td>
+          </tr>
+          <tr>
+            <td><strong>tickets</strong></td>
+            <td>Utworzenie ticketu, zmiana statusu, dodanie komentarza (w tym notatek wewnętrznych), zamknięcie</td>
+          </tr>
+          <tr>
+            <td><strong>notifications</strong></td>
+            <td>Wysłanie powiadomienia (typ, kanał: email/SMS/in-app, odbiorca)</td>
+          </tr>
+          <tr>
+            <td><strong>system</strong></td>
+            <td>Zmiana SLA Policy, zmiana konfiguracji, zmiany ustawień integracji (GSC, GA4, SMSAPI)</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>Co jest logowane — panel klienta</h3>
+      <table>
+        <thead>
+          <tr>
+            <th style="width:140px">log_name</th>
+            <th>Zdarzenia</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>auth</strong></td>
+            <td>login do panelu klienta, logout, nieudane logowanie, zmiana hasła</td>
+          </tr>
+          <tr>
+            <td><strong>client</strong></td>
+            <td>
+              Wyświetlenie dokumentu, pobranie PDF<br>
+              Utworzenie ticketu, dodanie komentarza do ticketu<br>
+              Odczyt powiadomienia
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>Czego się NIE loguje</h3>
+      <div class="info-box" style="background: var(--gray-50); border-color: var(--gray-400)">
+        <strong>Pominięte w audit logu (zbyt duży wolumen lub brak wartości):</strong>
+        <ul style="margin-top: 8px; padding-left: 20px; color: var(--gray-600)">
+          <li><code>seo_keyword_ranks</code> — TimescaleDB, miliony wpisów time-series</li>
+          <li><code>sla_incidents</code> — tworzone automatycznie przez system, nie przez użytkownika</li>
+          <li>Odczyt listy (GET /api/leads) — nie każde przeglądanie wymaga logu</li>
+        </ul>
+      </div>
+
+      <h3>Dostęp do logów w UI</h3>
+      <p>
+        Panel admina: zakładka <strong>"Historia zmian"</strong> przy każdym rekordzie (Lead, Client, Project, Document, Ticket) — wyświetla ostatnie N wpisów z <code>activity_log</code> dla danego <code>subject_type/subject_id</code>. Widok globalny w menu <strong>Ustawienia → Audit log</strong> (tylko rola <code>super-admin</code> / <code>admin</code>) z filtrowaniem po użytkowniku, typie zdarzenia i zakresie dat.
+      </p>
+    </div>
+
+    <!-- SECTION 10: PRIORITIES -->
+    <div class="page">
+      <div class="section-header">
+        <div class="section-num">10</div>
         <div class="section-title-wrap">
           <div class="section-label">Roadmap</div>
           <div class="section-title">Priorytety i plan wdrożenia</div>
@@ -1971,6 +2096,11 @@ document_versions
             <td><strong>SMSAPI.pl</strong></td>
             <td>Popularny w PL, dobry API, niski koszt</td>
           </tr>
+          <tr>
+            <td>Audit log</td>
+            <td><strong>Spatie Activity Log</strong></td>
+            <td>Standard de facto w Laravel, zero kodu dla CRUD, polymorphic causer</td>
+          </tr>
         </tbody>
       </table>
 
@@ -1984,7 +2114,7 @@ document_versions
           font-size: 11px;
         "
       >
-        ClientOps CRM — Specyfikacja Techniczna v1.0 &nbsp;·&nbsp; Marzec 2026 &nbsp;·&nbsp; Laravel
+        ClientOps CRM — Specyfikacja Techniczna v1.3 &nbsp;·&nbsp; Marzec 2026 &nbsp;·&nbsp; Laravel
         12 + React 19 + TypeScript
       </div>
     </div>
