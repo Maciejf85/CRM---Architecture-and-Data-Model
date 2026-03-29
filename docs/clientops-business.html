@@ -227,6 +227,19 @@
   .unit-val { font-size: 24px; font-weight: 700; color: var(--primary); line-height: 1; margin-bottom: 2px; }
   .unit-lbl { font-size: 10px; color: var(--gray-400); text-transform: uppercase; letter-spacing: 0.5px; }
   .unit-sub { font-size: 11px; color: var(--gray-600); margin-top: 4px; }
+
+
+  /* ─── LAST PAGE FOOTER */
+  .page-footer {
+    margin-top: 48px;
+    padding-top: 14px;
+    border-top: 1px solid #e2e8f0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 10px;
+    color: #94a3b8;
+  }
 </style>
 </head>
 <body>
@@ -524,7 +537,7 @@
 </div>
 
 <!-- ══════════════════════════════════════════════════════ SECTION 4: Pricing -->
-<div class="page page-break">
+<div class="page">
   <div class="section-header">
     <div class="section-num">4</div>
     <div>
@@ -657,7 +670,7 @@
 </div>
 
 <!-- ══════════════════════════════════════════════════════ SECTION 5: Value prop -->
-<div class="page page-break">
+<div class="page page-break" style="page-break-before: always">
   <div class="section-header">
     <div class="section-num">5</div>
     <div>
@@ -935,5 +948,10 @@
   </div>
 </div>
 
+
+<div class="page-footer">
+  <span>Maciej Fiałkowski</span>
+  <span>ClientOps CRM</span>
+</div>
 </body>
 </html>

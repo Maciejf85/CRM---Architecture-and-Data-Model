@@ -240,7 +240,7 @@
   .ui-menu-item.client .ui-menu-dot { background: var(--teal); }
 
   /* FOOTER */
-  .doc-footer { margin-top: 48px; padding-top: 20px; border-top: 1px solid var(--gray-200); text-align: center; color: var(--gray-400); font-size: 11px; }
+  .doc-footer-block { margin-top: 48px; padding-top: 20px; border-top: 1px solid var(--gray-200); text-align: center; color: var(--gray-400); font-size: 11px; }
 
   /* POLYMORPHIC TAG */
   .poly-tag { display: inline-block; background: var(--purple-light); color: var(--purple); border: 1px solid #ddd6fe; border-radius: 4px; padding: 1px 6px; font-size: 10px; font-weight: 600; font-family: monospace; }
@@ -250,6 +250,19 @@
 
   /* SECTION DIVIDER */
   hr.divider { border: none; border-top: 1px solid var(--gray-200); margin: 24px 0; }
+
+
+  /* ─── LAST PAGE FOOTER */
+  .page-footer {
+    margin-top: 48px;
+    padding-top: 14px;
+    border-top: 1px solid #e2e8f0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 10px;
+    color: #94a3b8;
+  }
 </style>
 </head>
 <body>
@@ -1450,7 +1463,7 @@ $conv->participants
     </tbody>
   </table>
 
-  <div class="doc-footer">
+  <div class="doc-footer-block">
     ClientOps CRM — Architektura i Model Danych v2.0.0 &nbsp;·&nbsp; Marzec 2026 &nbsp;·&nbsp;
     27 tabel · 13 sekcji · Laravel 12 + React 19 + PostgreSQL + TimescaleDB
   </div>
@@ -1483,5 +1496,10 @@ $conv->participants
   </div>
 </div>
 
+
+<div class="page-footer">
+  <span>Maciej Fiałkowski</span>
+  <span>ClientOps CRM</span>
+</div>
 </body>
 </html>
