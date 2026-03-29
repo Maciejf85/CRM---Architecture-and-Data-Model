@@ -82,6 +82,9 @@ async function generatePdf(fileName, ver) {
   const browser = await puppeteer.launch({ headless: true });
   const page    = await browser.newPage();
 
+  // 300 DPI: deviceScaleFactor = 300 / 96 ≈ 3.125
+  await page.setViewport({ width: 794, height: 1123, deviceScaleFactor: 3.125 });
+
   await page.goto(`file://${inputPath}`, { waitUntil: 'networkidle0' });
 
   await page.pdf({
