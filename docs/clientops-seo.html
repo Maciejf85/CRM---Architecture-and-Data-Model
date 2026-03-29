@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ClientOps CRM — Moduł SEO & AI v1.0.0</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+  :root {
+    --primary: #059669;
+    --primary-light: #ecfdf5;
+    --accent: #10b981;
+    --dark: #0f172a;
+    --gray-800: #1e293b;
+    --gray-600: #475569;
+    --gray-400: #94a3b8;
+    --gray-200: #e2e8f0;
+    --gray-100: #f1f5f9;
+    --gray-50: #f8fafc;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', -apple-system, sans-serif;
+    color: var(--dark);
+    background: white;
+    font-size: 13px;
+    line-height: 1.6;
+  }
+
+  @page { margin: 14mm 0 10mm; size: A4; }
+  @page :first { margin: 0; }
+
+  /* COVER */
+  .cover {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #0f172a 0%, #052e16 50%, #0f172a 100%);
+    display: flex; flex-direction: column;
+    justify-content: center; align-items: center;
+    text-align: center; padding: 60px 40px;
+    page-break-after: always;
+    position: relative; overflow: hidden;
+  }
+  .cover::before {
+    content: ''; position: absolute;
+    width: 500px; height: 500px;
+    background: radial-gradient(circle, rgba(5,150,105,0.18) 0%, transparent 70%);
+    top: -80px; right: -80px; border-radius: 50%;
+  }
+  .cover::after {
+    content: ''; position: absolute;
+    width: 400px; height: 400px;
+    background: radial-gradient(circle, rgba(16,185,129,0.10) 0%, transparent 70%);
+    bottom: -60px; left: -60px; border-radius: 50%;
+  }
+  .cover-badge {
+    background: rgba(5,150,105,0.2); border: 1px solid rgba(5,150,105,0.45);
+    color: #6ee7b7; padding: 6px 18px; border-radius: 20px;
+    font-size: 11px; font-weight: 500; letter-spacing: 1.5px;
+    text-transform: uppercase; margin-bottom: 24px; position: relative; z-index: 1;
+  }
+  .cover-logo {
+    font-size: 48px; font-weight: 700; color: white;
+    letter-spacing: -2px; margin-bottom: 6px; position: relative; z-index: 1;
+  }
+  .cover-logo span { color: #34d399; }
+  .cover-subtitle { font-size: 16px; color: #64748b; font-weight: 300; margin-bottom: 40px; position: relative; z-index: 1; }
+  .cover-divider { width: 60px; height: 2px; background: linear-gradient(90deg, #059669, #0ea5e9); margin: 0 auto 40px; position: relative; z-index: 1; }
+  .cover-title { font-size: 30px; font-weight: 700; color: white; margin-bottom: 14px; line-height: 1.2; position: relative; z-index: 1; }
+  .cover-desc { font-size: 14px; color: #475569; max-width: 540px; margin-bottom: 56px; position: relative; z-index: 1; line-height: 1.7; }
+  .cover-meta { display: flex; gap: 48px; justify-content: center; position: relative; z-index: 1; }
+  .cover-meta-item { text-align: center; }
+  .cover-meta-label { font-size: 10px; text-transform: uppercase; letter-spacing: 1px; color: #334155; margin-bottom: 4px; }
+  .cover-meta-value { font-size: 13px; color: #cbd5e1; font-weight: 500; }
+
+  /* PLACEHOLDER PAGE */
+  .placeholder-page {
+    padding: 80px 60px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+  }
+  .placeholder-icon {
+    width: 80px; height: 80px;
+    background: var(--primary-light);
+    border-radius: 20px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 36px;
+    margin: 0 auto 32px;
+  }
+  .placeholder-title {
+    font-size: 22px; font-weight: 700; color: var(--dark); margin-bottom: 12px;
+  }
+  .placeholder-sub {
+    font-size: 14px; color: var(--gray-600); max-width: 480px; line-height: 1.7;
+  }
+  .placeholder-badge {
+    display: inline-block;
+    margin-top: 32px;
+    background: var(--primary-light);
+    color: var(--primary);
+    border: 1px solid #a7f3d0;
+    border-radius: 6px;
+    padding: 6px 18px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+  .planned-sections {
+    margin-top: 48px;
+    width: 100%;
+    max-width: 560px;
+    text-align: left;
+  }
+  .planned-title {
+    font-size: 11px; text-transform: uppercase; letter-spacing: 1px;
+    color: var(--gray-400); margin-bottom: 16px; font-weight: 600;
+  }
+  .planned-item {
+    display: flex; align-items: center; gap: 12px;
+    padding: 10px 16px;
+    border: 1px solid var(--gray-200);
+    border-radius: 8px;
+    margin-bottom: 8px;
+    background: var(--gray-50);
+  }
+  .planned-num {
+    width: 26px; height: 26px; background: var(--primary);
+    border-radius: 6px; color: white; font-size: 11px; font-weight: 700;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .planned-text { font-size: 13px; font-weight: 500; color: var(--gray-800); }
+  .planned-sub { font-size: 11px; color: var(--gray-400); }
+</style>
+</head>
+<body>
+
+  <!-- COVER PAGE -->
+  <div class="cover">
+    <div class="cover-badge">Moduł SEO & AI — v1.0</div>
+    <div class="cover-logo">Client<span>Ops</span></div>
+    <div class="cover-subtitle">Platforma CRM nowej generacji</div>
+    <div class="cover-divider"></div>
+    <div class="cover-title">Moduł SEO & AI</div>
+    <div class="cover-desc">
+      Specyfikacja modułu analizy SEO z integracją Google Search Console, Google Analytics 4,
+      PageSpeed Insights oraz analizą semantyczną opartą na AI. Pipeline kolejkowy Horizon,
+      trendy pozycji w TimescaleDB, rekomendacje i raporty PDF.
+    </div>
+    <div class="cover-meta">
+      <div class="cover-meta-item">
+        <div class="cover-meta-label">Wersja</div>
+        <div class="cover-meta-value">1.0.0</div>
+      </div>
+      <div class="cover-meta-item">
+        <div class="cover-meta-label">Data</div>
+        <div class="cover-meta-value">Marzec 2026</div>
+      </div>
+      <div class="cover-meta-item">
+        <div class="cover-meta-label">Faza</div>
+        <div class="cover-meta-value">6 — Ostatnia</div>
+      </div>
+      <div class="cover-meta-item">
+        <div class="cover-meta-label">Typ</div>
+        <div class="cover-meta-value">Specyfikacja Modułu</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PLACEHOLDER -->
+  <div class="placeholder-page">
+    <div class="placeholder-icon">🔍</div>
+    <div class="placeholder-title">Dokument w przygotowaniu</div>
+    <div class="placeholder-sub">
+      Specyfikacja modułu SEO & AI jest aktualnie opracowywana.
+      Dokument będzie zawierał pełny opis architektury, pipeline kolejkowego,
+      integracji z zewnętrznymi API oraz schematu bazy danych.
+    </div>
+    <div class="placeholder-badge">W przygotowaniu</div>
+
+    <div class="planned-sections">
+      <div class="planned-title">Planowane sekcje dokumentu</div>
+
+      <div class="planned-item">
+        <div class="planned-num">1</div>
+        <div>
+          <div class="planned-text">Architektura Modułu SEO</div>
+          <div class="planned-sub">Przegląd komponentów, zależności, miejsce w systemie</div>
+        </div>
+      </div>
+      <div class="planned-item">
+        <div class="planned-num">2</div>
+        <div>
+          <div class="planned-text">Pipeline Kolejkowy Horizon</div>
+          <div class="planned-sub">CrawlWebsiteJob → FetchGSCDataJob → FetchGA4DataJob → AnalyzeKeywordsJob → GenerateAuditReportJob</div>
+        </div>
+      </div>
+      <div class="planned-item">
+        <div class="planned-num">3</div>
+        <div>
+          <div class="planned-text">Integracje z Google APIs</div>
+          <div class="planned-sub">Google Search Console API, Google Analytics 4 API — uwierzytelnianie, limity, obsługa błędów</div>
+        </div>
+      </div>
+      <div class="planned-item">
+        <div class="planned-num">4</div>
+        <div>
+          <div class="planned-text">Analiza AI (Claude / OpenAI)</div>
+          <div class="planned-sub">Analiza semantyczna treści, rekomendacje optymalizacji, strategia cache</div>
+        </div>
+      </div>
+      <div class="planned-item">
+        <div class="planned-num">5</div>
+        <div>
+          <div class="planned-text">Core Web Vitals — PageSpeed Insights</div>
+          <div class="planned-sub">LCP, CLS, INP — zbieranie, przechowywanie, alerty</div>
+        </div>
+      </div>
+      <div class="planned-item">
+        <div class="planned-num">6</div>
+        <div>
+          <div class="planned-text">Schemat Bazy Danych</div>
+          <div class="planned-sub">seo_audits, seo_keywords, seo_keyword_ranks (TimescaleDB), seo_recommendations</div>
+        </div>
+      </div>
+      <div class="planned-item">
+        <div class="planned-num">7</div>
+        <div>
+          <div class="planned-text">Trendy Pozycji — TimescaleDB</div>
+          <div class="planned-sub">Hypertable, continuous aggregates, polityka retencji danych</div>
+        </div>
+      </div>
+      <div class="planned-item">
+        <div class="planned-num">8</div>
+        <div>
+          <div class="planned-text">Raporty i Eksport PDF</div>
+          <div class="planned-sub">Browsershot, szablony raportów, powiadomienie po zakończeniu</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>

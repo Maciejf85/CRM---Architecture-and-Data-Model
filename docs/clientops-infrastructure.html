@@ -1,0 +1,1407 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ClientOps CRM — Wymagania Infrastrukturalne v1.0.0</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+  :root {
+    --primary: #4f46e5;
+    --primary-light: #eef2ff;
+    --accent: #818cf8;
+    --dark: #0f172a;
+    --gray-800: #1e293b;
+    --gray-600: #475569;
+    --gray-400: #94a3b8;
+    --gray-200: #e2e8f0;
+    --gray-100: #f1f5f9;
+    --gray-50: #f8fafc;
+    --green: #059669;
+    --green-light: #ecfdf5;
+    --orange: #d97706;
+    --orange-light: #fffbeb;
+    --red: #dc2626;
+    --red-light: #fef2f2;
+    --teal: #0d9488;
+    --teal-light: #f0fdfa;
+    --border: #e2e8f0;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', -apple-system, sans-serif;
+    color: var(--dark);
+    background: white;
+    font-size: 13px;
+    line-height: 1.6;
+  }
+
+  @page { margin: 14mm 0 10mm; size: A4; }
+  @page :first { margin: 0; }
+
+  /* COVER */
+  .cover {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%);
+    display: flex; flex-direction: column;
+    justify-content: center; align-items: center;
+    text-align: center; padding: 60px 40px;
+    page-break-after: always;
+    position: relative; overflow: hidden;
+  }
+  .cover::before {
+    content: ''; position: absolute;
+    width: 500px; height: 500px;
+    background: radial-gradient(circle, rgba(79,70,229,0.18) 0%, transparent 70%);
+    top: -80px; right: -80px; border-radius: 50%;
+  }
+  .cover::after {
+    content: ''; position: absolute;
+    width: 400px; height: 400px;
+    background: radial-gradient(circle, rgba(129,140,248,0.12) 0%, transparent 70%);
+    bottom: -60px; left: -60px; border-radius: 50%;
+  }
+  .cover-badge {
+    background: rgba(79,70,229,0.2); border: 1px solid rgba(79,70,229,0.45);
+    color: #c7d2fe; padding: 6px 18px; border-radius: 20px;
+    font-size: 11px; font-weight: 500; letter-spacing: 1.5px;
+    text-transform: uppercase; margin-bottom: 24px; position: relative; z-index: 1;
+  }
+  .cover-logo {
+    font-size: 48px; font-weight: 700; color: white;
+    letter-spacing: -2px; margin-bottom: 6px; position: relative; z-index: 1;
+  }
+  .cover-logo span { color: #a5b4fc; }
+  .cover-subtitle { font-size: 16px; color: #64748b; font-weight: 300; margin-bottom: 40px; position: relative; z-index: 1; }
+  .cover-divider { width: 60px; height: 2px; background: linear-gradient(90deg, #4f46e5, #0ea5e9); margin: 0 auto 40px; position: relative; z-index: 1; }
+  .cover-title { font-size: 30px; font-weight: 700; color: white; margin-bottom: 14px; line-height: 1.2; position: relative; z-index: 1; }
+  .cover-desc { font-size: 14px; color: #475569; max-width: 540px; margin-bottom: 56px; position: relative; z-index: 1; line-height: 1.7; }
+  .cover-meta { display: flex; gap: 48px; justify-content: center; position: relative; z-index: 1; }
+  .cover-meta-item { text-align: center; }
+  .cover-meta-label { font-size: 10px; text-transform: uppercase; letter-spacing: 1px; color: #334155; margin-bottom: 4px; }
+  .cover-meta-value { font-size: 13px; color: #cbd5e1; font-weight: 500; }
+
+  /* TOC */
+  .toc-page { padding: 56px 60px; page-break-after: always; min-height: 100vh; }
+  .toc-title { font-size: 26px; font-weight: 700; color: var(--dark); margin-bottom: 6px; }
+  .toc-subtitle { color: var(--gray-400); font-size: 13px; margin-bottom: 36px; }
+  .toc-list { list-style: none; }
+  .toc-item {
+    display: flex; align-items: center; padding: 9px 14px;
+    border-radius: 8px; margin-bottom: 4px;
+  }
+  .toc-item:hover { background: var(--gray-50); }
+  .toc-num {
+    width: 26px; height: 26px; background: var(--primary); color: white;
+    border-radius: 6px; display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 700; margin-right: 14px; flex-shrink: 0;
+  }
+  .toc-text { font-size: 13px; font-weight: 500; color: var(--gray-800); flex: 1; }
+  .toc-dots { flex: 1; border-bottom: 1px dashed var(--border); margin: 0 12px; height: 1px; align-self: flex-end; margin-bottom: 4px; }
+  .toc-sub {
+    display: flex; align-items: center; padding: 6px 14px 6px 54px;
+    color: var(--gray-600); font-size: 12px;
+  }
+  .toc-sub-dot { width: 4px; height: 4px; background: var(--gray-400); border-radius: 50%; margin-right: 10px; flex-shrink: 0; }
+
+  /* CONTENT PAGES */
+  .page { padding: 48px 60px; }
+  .page-break { page-break-after: always; }
+
+  /* SECTION HEADERS */
+  .section-header {
+    display: flex; align-items: flex-start; gap: 16px;
+    margin-bottom: 28px; padding-bottom: 18px;
+    border-bottom: 2px solid var(--border);
+  }
+  .section-num {
+    width: 44px; height: 44px; background: var(--primary); color: white;
+    border-radius: 10px; display: flex; align-items: center; justify-content: center;
+    font-size: 17px; font-weight: 700; flex-shrink: 0;
+  }
+  .section-label {
+    font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px;
+    color: var(--primary); font-weight: 600; margin-bottom: 2px;
+  }
+  .section-title { font-size: 22px; font-weight: 700; color: var(--dark); line-height: 1.2; }
+
+  h3 {
+    font-size: 14px; font-weight: 600; color: var(--dark);
+    margin: 24px 0 10px; display: flex; align-items: center; gap: 8px;
+    break-after: avoid;
+  }
+  h3::before {
+    content: ''; display: inline-block; width: 3px; height: 14px;
+    background: var(--primary); border-radius: 2px;
+  }
+  h4 {
+    font-size: 12px; font-weight: 600; color: var(--gray-600);
+    margin: 18px 0 8px; text-transform: uppercase; letter-spacing: 0.5px;
+  }
+
+  p { color: var(--gray-600); margin-bottom: 10px; line-height: 1.7; }
+
+  /* CODE */
+  pre {
+    background: var(--gray-800); border-radius: 8px; padding: 16px 18px;
+    margin: 10px 0 18px; overflow: hidden;
+    font-family: 'JetBrains Mono', monospace; font-size: 11px; line-height: 1.7;
+    color: #e2e8f0; break-inside: avoid;
+  }
+  code { font-family: 'JetBrains Mono', monospace; font-size: 11px; }
+  p code, li code {
+    background: var(--gray-100); padding: 2px 6px; border-radius: 4px;
+    color: var(--primary); font-size: 11px;
+  }
+
+  /* TABLES */
+  .table-wrap { overflow: hidden; border-radius: 10px; border: 1px solid var(--border); margin: 12px 0 20px; break-inside: avoid; }
+  table { width: 100%; border-collapse: collapse; }
+  th {
+    background: var(--gray-800); color: #e2e8f0;
+    padding: 10px 14px; text-align: left; font-size: 11px;
+    font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;
+  }
+  td { padding: 9px 14px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+  tr:nth-child(even) td { background: var(--gray-50); }
+  td:first-child { font-weight: 500; }
+  .td-num { font-family: 'JetBrains Mono', monospace; font-size: 11px; }
+
+  /* ALERT BOXES */
+  .alert {
+    padding: 14px 16px; border-radius: 8px; margin: 14px 0; display: flex; gap: 12px; break-inside: avoid;
+  }
+  .alert-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+  .alert-body { flex: 1; }
+  .alert-title { font-size: 12px; font-weight: 700; margin-bottom: 3px; }
+  .alert-text { font-size: 12px; line-height: 1.6; }
+  .alert-info { background: var(--primary-light); border-left: 3px solid var(--primary); }
+  .alert-info .alert-title { color: var(--primary); }
+  .alert-info .alert-text { color: #3730a3; }
+  .alert-warning { background: var(--orange-light); border-left: 3px solid var(--orange); }
+  .alert-warning .alert-title { color: var(--orange); }
+  .alert-warning .alert-text { color: #92400e; }
+  .alert-danger { background: var(--red-light); border-left: 3px solid var(--red); }
+  .alert-danger .alert-title { color: var(--red); }
+  .alert-danger .alert-text { color: #991b1b; }
+  .alert-success { background: var(--green-light); border-left: 3px solid var(--green); }
+  .alert-success .alert-title { color: var(--green); }
+  .alert-success .alert-text { color: #065f46; }
+
+  /* SCENARIO CARDS */
+  .scenario-banner {
+    border-radius: 12px; padding: 20px 24px; margin-bottom: 24px;
+    display: flex; align-items: center; gap: 20px;
+  }
+  .scenario-banner.s10 { background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%); border: 1px solid #6ee7b7; }
+  .scenario-banner.s100 { background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%); border: 1px solid #fcd34d; }
+  .scenario-banner.s5000 { background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%); border: 1px solid #fca5a5; }
+  .scenario-icon { font-size: 32px; flex-shrink: 0; }
+  .scenario-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 2px; }
+  .scenario-banner.s10 .scenario-label { color: #059669; }
+  .scenario-banner.s100 .scenario-label { color: #d97706; }
+  .scenario-banner.s5000 .scenario-label { color: #dc2626; }
+  .scenario-title { font-size: 18px; font-weight: 700; color: var(--dark); margin-bottom: 2px; }
+  .scenario-desc { font-size: 12px; color: var(--gray-600); }
+
+  /* SERVER SPEC CARDS */
+  .server-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 14px 0 20px; }
+  .server-grid-2 { grid-template-columns: repeat(2, 1fr); }
+  .server-card {
+    border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px;
+    background: var(--gray-50);
+  }
+  .server-card-title {
+    font-size: 12px; font-weight: 700; color: var(--dark); margin-bottom: 10px;
+    padding-bottom: 8px; border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 6px;
+  }
+  .server-card-title span { font-size: 14px; }
+  .server-spec-row { display: flex; justify-content: space-between; margin-bottom: 4px; }
+  .server-spec-label { font-size: 11px; color: var(--gray-600); }
+  .server-spec-value { font-size: 11px; font-weight: 600; color: var(--dark); font-family: 'JetBrains Mono', monospace; }
+
+  /* COST BADGE */
+  .cost-row {
+    display: flex; align-items: center; gap: 16px;
+    background: var(--primary-light); border: 1px solid #c7d2fe;
+    border-radius: 10px; padding: 14px 20px; margin: 16px 0;
+  }
+  .cost-label { font-size: 12px; color: var(--primary); font-weight: 600; }
+  .cost-value { font-size: 18px; font-weight: 700; color: var(--primary); }
+  .cost-note { font-size: 11px; color: #6366f1; }
+
+  /* ARCHITECTURE DIAGRAM (text-based) */
+  .arch-diagram {
+    background: #0f172a; border-radius: 10px; padding: 20px 24px;
+    margin: 14px 0 20px; font-family: 'JetBrains Mono', monospace;
+    font-size: 10.5px; line-height: 1.8; color: #94a3b8;
+    break-inside: avoid;
+  }
+  .arch-diagram .ah { color: #7dd3fc; font-weight: 600; }
+  .arch-diagram .ag { color: #86efac; }
+  .arch-diagram .ay { color: #fde68a; }
+  .arch-diagram .ar { color: #fca5a5; }
+  .arch-diagram .ap { color: #c4b5fd; }
+
+  /* METRIC PILLS */
+  .metrics-row { display: flex; gap: 10px; flex-wrap: wrap; margin: 12px 0; }
+  .metric-pill {
+    display: flex; flex-direction: column; align-items: center;
+    background: var(--gray-50); border: 1px solid var(--border);
+    border-radius: 10px; padding: 10px 14px; min-width: 90px;
+  }
+  .metric-val { font-size: 18px; font-weight: 700; color: var(--dark); line-height: 1; }
+  .metric-lbl { font-size: 10px; color: var(--gray-400); margin-top: 3px; text-align: center; }
+
+  /* QUEUE CONFIG */
+  .queue-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin: 12px 0 20px; }
+  .queue-card {
+    border: 1px solid var(--border); border-radius: 8px; padding: 12px 14px;
+    background: var(--gray-50); break-inside: avoid;
+  }
+  .queue-name { font-size: 11px; font-weight: 700; color: var(--primary); font-family: 'JetBrains Mono', monospace; margin-bottom: 6px; }
+  .queue-workers { font-size: 20px; font-weight: 700; color: var(--dark); line-height: 1; margin-bottom: 2px; }
+  .queue-workers-label { font-size: 10px; color: var(--gray-400); margin-bottom: 6px; }
+  .queue-tags { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 6px; }
+  .queue-tag {
+    font-size: 10px; padding: 2px 8px; border-radius: 4px; font-weight: 500;
+  }
+  .tag-io { background: #eff6ff; color: #1d4ed8; }
+  .tag-rl { background: #fef3c7; color: #92400e; }
+  .tag-ai { background: #f5f3ff; color: #5b21b6; }
+  .tag-mem { background: #fef2f2; color: #991b1b; }
+  .tag-cpu { background: #ecfdf5; color: #065f46; }
+
+  /* BOTTLENECK CARDS */
+  .bottleneck-grid { display: grid; grid-template-columns: 1fr; gap: 14px; margin: 14px 0; }
+  .bottleneck-card {
+    border: 1px solid var(--border); border-radius: 10px; padding: 16px;
+    break-inside: avoid;
+  }
+  .bottleneck-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+  .bottleneck-icon { font-size: 20px; }
+  .bottleneck-title { font-size: 13px; font-weight: 700; color: var(--dark); }
+  .bottleneck-subtitle { font-size: 11px; color: var(--gray-600); }
+  .bottleneck-problem { font-size: 12px; color: var(--red); margin-bottom: 6px; }
+  .bottleneck-problem::before { content: '⚠ Problem: '; font-weight: 700; }
+  .bottleneck-solution { font-size: 12px; color: var(--green); margin-bottom: 6px; }
+  .bottleneck-solution::before { content: '✓ Rozwiązanie: '; font-weight: 700; }
+  .bottleneck-note { font-size: 11px; color: var(--gray-600); font-style: italic; }
+
+  /* SUMMARY TABLE */
+  .summary-table-wrap { border-radius: 12px; overflow: hidden; border: 2px solid var(--primary); margin: 20px 0; }
+  .summary-table th { background: var(--primary); }
+  .summary-row-s10 td { background: #f0fdf4; }
+  .summary-row-s100 td { background: #fffbeb; }
+  .summary-row-s5000 td { background: #fef2f2; }
+  .badge-scale {
+    display: inline-block; padding: 2px 8px; border-radius: 4px;
+    font-size: 10px; font-weight: 700; text-transform: uppercase;
+  }
+  .badge-starter { background: #d1fae5; color: #065f46; }
+  .badge-growth { background: #fef3c7; color: #92400e; }
+  .badge-scale { background: #fee2e2; color: #991b1b; }
+
+  ul { padding-left: 20px; color: var(--gray-600); margin-bottom: 12px; }
+  li { margin-bottom: 4px; line-height: 1.6; }
+  strong { color: var(--dark); }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════ COVER -->
+<div class="cover">
+  <div class="cover-badge">Infrastruktura — v1.0</div>
+  <div class="cover-logo">Client<span>Ops</span></div>
+  <div class="cover-subtitle">Platforma CRM nowej generacji</div>
+  <div class="cover-divider"></div>
+  <div class="cover-title">Wymagania Infrastrukturalne</div>
+  <div class="cover-desc">
+    Analiza wymagań sprzętowych i architektonicznych dla 10, 100 i 5 000 klientów.
+    System ciągłego monitoringu SLA, tygodniowej analizy SEO z wielu źródeł
+    (GSC, GA4, PageSpeed, AI) oraz miesięcznych audytów z generowaniem PDF.
+  </div>
+  <div class="cover-meta">
+    <div class="cover-meta-item">
+      <div class="cover-meta-label">Wersja</div>
+      <div class="cover-meta-value">1.0.0</div>
+    </div>
+    <div class="cover-meta-item">
+      <div class="cover-meta-label">Data</div>
+      <div class="cover-meta-value">Marzec 2026</div>
+    </div>
+    <div class="cover-meta-item">
+      <div class="cover-meta-label">Scenariusze</div>
+      <div class="cover-meta-value">3</div>
+    </div>
+    <div class="cover-meta-item">
+      <div class="cover-meta-label">Typ</div>
+      <div class="cover-meta-value">DevOps / SRE</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ TOC -->
+<div class="toc-page">
+  <div class="toc-title">Spis treści</div>
+  <div class="toc-subtitle">Wymagania Infrastrukturalne — ClientOps CRM</div>
+
+  <ul class="toc-list">
+    <li class="toc-item">
+      <div class="toc-num">1</div>
+      <div class="toc-text">Charakterystyka Systemu i Model Obciążenia</div>
+      <div class="toc-dots"></div>
+    </li>
+    <li class="toc-item">
+      <div class="toc-num">2</div>
+      <div class="toc-text">Scenariusz: 10 Klientów — Single Server</div>
+      <div class="toc-dots"></div>
+    </li>
+    <li class="toc-sub"><div class="toc-sub-dot"></div>Specyfikacja serwera</li>
+    <li class="toc-sub"><div class="toc-sub-dot"></div>Konfiguracja Horizon</li>
+    <li class="toc-sub"><div class="toc-sub-dot"></div>Szacunkowy koszt</li>
+    <li class="toc-item">
+      <div class="toc-num">3</div>
+      <div class="toc-text">Scenariusz: 100 Klientów — Mały Klaster</div>
+      <div class="toc-dots"></div>
+    </li>
+    <li class="toc-sub"><div class="toc-sub-dot"></div>Architektura 2–3 serwerów</li>
+    <li class="toc-sub"><div class="toc-sub-dot"></div>Specyfikacja komponentów</li>
+    <li class="toc-sub"><div class="toc-sub-dot"></div>Konfiguracja Horizon</li>
+    <li class="toc-item">
+      <div class="toc-num">4</div>
+      <div class="toc-text">Scenariusz: 5 000 Klientów — Klaster Produkcyjny</div>
+      <div class="toc-dots"></div>
+    </li>
+    <li class="toc-sub"><div class="toc-sub-dot"></div>Architektura HA z load balancerem</li>
+    <li class="toc-sub"><div class="toc-sub-dot"></div>Specyfikacja wszystkich węzłów</li>
+    <li class="toc-sub"><div class="toc-sub-dot"></div>Konfiguracja Horizon i kolejek</li>
+    <li class="toc-sub"><div class="toc-sub-dot"></div>TimescaleDB — partycjonowanie i retencja</li>
+    <li class="toc-item">
+      <div class="toc-num">5</div>
+      <div class="toc-text">Krytyczne Indeksy Bazy Danych</div>
+      <div class="toc-dots"></div>
+    </li>
+    <li class="toc-item">
+      <div class="toc-num">6</div>
+      <div class="toc-text">Wąskie Gardła i Optymalizacje</div>
+      <div class="toc-dots"></div>
+    </li>
+    <li class="toc-sub"><div class="toc-sub-dot"></div>PDF Generation (Browsershot)</li>
+    <li class="toc-sub"><div class="toc-sub-dot"></div>Monitoring SLA — skalowanie zapytań</li>
+    <li class="toc-sub"><div class="toc-sub-dot"></div>Google APIs — rate limiting</li>
+    <li class="toc-sub"><div class="toc-sub-dot"></div>AI Processing — koszt i cache</li>
+    <li class="toc-item">
+      <div class="toc-num">7</div>
+      <div class="toc-text">Zestawienie Kosztów i Rekomendacje</div>
+      <div class="toc-dots"></div>
+    </li>
+  </ul>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ SECTION 1: Load Model -->
+<div class="page page-break">
+  <div class="section-header">
+    <div class="section-num">1</div>
+    <div>
+      <div class="section-label">Podstawy</div>
+      <div class="section-title">Charakterystyka Systemu i Model Obciążenia</div>
+    </div>
+  </div>
+
+  <h3>Stałe procesy działające w tle</h3>
+  <p>ClientOps nie jest systemem pasywnym — kilka procesów działa <strong>nieprzerwanie</strong>, niezależnie od aktywności użytkowników:</p>
+
+  <div class="table-wrap">
+    <table>
+      <tr>
+        <th>Proces</th>
+        <th>Częstotliwość</th>
+        <th>Komponent</th>
+        <th>Obciążenie</th>
+      </tr>
+      <tr>
+        <td><code>CheckSlaBreachesJob</code></td>
+        <td class="td-num">co 5 minut</td>
+        <td>Laravel Scheduler → Queue</td>
+        <td>Zapytanie DB — skanuje aktywne tickety i projekty</td>
+      </tr>
+      <tr>
+        <td>Analiza SEO — pipeline</td>
+        <td class="td-num">1×/tydz. per projekt</td>
+        <td>Horizon (5 kolejek)</td>
+        <td>I/O sieciowy, Google APIs, AI API, DB write</td>
+      </tr>
+      <tr>
+        <td>Miesięczny audyt + PDF</td>
+        <td class="td-num">1×/miesiąc per klient</td>
+        <td>Horizon + Browsershot</td>
+        <td>Headless Chromium — ~1 GB RAM / instancja</td>
+      </tr>
+      <tr>
+        <td>WebSocket (Reverb)</td>
+        <td class="td-num">ciągłe połączenia</td>
+        <td>Laravel Reverb + Redis</td>
+        <td>Długotrwałe połączenia TCP, pub/sub Redis</td>
+      </tr>
+      <tr>
+        <td>Indeksowanie Meilisearch</td>
+        <td class="td-num">po każdej zmianie</td>
+        <td>Scout Observer → Queue</td>
+        <td>Lekkie — małe incremental updates</td>
+      </tr>
+    </table>
+  </div>
+
+  <h3>Pipeline SEO — 7 jobów per analiza</h3>
+  <p>Każda analiza SEO jednego projektu generuje sekwencję jobów w różnych kolejkach:</p>
+
+  <div class="arch-diagram">
+<span class="ah">AuditRequestedEvent</span>
+  └─► <span class="ag">CrawlWebsiteJob</span>         queue: <span class="ay">crawlers</span>       │ Crawling stron, zbieranie meta/h1/broken links
+       └─► <span class="ag">FetchGSCDataJob</span>       queue: <span class="ay">google-apis</span>    │ Google Search Console API — pozycje, kliknięcia
+       └─► <span class="ag">FetchGA4DataJob</span>       queue: <span class="ay">google-apis</span>    │ Google Analytics 4 API — ruch organiczny (równolegle)
+            └─► <span class="ag">AnalyzeKeywordsJob</span>   queue: <span class="ay">ai-processing</span>  │ Analiza słów kluczowych + PageSpeed Insights
+            └─► <span class="ag">AnalyzeSemanticsJob</span>  queue: <span class="ay">ai-processing</span>  │ Analiza semantyczna treści przez Claude/OpenAI (równolegle)
+                 └─► <span class="ag">GenerateAuditReportJob</span> queue: <span class="ay">pdf</span>           │ Browsershot PDF — headless Chromium
+                      └─► <span class="ag">NotifyAuditCompleteJob</span> queue: <span class="ay">default</span>       │ Mail + in-app notification
+  </div>
+
+  <h3>Model obciążenia — założenia bazowe</h3>
+
+  <div class="table-wrap">
+    <table>
+      <tr>
+        <th>Parametr</th>
+        <th>Wartość</th>
+        <th>Uzasadnienie</th>
+      </tr>
+      <tr>
+        <td>Projekty per klient (śr.)</td>
+        <td class="td-num">3</td>
+        <td>Agencja obsługuje kilka stron/projektów</td>
+      </tr>
+      <tr>
+        <td>Analizy SEO/projekt/miesiąc</td>
+        <td class="td-num">4 (tygodniowo)</td>
+        <td>Cotygodniowy snapshot pozycji i wskaźników</td>
+      </tr>
+      <tr>
+        <td>Joby per analiza SEO</td>
+        <td class="td-num">7</td>
+        <td>Pipeline: crawl + 2×Google + 2×AI + PDF + notify</td>
+      </tr>
+      <tr>
+        <td>Joby per miesięczny audyt</td>
+        <td class="td-num">3</td>
+        <td>GenerateReport + BrowsershotPDF + Notify</td>
+      </tr>
+      <tr>
+        <td>SLA scany/dobę</td>
+        <td class="td-num">288</td>
+        <td>Co 5 minut × 24h = 288 uruchomień schedulera</td>
+      </tr>
+      <tr>
+        <td>Aktywni użytkownicy per klient</td>
+        <td class="td-num">2</td>
+        <td>Admin + manager (lub client-admin + client-user)</td>
+      </tr>
+      <tr>
+        <td>Czas generowania PDF</td>
+        <td class="td-num">30–90s</td>
+        <td>Headless Chromium, zależy od złożoności raportu</td>
+      </tr>
+      <tr>
+        <td>RAM per instancja Browsershot</td>
+        <td class="td-num">~1 GB</td>
+        <td>Chromium to ciężki proces — każdy worker = 1 Chromium</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="alert alert-info">
+    <div class="alert-icon">ℹ</div>
+    <div class="alert-body">
+      <div class="alert-title">Google APIs — rate limity</div>
+      <div class="alert-text">Google Search Console API: 200 zapytań/100 sekund per projekt (OAuth2 user token). Przy dużej liczbie projektów wymagane jest rozłożenie jobów w czasie oraz retry logic z exponential backoff w kolejce <code>google-apis</code>.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ SECTION 2: 10 clients -->
+<div class="page page-break">
+  <div class="section-header">
+    <div class="section-num">2</div>
+    <div>
+      <div class="section-label">Scenariusz Startowy</div>
+      <div class="section-title">10 Klientów — Single Server</div>
+    </div>
+  </div>
+
+  <div class="scenario-banner s10">
+    <div class="scenario-icon">🌱</div>
+    <div>
+      <div class="scenario-label">Starter / Dev / Pilot</div>
+      <div class="scenario-title">10 klientów · 30 projektów · 5–20 aktywnych userów</div>
+      <div class="scenario-desc">Idealne na start, pilotaż, środowisko developerskie lub bardzo małą agencję. Wszystkie komponenty na jednym serwerze.</div>
+    </div>
+  </div>
+
+  <h3>Profil obciążenia</h3>
+
+  <div class="metrics-row">
+    <div class="metric-pill">
+      <div class="metric-val">30</div>
+      <div class="metric-lbl">projektów</div>
+    </div>
+    <div class="metric-pill">
+      <div class="metric-val">~28</div>
+      <div class="metric-lbl">joby SEO/dzień</div>
+    </div>
+    <div class="metric-pill">
+      <div class="metric-val">~1</div>
+      <div class="metric-lbl">audyt PDF/dzień</div>
+    </div>
+    <div class="metric-pill">
+      <div class="metric-val">288</div>
+      <div class="metric-lbl">SLA scany/dzień</div>
+    </div>
+    <div class="metric-pill">
+      <div class="metric-val">5–20</div>
+      <div class="metric-lbl">concurrent users</div>
+    </div>
+    <div class="metric-pill">
+      <div class="metric-val">~840</div>
+      <div class="metric-lbl">joby SEO/miesiąc</div>
+    </div>
+  </div>
+
+  <p>Przy 10 klientach obciążenie jest minimalne. SLA job skanuje kilkadziesiąt rekordów, kolejki SEO pracują głównie w nocy (zaplanowane), a jeden Chromium wystarcza do generowania ~1 PDF dziennie.</p>
+
+  <h3>Architektura: pojedynczy serwer VPS</h3>
+
+  <div class="arch-diagram">
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                          <span class="ah">VPS — Jeden Serwer</span>                              │
+│                                                                             │
+│   <span class="ag">Nginx</span>          reverse proxy, SSL termination, gzip                   │
+│   <span class="ag">PHP-FPM</span>        Laravel 12, PHP 8.3, 8 workers                         │
+│   <span class="ag">PostgreSQL 16</span>  + TimescaleDB extension — główna baza danych           │
+│   <span class="ag">Redis 7</span>        cache + queue driver + sesje + pub/sub Reverb          │
+│   <span class="ag">Horizon</span>        5 kolejek, 8 workerów łącznie                          │
+│   <span class="ag">Reverb</span>         WebSocket server (kilka jednoczesnych połączeń)         │
+│   <span class="ag">Meilisearch</span>    full-text search, ~100MB RAM                           │
+│   <span class="ag">Chromium</span>       Browsershot — 1 instancja, uruchamiana na żądanie      │
+│                                                                             │
+└─────────────────────────────────────────────────────────────────────────────┘
+  </div>
+
+  <h3>Specyfikacja serwera</h3>
+
+  <div class="server-grid server-grid-2">
+    <div class="server-card">
+      <div class="server-card-title"><span>🖥</span> Serwer Aplikacji + Bazy</div>
+      <div class="server-spec-row"><span class="server-spec-label">vCPU</span><span class="server-spec-value">4 cores</span></div>
+      <div class="server-spec-row"><span class="server-spec-label">RAM</span><span class="server-spec-value">8 GB</span></div>
+      <div class="server-spec-row"><span class="server-spec-label">Dysk</span><span class="server-spec-value">100 GB NVMe SSD</span></div>
+      <div class="server-spec-row"><span class="server-spec-label">Transfer</span><span class="server-spec-value">2 TB / miesiąc</span></div>
+      <div class="server-spec-row"><span class="server-spec-label">OS</span><span class="server-spec-value">Ubuntu 22.04 LTS</span></div>
+      <div class="server-spec-row"><span class="server-spec-label">Przykład (Hetzner)</span><span class="server-spec-value">CX21 / CX31</span></div>
+    </div>
+    <div class="server-card">
+      <div class="server-card-title"><span>💾</span> Podział pamięci RAM (8 GB)</div>
+      <div class="server-spec-row"><span class="server-spec-label">PostgreSQL</span><span class="server-spec-value">3 GB (shared_buffers)</span></div>
+      <div class="server-spec-row"><span class="server-spec-label">PHP-FPM workers</span><span class="server-spec-value">~1.5 GB</span></div>
+      <div class="server-spec-row"><span class="server-spec-label">Redis</span><span class="server-spec-value">512 MB (maxmemory)</span></div>
+      <div class="server-spec-row"><span class="server-spec-label">Horizon workers</span><span class="server-spec-value">~1 GB</span></div>
+      <div class="server-spec-row"><span class="server-spec-label">Meilisearch</span><span class="server-spec-value">~256 MB</span></div>
+      <div class="server-spec-row"><span class="server-spec-label">Chromium (peak)</span><span class="server-spec-value">~1 GB (chwilowo)</span></div>
+    </div>
+  </div>
+
+  <h3>Konfiguracja Horizon</h3>
+
+  <div class="queue-grid">
+    <div class="queue-card">
+      <div class="queue-name">default</div>
+      <div class="queue-workers">2</div>
+      <div class="queue-workers-label">workery</div>
+      <div class="queue-tags"><span class="queue-tag tag-cpu">CRUD, notifikacje</span></div>
+    </div>
+    <div class="queue-card">
+      <div class="queue-name">crawlers</div>
+      <div class="queue-workers">1</div>
+      <div class="queue-workers-label">worker</div>
+      <div class="queue-tags"><span class="queue-tag tag-io">I/O intensive</span></div>
+    </div>
+    <div class="queue-card">
+      <div class="queue-name">google-apis</div>
+      <div class="queue-workers">1</div>
+      <div class="queue-workers-label">worker</div>
+      <div class="queue-tags"><span class="queue-tag tag-rl">rate limited</span></div>
+    </div>
+    <div class="queue-card">
+      <div class="queue-name">ai-processing</div>
+      <div class="queue-workers">1</div>
+      <div class="queue-workers-label">worker</div>
+      <div class="queue-tags"><span class="queue-tag tag-ai">OpenAI / Claude</span></div>
+    </div>
+    <div class="queue-card">
+      <div class="queue-name">pdf</div>
+      <div class="queue-workers">1</div>
+      <div class="queue-workers-label">worker</div>
+      <div class="queue-tags"><span class="queue-tag tag-mem">~1 GB RAM</span></div>
+    </div>
+  </div>
+
+  <div class="cost-row">
+    <div>
+      <div class="cost-label">Szacunkowy koszt miesięczny (Hetzner)</div>
+      <div class="cost-value">30–60 EUR / miesiąc</div>
+    </div>
+    <div class="cost-note">CX31 (4vCPU, 8GB) ≈ €12/mies. + backup €2 + MinIO/S3 storage + domeny</div>
+  </div>
+
+  <div class="alert alert-success">
+    <div class="alert-icon">✓</div>
+    <div class="alert-body">
+      <div class="alert-title">Kiedy ten scenariusz jest wystarczający</div>
+      <div class="alert-text">Do ~15 klientów single-server działa bez problemów. Uwaga: Chromium generujący PDF i PHP-FPM rywalizują o CPU — zaplanuj generowanie PDF poza godzinami szczytu (np. 2:00–6:00 rano przez schedulera Laravel).</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ SECTION 3: 100 clients -->
+<div class="page page-break">
+  <div class="section-header">
+    <div class="section-num">3</div>
+    <div>
+      <div class="section-label">Scenariusz Wzrostu</div>
+      <div class="section-title">100 Klientów — Mały Klaster</div>
+    </div>
+  </div>
+
+  <div class="scenario-banner s100">
+    <div class="scenario-icon">🚀</div>
+    <div>
+      <div class="scenario-label">Growth / Mała Agencja SaaS</div>
+      <div class="scenario-title">100 klientów · 300 projektów · 50–200 aktywnych userów</div>
+      <div class="scenario-desc">Separacja warstw — baza danych na dedykowanym serwerze, osobna pula workerów Horizon. System potrzebuje 2–3 maszyn.</div>
+    </div>
+  </div>
+
+  <h3>Profil obciążenia</h3>
+
+  <div class="metrics-row">
+    <div class="metric-pill">
+      <div class="metric-val">300</div>
+      <div class="metric-lbl">projektów</div>
+    </div>
+    <div class="metric-pill">
+      <div class="metric-val">~280</div>
+      <div class="metric-lbl">joby SEO/dzień</div>
+    </div>
+    <div class="metric-pill">
+      <div class="metric-val">~10</div>
+      <div class="metric-lbl">audytów PDF/dzień</div>
+    </div>
+    <div class="metric-pill">
+      <div class="metric-val">~12</div>
+      <div class="metric-lbl">joby SEO/godz.</div>
+    </div>
+    <div class="metric-pill">
+      <div class="metric-val">50–200</div>
+      <div class="metric-lbl">concurrent users</div>
+    </div>
+    <div class="metric-pill">
+      <div class="metric-val">~8 400</div>
+      <div class="metric-lbl">joby SEO/miesiąc</div>
+    </div>
+  </div>
+
+  <h3>Architektura: 2–3 serwery</h3>
+
+  <div class="arch-diagram">
+                         <span class="ah">Internet</span>
+                             │
+                    ┌────────────────┐
+                    │  <span class="ag">App Server</span>     │
+                    │  Nginx         │
+                    │  PHP-FPM       │
+                    │  Laravel Horizon│  ← workery SEO, PDF, API
+                    │  Reverb WS     │
+                    │  Meilisearch   │
+                    └───────┬────────┘
+                            │
+              ┌─────────────┴──────────────┐
+              │                            │
+     ┌────────────────┐          ┌─────────────────┐
+     │  <span class="ag">DB Server</span>      │          │  <span class="ag">Redis Server</span>    │
+     │  PostgreSQL 16  │          │  Redis 7        │
+     │  TimescaleDB    │          │  (sessions,     │
+     │  500 GB NVMe    │          │   queue, cache, │
+     │                 │          │   pub/sub)      │
+     └────────────────┘          └─────────────────┘
+  </div>
+
+  <h3>Specyfikacja komponentów</h3>
+
+  <div class="server-grid">
+    <div class="server-card">
+      <div class="server-card-title"><span>🖥</span> App Server</div>
+      <div class="server-spec-row"><span class="server-spec-label">vCPU</span><span class="server-spec-value">8 cores</span></div>
+      <div class="server-spec-row"><span class="server-spec-label">RAM</span><span class="server-spec-value">16 GB</span></div>
+      <div class="server-spec-row"><span class="server-spec-label">Dysk</span><span class="server-spec-value">100 GB NVMe SSD</span></div>
+      <div class="server-spec-row"><span class="server-spec-label">Przykład</span><span class="server-spec-value">Hetzner CCX23</span></div>
+      <div class="server-spec-row"><span class="server-spec-label">Koszt</span><span class="server-spec-value">~€55/mies.</span></div>
+    </div>
+    <div class="server-card">
+      <div class="server-card-title"><span>🗄</span> DB Server</div>
+      <div class="server-spec-row"><span class="server-spec-label">vCPU</span><span class="server-spec-value">8 cores</span></div>
+      <div class="server-spec-row"><span class="server-spec-label">RAM</span><span class="server-spec-value">32 GB</span></div>
+      <div class="server-spec-row"><span class="server-spec-label">Dysk</span><span class="server-spec-value">500 GB NVMe SSD</span></div>
+      <div class="server-spec-row"><span class="server-spec-label">Przykład</span><span class="server-spec-value">Hetzner CCX33</span></div>
+      <div class="server-spec-row"><span class="server-spec-label">Koszt</span><span class="server-spec-value">~€95/mies.</span></div>
+    </div>
+    <div class="server-card">
+      <div class="server-card-title"><span>⚡</span> Redis Server</div>
+      <div class="server-spec-row"><span class="server-spec-label">vCPU</span><span class="server-spec-value">4 cores</span></div>
+      <div class="server-spec-row"><span class="server-spec-label">RAM</span><span class="server-spec-value">8 GB</span></div>
+      <div class="server-spec-row"><span class="server-spec-label">Dysk</span><span class="server-spec-value">60 GB SSD</span></div>
+      <div class="server-spec-row"><span class="server-spec-label">Przykład</span><span class="server-spec-value">Hetzner CX31</span></div>
+      <div class="server-spec-row"><span class="server-spec-label">Koszt</span><span class="server-spec-value">~€15/mies.</span></div>
+    </div>
+  </div>
+
+  <h3>Konfiguracja Horizon</h3>
+
+  <div class="queue-grid">
+    <div class="queue-card">
+      <div class="queue-name">default</div>
+      <div class="queue-workers">4</div>
+      <div class="queue-workers-label">workery</div>
+      <div class="queue-tags"><span class="queue-tag tag-cpu">CRUD, notifikacje, Scout</span></div>
+    </div>
+    <div class="queue-card">
+      <div class="queue-name">crawlers</div>
+      <div class="queue-workers">2</div>
+      <div class="queue-workers-label">workery</div>
+      <div class="queue-tags"><span class="queue-tag tag-io">I/O intensive</span><span class="queue-tag tag-cpu">timeout: 300s</span></div>
+    </div>
+    <div class="queue-card">
+      <div class="queue-name">google-apis</div>
+      <div class="queue-workers">2</div>
+      <div class="queue-workers-label">workery</div>
+      <div class="queue-tags"><span class="queue-tag tag-rl">rate limited</span><span class="queue-tag tag-rl">throttle middleware</span></div>
+    </div>
+    <div class="queue-card">
+      <div class="queue-name">ai-processing</div>
+      <div class="queue-workers">2</div>
+      <div class="queue-workers-label">workery</div>
+      <div class="queue-tags"><span class="queue-tag tag-ai">OpenAI / Claude API</span></div>
+    </div>
+    <div class="queue-card">
+      <div class="queue-name">pdf</div>
+      <div class="queue-workers">2</div>
+      <div class="queue-workers-label">workery</div>
+      <div class="queue-tags"><span class="queue-tag tag-mem">2× Chromium ~2GB RAM</span></div>
+    </div>
+  </div>
+
+  <div class="alert alert-warning">
+    <div class="alert-icon">⚠</div>
+    <div class="alert-body">
+      <div class="alert-title">PDF Queue — uwaga na pamięć</div>
+      <div class="alert-text">2 workery PDF × ~1 GB Chromium = ~2 GB RAM tylko na generowanie PDF. Na App Serverze z 16 GB to akceptowalne, ale nie zwiększaj workerów PDF powyżej 4 bez upgrade'u RAM do 32 GB.</div>
+    </div>
+  </div>
+
+  <div class="cost-row">
+    <div>
+      <div class="cost-label">Szacunkowy koszt miesięczny (Hetzner)</div>
+      <div class="cost-value">175–350 EUR / miesiąc</div>
+    </div>
+    <div class="cost-note">App €55 + DB €95 + Redis €15 + backup + storage MinIO/S3 + domeny SSL</div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ SECTION 4: 5000 clients -->
+<div class="page page-break">
+  <div class="section-header">
+    <div class="section-num">4</div>
+    <div>
+      <div class="section-label">Scenariusz Produkcyjny</div>
+      <div class="section-title">5 000 Klientów — Klaster HA</div>
+    </div>
+  </div>
+
+  <div class="scenario-banner s5000">
+    <div class="scenario-icon">🏭</div>
+    <div>
+      <div class="scenario-label">Scale / SaaS Production</div>
+      <div class="scenario-title">5 000 klientów · 15 000 projektów · 1 000–5 000 użytkowników (peak)</div>
+      <div class="scenario-desc">Pełny klaster HA z load balancerem, wieloma węzłami app, replikami DB, Redis cluster i dedykowanymi workerami kolejek.</div>
+    </div>
+  </div>
+
+  <h3>Profil obciążenia</h3>
+
+  <div class="metrics-row">
+    <div class="metric-pill">
+      <div class="metric-val">15 000</div>
+      <div class="metric-lbl">projektów</div>
+    </div>
+    <div class="metric-pill">
+      <div class="metric-val">~14 000</div>
+      <div class="metric-lbl">joby SEO/dzień</div>
+    </div>
+    <div class="metric-pill">
+      <div class="metric-val">~500</div>
+      <div class="metric-lbl">audytów PDF/dzień</div>
+    </div>
+    <div class="metric-pill">
+      <div class="metric-val">~583</div>
+      <div class="metric-lbl">joby SEO/godz.</div>
+    </div>
+    <div class="metric-pill">
+      <div class="metric-val">1–5k</div>
+      <div class="metric-lbl">concurrent users</div>
+    </div>
+    <div class="metric-pill">
+      <div class="metric-val">~500–2k</div>
+      <div class="metric-lbl">WS connections</div>
+    </div>
+  </div>
+
+  <div class="alert alert-danger">
+    <div class="alert-icon">🔴</div>
+    <div class="alert-body">
+      <div class="alert-title">500 PDF/dzień = ~21 audytów/godzinę przez Chromium</div>
+      <div class="alert-text">Przy 4 workerach PDF każdy zajęty przez 30–90 sekund — przepustowość to ~160–480 PDF/godz. Potrzeba minimum 4–6 workerów PDF na dedykowanym serwerze z 32 GB RAM, aby nie tworzyć zaległości w kolejce.</div>
+    </div>
+  </div>
+
+  <h3>Architektura klastra</h3>
+
+  <div class="arch-diagram">
+              <span class="ah">Internet / CDN</span>
+                    │
+         ┌──────────────────────┐
+         │  <span class="ap">Load Balancer × 2</span>   │   (HA Pair — HAProxy lub Nginx)
+         │  (Active / Passive)  │   Failover automatyczny
+         └──────────┬───────────┘
+                    │
+      ┌─────────────┼─────────────┐
+      │             │             │
+┌──────────┐  ┌──────────┐  ┌──────────┐
+│<span class="ag">App Node 1</span>│  │<span class="ag">App Node 2</span>│  │<span class="ag">App Node 3</span>│  ← PHP-FPM + Nginx
+│ Nginx    │  │ Nginx    │  │ Nginx    │    Session: Redis
+│ PHP-FPM  │  │ PHP-FPM  │  │ PHP-FPM  │    Cache: Redis
+│ Reverb   │  │ Reverb   │  │          │    Stateless
+└────┬─────┘  └────┬─────┘  └────┬─────┘
+     └─────────────┼──────────────┘
+                   │  (czyta z repliki, pisze do primary)
+        ┌──────────┴────────────────────┐
+        │                               │
+┌──────────────────┐      ┌────────────────────────┐
+│  <span class="ag">DB Primary</span>      │      │  <span class="ag">DB Replicas × 2</span>        │
+│  PostgreSQL 16   │ ───► │  (read-only)            │
+│  TimescaleDB     │      │  SELECT queries,        │
+│  16 vCPU/64 GB   │      │  raportowanie, exports  │
+│  2 TB NVMe SSD   │      │  16 vCPU/64 GB each     │
+└──────────────────┘      └────────────────────────┘
+
+┌────────────────────────────────────────────┐
+│  <span class="ap">Redis Cluster</span> (6 węzłów: 3 primary + 3 replika)│
+│  Node: 4 vCPU / 16 GB RAM / 50 GB SSD each │
+│  Cluster mode — sharding kluczy            │
+└────────────────────────────────────────────┘
+
+┌────────────────────┐  ┌────────────────────┐  ┌─────────────────┐
+│  <span class="ay">Horizon Server</span>    │  │  <span class="ay">Crawler Workers</span>  │  │  <span class="ay">Reverb / WS</span>    │
+│  16 vCPU / 32 GB  │  │  × 2–3 nodes       │  │  × 2 nodes      │
+│  dispatcher +     │  │  8 vCPU / 16 GB    │  │  4 vCPU / 8 GB  │
+│  worker processes │  │  sieciowe I/O      │  │  Redis pub/sub  │
+└────────────────────┘  └────────────────────┘  └─────────────────┘
+
+┌────────────────────┐  ┌────────────────────┐
+│  <span class="ap">Meilisearch × 2</span>  │  │  <span class="ap">MinIO Cluster</span>    │
+│  8 vCPU / 32 GB   │  │  × 4 nodes         │
+│  200 GB SSD       │  │  4 vCPU / 8 GB     │
+│  primary + replica│  │  1 TB HDD per node │
+└────────────────────┘  └────────────────────┘
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ SECTION 4 cont — specs -->
+<div class="page page-break">
+  <div class="section-header">
+    <div class="section-num" style="background: #6d28d9;">4</div>
+    <div>
+      <div class="section-label">Scenariusz 5 000 Klientów — ciąg dalszy</div>
+      <div class="section-title">Specyfikacja węzłów i konfiguracja Horizon</div>
+    </div>
+  </div>
+
+  <h3>Specyfikacja wszystkich węzłów</h3>
+
+  <div class="server-grid">
+    <div class="server-card">
+      <div class="server-card-title"><span>⚖️</span> Load Balancer × 2</div>
+      <div class="server-spec-row"><span class="server-spec-label">vCPU</span><span class="server-spec-value">2 cores</span></div>
+      <div class="server-spec-row"><span class="server-spec-label">RAM</span><span class="server-spec-value">4 GB</span></div>
+      <div class="server-spec-row"><span class="server-spec-label">Dysk</span><span class="server-spec-value">40 GB SSD</span></div>
+      <div class="server-spec-row"><span class="server-spec-label">Koszt</span><span class="server-spec-value">2 × €8 = €16</span></div>
+    </div>
+    <div class="server-card">
+      <div class="server-card-title"><span>🖥</span> App Nodes × 3</div>
+      <div class="server-spec-row"><span class="server-spec-label">vCPU</span><span class="server-spec-value">8 cores</span></div>
+      <div class="server-spec-row"><span class="server-spec-label">RAM</span><span class="server-spec-value">16 GB</span></div>
+      <div class="server-spec-row"><span class="server-spec-label">Dysk</span><span class="server-spec-value">100 GB NVMe SSD</span></div>
+      <div class="server-spec-row"><span class="server-spec-label">Koszt</span><span class="server-spec-value">3 × €55 = €165</span></div>
+    </div>
+    <div class="server-card">
+      <div class="server-card-title"><span>🗄</span> DB Primary</div>
+      <div class="server-spec-row"><span class="server-spec-label">vCPU</span><span class="server-spec-value">16 cores</span></div>
+      <div class="server-spec-row"><span class="server-spec-label">RAM</span><span class="server-spec-value">64 GB</span></div>
+      <div class="server-spec-row"><span class="server-spec-label">Dysk</span><span class="server-spec-value">2 TB NVMe SSD</span></div>
+      <div class="server-spec-row"><span class="server-spec-label">Koszt</span><span class="server-spec-value">~€320/mies.</span></div>
+    </div>
+    <div class="server-card">
+      <div class="server-card-title"><span>📖</span> DB Replicas × 2</div>
+      <div class="server-spec-row"><span class="server-spec-label">vCPU</span><span class="server-spec-value">16 cores</span></div>
+      <div class="server-spec-row"><span class="server-spec-label">RAM</span><span class="server-spec-value">64 GB</span></div>
+      <div class="server-spec-row"><span class="server-spec-label">Dysk</span><span class="server-spec-value">2 TB NVMe SSD</span></div>
+      <div class="server-spec-row"><span class="server-spec-label">Koszt</span><span class="server-spec-value">2 × €320 = €640</span></div>
+    </div>
+    <div class="server-card">
+      <div class="server-card-title"><span>⚡</span> Redis Cluster × 6</div>
+      <div class="server-spec-row"><span class="server-spec-label">vCPU</span><span class="server-spec-value">4 cores / węzeł</span></div>
+      <div class="server-spec-row"><span class="server-spec-label">RAM</span><span class="server-spec-value">16 GB / węzeł</span></div>
+      <div class="server-spec-row"><span class="server-spec-label">Dysk</span><span class="server-spec-value">50 GB SSD / węzeł</span></div>
+      <div class="server-spec-row"><span class="server-spec-label">Koszt</span><span class="server-spec-value">6 × €35 = €210</span></div>
+    </div>
+    <div class="server-card">
+      <div class="server-card-title"><span>⚙️</span> Horizon Server</div>
+      <div class="server-spec-row"><span class="server-spec-label">vCPU</span><span class="server-spec-value">16 cores</span></div>
+      <div class="server-spec-row"><span class="server-spec-label">RAM</span><span class="server-spec-value">32 GB</span></div>
+      <div class="server-spec-row"><span class="server-spec-label">Dysk</span><span class="server-spec-value">100 GB NVMe SSD</span></div>
+      <div class="server-spec-row"><span class="server-spec-label">Koszt</span><span class="server-spec-value">~€160/mies.</span></div>
+    </div>
+    <div class="server-card">
+      <div class="server-card-title"><span>🕷</span> Crawler Workers × 3</div>
+      <div class="server-spec-row"><span class="server-spec-label">vCPU</span><span class="server-spec-value">8 cores</span></div>
+      <div class="server-spec-row"><span class="server-spec-label">RAM</span><span class="server-spec-value">16 GB</span></div>
+      <div class="server-spec-row"><span class="server-spec-label">Dysk</span><span class="server-spec-value">100 GB SSD</span></div>
+      <div class="server-spec-row"><span class="server-spec-label">Koszt</span><span class="server-spec-value">3 × €55 = €165</span></div>
+    </div>
+    <div class="server-card">
+      <div class="server-card-title"><span>🔌</span> Reverb WS × 2</div>
+      <div class="server-spec-row"><span class="server-spec-label">vCPU</span><span class="server-spec-value">4 cores</span></div>
+      <div class="server-spec-row"><span class="server-spec-label">RAM</span><span class="server-spec-value">8 GB</span></div>
+      <div class="server-spec-row"><span class="server-spec-label">Dysk</span><span class="server-spec-value">40 GB SSD</span></div>
+      <div class="server-spec-row"><span class="server-spec-label">Koszt</span><span class="server-spec-value">2 × €15 = €30</span></div>
+    </div>
+    <div class="server-card">
+      <div class="server-card-title"><span>🔍</span> Meilisearch × 2</div>
+      <div class="server-spec-row"><span class="server-spec-label">vCPU</span><span class="server-spec-value">8 cores</span></div>
+      <div class="server-spec-row"><span class="server-spec-label">RAM</span><span class="server-spec-value">32 GB</span></div>
+      <div class="server-spec-row"><span class="server-spec-label">Dysk</span><span class="server-spec-value">200 GB NVMe SSD</span></div>
+      <div class="server-spec-row"><span class="server-spec-label">Koszt</span><span class="server-spec-value">2 × €95 = €190</span></div>
+    </div>
+  </div>
+
+  <h3>Konfiguracja Horizon (5 000 klientów)</h3>
+
+  <div class="queue-grid">
+    <div class="queue-card">
+      <div class="queue-name">default</div>
+      <div class="queue-workers">10</div>
+      <div class="queue-workers-label">workerów</div>
+      <div class="queue-tags"><span class="queue-tag tag-cpu">CRUD, Scout, powiadomienia</span></div>
+    </div>
+    <div class="queue-card">
+      <div class="queue-name">crawlers</div>
+      <div class="queue-workers">8</div>
+      <div class="queue-workers-label">workerów</div>
+      <div class="queue-tags"><span class="queue-tag tag-io">dedykowane węzły</span><span class="queue-tag tag-cpu">timeout: 300s</span></div>
+    </div>
+    <div class="queue-card">
+      <div class="queue-name">google-apis</div>
+      <div class="queue-workers">4</div>
+      <div class="queue-workers-label">workerów</div>
+      <div class="queue-tags"><span class="queue-tag tag-rl">throttle Redis</span><span class="queue-tag tag-rl">exponential backoff</span></div>
+    </div>
+    <div class="queue-card">
+      <div class="queue-name">ai-processing</div>
+      <div class="queue-workers">6</div>
+      <div class="queue-workers-label">workerów</div>
+      <div class="queue-tags"><span class="queue-tag tag-ai">cache TTL 7 dni</span><span class="queue-tag tag-ai">timeout: 180s</span></div>
+    </div>
+    <div class="queue-card">
+      <div class="queue-name">pdf</div>
+      <div class="queue-workers">6</div>
+      <div class="queue-workers-label">workerów</div>
+      <div class="queue-tags"><span class="queue-tag tag-mem">6 GB RAM razem</span><span class="queue-tag tag-mem">timeout: 600s</span></div>
+    </div>
+  </div>
+
+  <h3>TimescaleDB — konfiguracja dla 5 000 klientów</h3>
+  <p>Tabela <code>seo_keyword_ranks</code> będzie rosnąć szybko: 15 000 projektów × średnio 50 słów kluczowych × 4 snapshoty/miesiąc = <strong>3 000 000 rekordów/miesiąc</strong>. TimescaleDB jest tu niezbędny.</p>
+
+  <pre>-- Hypertable z partycjonowaniem miesięcznym
+SELECT create_hypertable('seo_keyword_ranks', 'checked_at',
+  chunk_time_interval =&gt; INTERVAL '1 month'
+);
+
+-- Polityka retencji: zachowaj 2 lata
+SELECT add_retention_policy('seo_keyword_ranks', INTERVAL '2 years');
+
+-- Continuous aggregate — tygodniowe trendy (dla wykresów echarts)
+CREATE MATERIALIZED VIEW seo_rank_weekly
+WITH (timescaledb.continuous) AS
+  SELECT time_bucket('1 week', checked_at) AS week,
+         keyword_id,
+         project_id,
+         AVG(position)    AS avg_position,
+         MIN(position)    AS best_position,
+         SUM(impressions) AS total_impressions
+  FROM seo_keyword_ranks
+  GROUP BY 1, 2, 3;
+
+-- Polityka odświeżania agregatu
+SELECT add_continuous_aggregate_policy('seo_rank_weekly',
+  start_offset =&gt; INTERVAL '3 weeks',
+  end_offset   =&gt; INTERVAL '1 hour',
+  schedule_interval =&gt; INTERVAL '1 day'
+);</pre>
+
+  <div class="cost-row">
+    <div>
+      <div class="cost-label">Szacunkowy koszt miesięczny — self-hosted (Hetzner / OVH)</div>
+      <div class="cost-value">2 500 – 6 000 EUR / miesiąc</div>
+    </div>
+    <div class="cost-note">Alternatywa cloud (AWS/GCP z managed RDS, ElastiCache, S3): 5 000 – 15 000 EUR/mies.</div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ SECTION 5: DB Indexes -->
+<div class="page page-break">
+  <div class="section-header">
+    <div class="section-num">5</div>
+    <div>
+      <div class="section-label">Optymalizacja</div>
+      <div class="section-title">Krytyczne Indeksy Bazy Danych</div>
+    </div>
+  </div>
+
+  <p>Bez odpowiednich indeksów system przy 5 000 klientach przestanie odpowiadać. Każde zapytanie w multi-tenant systemie zaczyna od filtrowania po <code>client_id</code> — to musi być zawsze zindeksowane.</p>
+
+  <h3>Indeksy SLA — krytyczne dla CheckSlaBreachesJob</h3>
+  <p>Job uruchamiany co 5 minut musi skanować tylko aktywne rekordy. <strong>Partial index</strong> dramatycznie zmniejsza rozmiar skanowanego zestawu.</p>
+
+  <pre>-- Tylko aktywne tickety z przekroczonym terminem SLA
+CREATE INDEX idx_tickets_sla_response
+  ON tickets (sla_response_due_at)
+  WHERE status NOT IN ('resolved', 'closed')
+    AND sla_response_due_at IS NOT NULL;
+
+CREATE INDEX idx_tickets_sla_resolution
+  ON tickets (sla_resolution_due_at)
+  WHERE status NOT IN ('resolved', 'closed')
+    AND sla_resolution_due_at IS NOT NULL;
+
+-- Nienotyfikowane naruszenia SLA
+CREATE INDEX idx_sla_incidents_pending
+  ON sla_incidents (breached_at)
+  WHERE notified = false;</pre>
+
+  <h3>Indeksy Multi-tenancy — Global Scopes</h3>
+  <p>Trait <code>BelongsToTenant</code> dodaje <code>WHERE client_id = ?</code> do każdego zapytania. Bez composite index każde zapytanie to full table scan.</p>
+
+  <pre>-- Composite indeksy per tabela — najczęstsze kombinacje zapytań
+CREATE INDEX idx_tickets_client_status      ON tickets (client_id, status);
+CREATE INDEX idx_projects_client            ON projects (client_id);
+CREATE INDEX idx_leads_client_status        ON leads (client_id, status);
+CREATE INDEX idx_documents_documentable     ON documents (documentable_type, documentable_id);
+CREATE INDEX idx_seo_analyses_project       ON seo_analyses (project_id, created_at DESC);
+CREATE INDEX idx_audits_client_type         ON audits (client_id, type, created_at DESC);
+
+-- Unikalność slugów w scope
+CREATE UNIQUE INDEX idx_projects_slug_client    ON projects (client_id, slug);
+CREATE UNIQUE INDEX idx_leads_slug_client       ON leads (client_id, slug);
+CREATE UNIQUE INDEX idx_documents_slug          ON documents (documentable_type, documentable_id, slug);</pre>
+
+  <h3>Indeksy SEO — TimescaleDB</h3>
+
+  <pre>-- Dla zapytań o historię pozycji konkretnego słowa kluczowego
+CREATE INDEX idx_seo_keyword_ranks_kw_time
+  ON seo_keyword_ranks (keyword_id, checked_at DESC);
+
+-- Dla dashboardu projektu — wszystkie słowa z ostatniego snapshotu
+CREATE INDEX idx_seo_keyword_ranks_proj_time
+  ON seo_keyword_ranks (project_id, checked_at DESC);
+
+-- Dla alertów — gwałtowne spadki pozycji
+CREATE INDEX idx_seo_issues_severity
+  ON seo_issues (project_id, severity, created_at DESC)
+  WHERE severity IN ('critical', 'warning');</pre>
+
+  <h3>Indeksy Wiadomości — Inbox Real-time</h3>
+
+  <pre>-- Nieprzeczytane wiadomości per uczestnik
+CREATE INDEX idx_conv_participants_unread
+  ON conversation_participants (participable_type, participable_id, last_read_at);
+
+-- Wiadomości w konwersacji (stronicowanie)
+CREATE INDEX idx_messages_conversation
+  ON messages (conversation_id, created_at DESC);</pre>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ SECTION 6: Bottlenecks -->
+<div class="page page-break">
+  <div class="section-header">
+    <div class="section-num">6</div>
+    <div>
+      <div class="section-label">Architektura</div>
+      <div class="section-title">Wąskie Gardła i Strategie Optymalizacji</div>
+    </div>
+  </div>
+
+  <div class="bottleneck-grid">
+
+    <div class="bottleneck-card">
+      <div class="bottleneck-header">
+        <div class="bottleneck-icon">📄</div>
+        <div>
+          <div class="bottleneck-title">PDF Generation — Browsershot / Chromium</div>
+          <div class="bottleneck-subtitle">Najcięższy pojedynczy job w systemie</div>
+        </div>
+      </div>
+      <div class="bottleneck-problem">Jeden Chromium zużywa ~1 GB RAM i 30–90 sekund CPU. Przy 500 PDF/dzień (5k klientów) kolejka <code>pdf</code> musi pracować non-stop przez 4–12 godzin.</div>
+      <div class="bottleneck-solution">Dedykowana kolejka <code>pdf</code> z limitem workerów = RAM / 1.2 GB. Planowanie generowania w oknach nocnych (00:00–06:00) przez Laravel Scheduler. Priorytetyzacja: audyty triggered ręcznie > automatyczne miesięczne.</div>
+      <div class="bottleneck-note">Alternatatywa: wFPDF/DomPDF dla prostych raportów (szybsze), Browsershot tylko dla skomplikowanych layoutów z wykresami echarts.</div>
+    </div>
+
+    <div class="bottleneck-card">
+      <div class="bottleneck-header">
+        <div class="bottleneck-icon">⏰</div>
+        <div>
+          <div class="bottleneck-title">SLA Monitoring — CheckSlaBreachesJob co 5 minut</div>
+          <div class="bottleneck-subtitle">Skalowanie zapytań przy dużej liczbie rekordów</div>
+        </div>
+      </div>
+      <div class="bottleneck-problem">Przy 5 000 klientach tabela <code>tickets</code> może mieć 100 000+ rekordów. Full table scan co 5 minut = pożeranie CPU i I/O bazy danych.</div>
+      <div class="bottleneck-solution">Partial index na aktywnych ticketach (patrz sekcja 5). Redis cache dla ostatnio sprawdzonych rekordów — skip jeśli sprawdzono &lt; 5 min temu. Zamiast skanować całą tabelę: <code>WHERE sla_response_due_at &lt; NOW() AND notified = false</code>.</div>
+      <div class="bottleneck-note">Docelowo: zamiast pollingu co 5 min — event-driven (Carbon + Redis Sorted Set: ticket → score = timestamp breach). Job sprawdza tylko top N z ZRANGEBYSCORE.</div>
+    </div>
+
+    <div class="bottleneck-card">
+      <div class="bottleneck-header">
+        <div class="bottleneck-icon">🔑</div>
+        <div>
+          <div class="bottleneck-title">Google APIs — Rate Limiting i Quota</div>
+          <div class="bottleneck-subtitle">GSC API: 200 req/100s per user token; GA4: 10 concurrent requests</div>
+        </div>
+      </div>
+      <div class="bottleneck-problem">Przy 15 000 projektach i 4 analizach/miesiąc = 60 000 wywołań GSC/miesiąc. Przy zbyt wielu równoległych workerach — API zwróci 429 Too Many Requests dla całej aplikacji.</div>
+      <div class="bottleneck-solution">Kolejka <code>google-apis</code> z throttle middleware opartym na Redis: max 20 jobów GSC/minutę per OAuth token. Exponential backoff przy 429. Rozłożenie jobów w czasie — nie planuj wszystkich analiz SEO na ten sam dzień tygodnia.</div>
+      <div class="bottleneck-note">Każdy klient autoryzuje własny Google OAuth token — przy 100+ klientach limity dotyczą per token, nie globalnie. To znacznie zwiększa przepustowość.</div>
+    </div>
+
+    <div class="bottleneck-card">
+      <div class="bottleneck-header">
+        <div class="bottleneck-icon">🤖</div>
+        <div>
+          <div class="bottleneck-title">AI Processing — Koszt i Latencja API</div>
+          <div class="bottleneck-subtitle">OpenAI / Claude — każda analiza semantyczna to koszt i czas</div>
+        </div>
+      </div>
+      <div class="bottleneck-problem">Analiza semantyczna jednej strony przez Claude/OpenAI: ~0.5–2 USD + 5–30 sekund latencji. Przy 15 000 projektach × 4/miesiąc = koszt może przekroczyć $30 000/miesiąc bez optymalizacji.</div>
+      <div class="bottleneck-solution">Cache wyników analizy semantycznej w Redis z TTL 7 dni — jeśli treść strony nie zmieniła się (hash treści), nie wysyłaj ponownie do AI. Batch processing: kilka stron w jednym promptcie tam gdzie możliwe. Limit analizowanych stron per projekt (np. top 10 stron wg ruchu z GA4).</div>
+      <div class="bottleneck-note">Rozważyć modele: Claude Haiku lub GPT-4o-mini dla masowych analiz (tańsze 10×), Claude Opus/GPT-4 tylko dla finalnego raportu.</div>
+    </div>
+
+    <div class="bottleneck-card">
+      <div class="bottleneck-header">
+        <div class="bottleneck-icon">🌐</div>
+        <div>
+          <div class="bottleneck-title">Crawler — Ethical Crawling i Timeouty</div>
+          <div class="bottleneck-subtitle">Crawlowanie cudzych stron musi szanować robots.txt i nie przeciążać serwerów klientów</div>
+        </div>
+      </div>
+      <div class="bottleneck-problem">CrawlWebsiteJob może trwać 10–300 sekund zależnie od rozmiaru strony. Jednoczesne crawlowanie 8+ stron = duże zużycie sieci i CPU. Brak respektu dla robots.txt lub zbyt agresywne crawlowanie może zablokować IP serwera.</div>
+      <div class="bottleneck-solution">Crawler workers na dedykowanych maszynach (osobne IP lub IP rotation). Respektowanie <code>robots.txt</code> i <code>Crawl-delay</code>. Limit: max 1 request/sekunda per domena. Timeout 300s z graceful cancellation. Cache crawl results na 24h — ponowne uruchomienie analizy nie crawluje od nowa.</div>
+      <div class="bottleneck-note">Alternatywa dla własnego crawlera: zewnętrzne API (Screaming Frog API, Ahrefs API, SEMrush API) — drogie, ale eliminuje całkowicie problem crawlowania po stronie serwera.</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ SECTION 7: Summary -->
+<div class="page">
+  <div class="section-header">
+    <div class="section-num">7</div>
+    <div>
+      <div class="section-label">Podsumowanie</div>
+      <div class="section-title">Zestawienie Kosztów i Rekomendacje</div>
+    </div>
+  </div>
+
+  <h3>Porównanie scenariuszy</h3>
+
+  <div class="summary-table-wrap">
+    <table class="summary-table">
+      <tr>
+        <th>Scenariusz</th>
+        <th>Klienci</th>
+        <th>Projekty</th>
+        <th>Joby SEO/dzień</th>
+        <th>PDF/dzień</th>
+        <th>Serwery</th>
+        <th>Koszt/mies.</th>
+      </tr>
+      <tr class="summary-row-s10">
+        <td><span class="badge-starter">Starter</span></td>
+        <td class="td-num">10</td>
+        <td class="td-num">30</td>
+        <td class="td-num">~28</td>
+        <td class="td-num">~1</td>
+        <td class="td-num">1</td>
+        <td class="td-num">€30–60</td>
+      </tr>
+      <tr class="summary-row-s100">
+        <td><span class="badge-growth">Growth</span></td>
+        <td class="td-num">100</td>
+        <td class="td-num">300</td>
+        <td class="td-num">~280</td>
+        <td class="td-num">~10</td>
+        <td class="td-num">3</td>
+        <td class="td-num">€175–350</td>
+      </tr>
+      <tr class="summary-row-s5000">
+        <td><span style="background:#fee2e2;color:#991b1b;display:inline-block;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:700;text-transform:uppercase;">Scale</span></td>
+        <td class="td-num">5 000</td>
+        <td class="td-num">15 000</td>
+        <td class="td-num">~14 000</td>
+        <td class="td-num">~500</td>
+        <td class="td-num">20+</td>
+        <td class="td-num">€2 500–6 000</td>
+      </tr>
+    </table>
+  </div>
+
+  <h3>Rekomendowana ścieżka wzrostu</h3>
+
+  <div class="table-wrap">
+    <table>
+      <tr>
+        <th>Krok</th>
+        <th>Kiedy</th>
+        <th>Działanie</th>
+        <th>Trigger</th>
+      </tr>
+      <tr>
+        <td>1. Single server</td>
+        <td class="td-num">0–15 klientów</td>
+        <td>VPS 4 vCPU / 8 GB — wszystko na jednym serwerze</td>
+        <td>Start projektu</td>
+      </tr>
+      <tr>
+        <td>2. Separacja DB</td>
+        <td class="td-num">~15–30 klientów</td>
+        <td>Przenieś PostgreSQL na dedykowany serwer</td>
+        <td>CPU DB &gt; 60% lub RAM &gt; 80%</td>
+      </tr>
+      <tr>
+        <td>3. Separacja Redis</td>
+        <td class="td-num">~30–60 klientów</td>
+        <td>Redis na osobnym serwerze, dedykowane workery Horizon</td>
+        <td>Lag kolejki &gt; 5 min</td>
+      </tr>
+      <tr>
+        <td>4. Drugi App Node</td>
+        <td class="td-num">~80–120 klientów</td>
+        <td>Load balancer + 2 identyczne app nodes</td>
+        <td>Response time &gt; 500ms lub deploy downtime nieakceptowalny</td>
+      </tr>
+      <tr>
+        <td>5. DB Replica</td>
+        <td class="td-num">~200+ klientów</td>
+        <td>Read replica dla raportowania i SELECT-heavy queries</td>
+        <td>DB read IOPS &gt; 80%</td>
+      </tr>
+      <tr>
+        <td>6. Redis Cluster</td>
+        <td class="td-num">~500+ klientów</td>
+        <td>Redis Cluster mode (3 primary + 3 replica)</td>
+        <td>Redis memory &gt; 12 GB lub połączeń &gt; 10k</td>
+      </tr>
+      <tr>
+        <td>7. Dedykowane crawlery</td>
+        <td class="td-num">~1 000+ klientów</td>
+        <td>Osobne VM dla kolejki <code>crawlers</code> — izolacja I/O sieciowego</td>
+        <td>Crawler jobs lag &gt; 30 min</td>
+      </tr>
+    </table>
+  </div>
+
+  <h3>Narzędzia monitoringu i alertowania</h3>
+
+  <div class="table-wrap">
+    <table>
+      <tr>
+        <th>Co monitorować</th>
+        <th>Narzędzie</th>
+        <th>Alert gdy</th>
+      </tr>
+      <tr>
+        <td>Kolejki Horizon</td>
+        <td>Laravel Horizon Dashboard</td>
+        <td>Lag &gt; 5 minut, failed jobs &gt; 10/godz.</td>
+      </tr>
+      <tr>
+        <td>Baza danych</td>
+        <td>pgBadger / pg_stat_statements</td>
+        <td>Slow queries &gt; 1s, connections &gt; 80%</td>
+      </tr>
+      <tr>
+        <td>Redis</td>
+        <td>Redis INFO / RedisInsight</td>
+        <td>Memory &gt; 80%, evictions &gt; 0</td>
+      </tr>
+      <tr>
+        <td>Serwery (CPU/RAM)</td>
+        <td>Netdata / Grafana + Prometheus</td>
+        <td>CPU &gt; 80% przez &gt; 5 min, RAM &gt; 90%</td>
+      </tr>
+      <tr>
+        <td>WebSocket Reverb</td>
+        <td>Custom metrics → Grafana</td>
+        <td>Connections drop, reconnect storm</td>
+      </tr>
+      <tr>
+        <td>TimescaleDB chunks</td>
+        <td>timescaledb_information views</td>
+        <td>Chunk size &gt; 10 GB, retencja niesprawna</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="alert alert-info">
+    <div class="alert-icon">💡</div>
+    <div class="alert-body">
+      <div class="alert-title">Najważniejsza zasada przy skalowaniu</div>
+      <div class="alert-text">Mierz zanim zainwestujesz. Każdy upgrade serwera powinien być poprzedzony tygodniem zbierania metryk. Najczęstszy błąd: upgrade app servera gdy prawdziwym wąskim gardłem jest nieoptymalne zapytanie SQL bez indeksu lub brak cache dla powtarzalnych wyników AI.</div>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>

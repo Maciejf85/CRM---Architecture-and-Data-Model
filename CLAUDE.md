@@ -418,13 +418,24 @@ Pliki źródłowe (HTML) w `docs/` — edytuj tu, potem generuj PDF:
 - `docs/clientops-implementation.html` — przewodnik implementacji (aktualna: v1.0.0)
 - `docs/clientops-libraries.html` — mapowanie bibliotek JS (aktualna: v1.0.0)
 - `docs/clientops-structure.html` — struktura frontend (aktualna: v1.0.0)
+- `docs/clientops-seo.html` — moduł SEO & AI (aktualna: v1.0.0, strona tytułowa + placeholder)
+- `docs/clientops-audit.html` — moduł Audytów (aktualna: v1.0.0, strona tytułowa + placeholder)
+- `docs/clientops-infrastructure.html` — wymagania infrastrukturalne (aktualna: v1.0.0)
 
 Wersjonowane PDF w `docs/pdf/`.
+Numerowanie: `01` spec · `02` architecture · `03` libraries · `04` structure · `05` implementation · `06` seo · `07` audit · `08` infrastructure
 
-Generowanie PDF (wymaga puppeteer w `/tmp/node_modules`):
+Generowanie PDF (puppeteer w `/Users/maciejf85/Sites/puppeteer-core/node_modules`):
 
 ```bash
-cd /tmp && node /Users/maciejf85/Sites/CRM/docs/generate-pdf.js 1.2.0
+# Jeden plik (nowy format):
+NODE_PATH=/Users/maciejf85/Sites/puppeteer-core/node_modules node /Users/maciejf85/Sites/CRM/docs/generate-pdf.js clientops-infrastructure 1.0.0
+
+# Backward compat — generuje clientops-crm-spec:
+NODE_PATH=/Users/maciejf85/Sites/puppeteer-core/node_modules node /Users/maciejf85/Sites/CRM/docs/generate-pdf.js 1.5.0
+
+# Wszystkie pliki naraz:
+NODE_PATH=/Users/maciejf85/Sites/puppeteer-core/node_modules node /Users/maciejf85/Sites/CRM/docs/generate-pdf.js all 1.0.0
 ```
 
 ---
