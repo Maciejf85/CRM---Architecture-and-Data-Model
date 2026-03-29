@@ -1,0 +1,1047 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ClientOps CRM — Symulacja Przepływu v1.0.0</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+  :root {
+    --primary: #0891b2;
+    --primary-light: #ecfeff;
+    --accent: #06b6d4;
+    --dark: #0f172a;
+    --gray-800: #1e293b;
+    --gray-600: #475569;
+    --gray-400: #94a3b8;
+    --gray-200: #e2e8f0;
+    --gray-100: #f1f5f9;
+    --gray-50: #f8fafc;
+    --green: #059669;
+    --green-light: #ecfdf5;
+    --orange: #d97706;
+    --orange-light: #fffbeb;
+    --red: #dc2626;
+    --red-light: #fef2f2;
+    --border: #e2e8f0;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', -apple-system, sans-serif;
+    color: var(--dark);
+    background: white;
+    font-size: 13px;
+    line-height: 1.6;
+  }
+
+  @page { margin: 14mm 0 10mm; size: A4; }
+  @page :first { margin: 0; }
+
+  /* ─── COVER */
+  .cover {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #0c1a2e 0%, #061a2a 50%, #0c1a2e 100%);
+    display: flex; flex-direction: column;
+    justify-content: center; align-items: center;
+    text-align: center; padding: 60px 40px;
+    page-break-after: always;
+    position: relative; overflow: hidden;
+  }
+  .cover::before {
+    content: ''; position: absolute;
+    width: 500px; height: 500px;
+    background: radial-gradient(circle, rgba(8,145,178,0.22) 0%, transparent 70%);
+    top: -80px; right: -80px; border-radius: 50%;
+  }
+  .cover::after {
+    content: ''; position: absolute;
+    width: 400px; height: 400px;
+    background: radial-gradient(circle, rgba(6,182,212,0.13) 0%, transparent 70%);
+    bottom: -60px; left: -60px; border-radius: 50%;
+  }
+  .cover-badge {
+    background: rgba(8,145,178,0.2); border: 1px solid rgba(8,145,178,0.45);
+    color: #67e8f9; padding: 6px 18px; border-radius: 20px;
+    font-size: 11px; font-weight: 500; letter-spacing: 1.5px;
+    text-transform: uppercase; margin-bottom: 24px; position: relative; z-index: 1;
+  }
+  .cover-logo {
+    font-size: 48px; font-weight: 700; color: white;
+    letter-spacing: -2px; margin-bottom: 6px; position: relative; z-index: 1;
+  }
+  .cover-logo span { color: #67e8f9; }
+  .cover-subtitle { font-size: 16px; color: #64748b; font-weight: 300; margin-bottom: 40px; position: relative; z-index: 1; }
+  .cover-divider { width: 60px; height: 2px; background: linear-gradient(90deg, #0891b2, #06b6d4); margin: 0 auto 40px; position: relative; z-index: 1; }
+  .cover-title { font-size: 30px; font-weight: 700; color: white; margin-bottom: 14px; line-height: 1.2; position: relative; z-index: 1; }
+  .cover-desc { font-size: 14px; color: #475569; max-width: 540px; margin-bottom: 56px; position: relative; z-index: 1; line-height: 1.7; }
+  .cover-meta { display: flex; gap: 48px; justify-content: center; position: relative; z-index: 1; }
+  .cover-meta-item { text-align: center; }
+  .cover-meta-label { font-size: 10px; text-transform: uppercase; letter-spacing: 1px; color: #334155; margin-bottom: 4px; }
+  .cover-meta-value { font-size: 13px; color: #cbd5e1; font-weight: 500; }
+
+  /* ─── TOC */
+  .toc-page { padding: 56px 60px; page-break-after: always; min-height: 100vh; }
+  .toc-title { font-size: 26px; font-weight: 700; color: var(--dark); margin-bottom: 6px; }
+  .toc-subtitle { color: var(--gray-400); font-size: 13px; margin-bottom: 36px; }
+  .toc-list { list-style: none; }
+  .toc-item {
+    display: flex; align-items: center; padding: 9px 14px;
+    border-radius: 8px; margin-bottom: 4px;
+  }
+  .toc-num {
+    width: 26px; height: 26px; background: var(--primary); color: white;
+    border-radius: 6px; display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 700; margin-right: 14px; flex-shrink: 0;
+  }
+  .toc-text { font-size: 13px; font-weight: 500; color: var(--gray-800); flex: 1; }
+  .toc-dots { flex: 1; border-bottom: 1px dashed var(--border); margin: 0 12px; height: 1px; align-self: flex-end; margin-bottom: 4px; }
+
+  /* ─── CONTENT */
+  .page { padding: 48px 60px; }
+  .page-break { page-break-after: always; }
+
+  .section-header {
+    display: flex; align-items: flex-start; gap: 16px;
+    margin-bottom: 28px; padding-bottom: 18px;
+    border-bottom: 2px solid var(--gray-100);
+  }
+  .section-num {
+    width: 40px; height: 40px; background: var(--primary); color: white;
+    border-radius: 10px; display: flex; align-items: center; justify-content: center;
+    font-size: 16px; font-weight: 700; flex-shrink: 0;
+  }
+  .section-label { font-size: 10px; text-transform: uppercase; letter-spacing: 1.5px; color: var(--gray-400); margin-bottom: 3px; }
+  .section-title { font-size: 20px; font-weight: 700; color: var(--dark); line-height: 1.2; }
+
+  h3 { font-size: 14px; font-weight: 700; color: var(--gray-800); margin: 24px 0 10px; break-after: avoid; }
+  h4 { font-size: 12px; font-weight: 600; color: var(--gray-600); margin: 16px 0 8px; break-after: avoid; }
+  p { margin-bottom: 12px; color: var(--gray-600); line-height: 1.65; }
+  code {
+    font-family: 'JetBrains Mono', monospace;
+    background: var(--gray-100); color: var(--primary);
+    padding: 1px 5px; border-radius: 4px; font-size: 11px;
+  }
+
+  /* ─── STEP TIMELINE */
+  .flow-steps {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    margin: 20px 0;
+  }
+  .flow-step {
+    display: flex;
+    gap: 20px;
+    break-inside: avoid;
+  }
+  .flow-step-left {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 40px;
+    flex-shrink: 0;
+  }
+  .flow-dot {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    background: var(--primary);
+    color: white;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 700;
+    flex-shrink: 0;
+    z-index: 1;
+  }
+  .flow-line {
+    width: 2px;
+    flex: 1;
+    background: var(--gray-200);
+    min-height: 16px;
+  }
+  .flow-step-body {
+    padding-bottom: 24px;
+    flex: 1;
+  }
+  .flow-step-title {
+    font-size: 14px; font-weight: 700; color: var(--dark);
+    margin-bottom: 4px; padding-top: 6px;
+  }
+  .flow-step-sub {
+    font-size: 11.5px; color: var(--gray-400);
+    margin-bottom: 10px;
+  }
+
+  /* ─── CODE BLOCK */
+  .code-block {
+    background: #0f172a;
+    border-radius: 10px;
+    padding: 16px 20px;
+    margin: 12px 0;
+    break-inside: avoid;
+    overflow: hidden;
+  }
+  .code-block-label {
+    font-size: 9.5px;
+    font-family: 'JetBrains Mono', monospace;
+    color: #475569;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 10px;
+    border-bottom: 1px solid #1e293b;
+    padding-bottom: 6px;
+  }
+  .code-block pre {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10.5px;
+    line-height: 1.7;
+    color: #94a3b8;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+  .code-block .ck { color: #67e8f9; }   /* key */
+  .code-block .cv { color: #a5f3fc; }   /* value string */
+  .code-block .cn { color: #fde68a; }   /* number */
+  .code-block .cc { color: #475569; font-style: italic; } /* comment */
+  .code-block .ct { color: #86efac; }   /* table name */
+  .code-block .cm { color: #f9a8d4; }   /* method/class */
+  .code-block .cs { color: #c4b5fd; }   /* special keyword */
+
+  /* ─── QUEUE PIPELINE */
+  .pipeline {
+    background: var(--gray-50);
+    border: 1px solid var(--gray-200);
+    border-radius: 10px;
+    padding: 16px 20px;
+    margin: 12px 0;
+    break-inside: avoid;
+  }
+  .pipeline-title {
+    font-size: 10px; font-weight: 600; text-transform: uppercase;
+    letter-spacing: 1px; color: var(--gray-400); margin-bottom: 12px;
+  }
+  .pipeline-row {
+    display: flex; align-items: flex-start; gap: 12px;
+    margin-bottom: 8px;
+    break-inside: avoid;
+  }
+  .pipeline-queue {
+    font-size: 9px; font-family: 'JetBrains Mono', monospace;
+    background: var(--primary-light); color: var(--primary);
+    border: 1px solid #a5f3fc; border-radius: 4px;
+    padding: 2px 7px; white-space: nowrap; flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .pipeline-job {
+    font-size: 11px; font-family: 'JetBrains Mono', monospace;
+    color: var(--gray-800); font-weight: 500;
+  }
+  .pipeline-desc {
+    font-size: 10.5px; color: var(--gray-400); margin-top: 1px;
+  }
+  .pipeline-arrow {
+    color: var(--gray-200); margin-left: 32px; font-size: 11px; margin-bottom: 4px;
+  }
+
+  /* ─── TABLE */
+  .table-wrap { margin: 14px 0; break-inside: avoid; }
+  table { width: 100%; border-collapse: collapse; font-size: 11.5px; }
+  th {
+    background: var(--gray-800); color: white;
+    padding: 8px 12px; text-align: left;
+    font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;
+  }
+  th:first-child { border-radius: 6px 0 0 0; }
+  th:last-child  { border-radius: 0 6px 0 0; }
+  td { padding: 7px 12px; border-bottom: 1px solid var(--gray-100); color: var(--gray-600); vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+  tr { break-inside: avoid; }
+
+  /* ─── STATUS BADGE */
+  .badge {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 3px 10px; border-radius: 20px; font-size: 10px; font-weight: 600;
+  }
+  .badge-cyan  { background: #ecfeff; color: #0891b2; border: 1px solid #a5f3fc; }
+  .badge-green { background: #ecfdf5; color: #059669; border: 1px solid #a7f3d0; }
+  .badge-orange { background: #fffbeb; color: #d97706; border: 1px solid #fde68a; }
+  .badge-blue  { background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; }
+  .badge-slate { background: #f1f5f9; color: #475569; border: 1px solid #e2e8f0; }
+
+  /* ─── ALERT */
+  .alert { display: flex; gap: 14px; padding: 14px 18px; border-radius: 10px; margin: 16px 0; break-inside: avoid; }
+  .alert-info    { background: #ecfeff; border: 1px solid #a5f3fc; }
+  .alert-success { background: #ecfdf5; border: 1px solid #a7f3d0; }
+  .alert-warning { background: #fffbeb; border: 1px solid #fde68a; }
+  .alert-icon { font-size: 16px; flex-shrink: 0; line-height: 1.5; }
+  .alert-title { font-size: 12px; font-weight: 700; color: var(--dark); margin-bottom: 3px; }
+  .alert-text  { font-size: 11.5px; color: var(--gray-600); line-height: 1.55; }
+
+  /* ─── KANBAN FLOW */
+  .kanban-flow {
+    display: flex; align-items: center; gap: 0;
+    margin: 16px 0; flex-wrap: nowrap;
+    break-inside: avoid;
+  }
+  .kanban-col {
+    flex: 1; text-align: center;
+    padding: 8px 4px;
+    border-radius: 6px;
+    font-size: 9.5px; font-weight: 600;
+    background: var(--gray-100); color: var(--gray-600);
+    border: 1px solid var(--gray-200);
+  }
+  .kanban-col.active {
+    background: var(--primary); color: white; border-color: var(--primary);
+    transform: scale(1.05);
+  }
+  .kanban-col.done {
+    background: var(--green-light); color: var(--green); border-color: #a7f3d0;
+  }
+  .kanban-arrow {
+    color: var(--gray-300); font-size: 10px; padding: 0 2px; flex-shrink: 0;
+  }
+
+  /* ─── NOTIFICATION ROW */
+  .notif-row {
+    display: flex; align-items: flex-start; gap: 12px;
+    padding: 10px 14px; border-radius: 8px;
+    background: var(--gray-50); border: 1px solid var(--gray-200);
+    margin-bottom: 6px; break-inside: avoid;
+  }
+  .notif-icon { font-size: 16px; flex-shrink: 0; }
+  .notif-channel {
+    font-size: 9px; font-family: 'JetBrains Mono', monospace;
+    background: var(--gray-200); color: var(--gray-600);
+    border-radius: 4px; padding: 1px 6px; margin-top: 2px; display: inline-block;
+  }
+  .notif-text { font-size: 11.5px; color: var(--gray-600); line-height: 1.5; }
+  .notif-target { font-size: 10px; color: var(--gray-400); }
+
+  /* ─── SUMMARY TABLE */
+  .summary-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+    margin: 16px 0; break-inside: avoid;
+  }
+  .summary-card {
+    background: var(--gray-50); border: 1px solid var(--gray-200);
+    border-radius: 10px; padding: 14px 16px; break-inside: avoid;
+  }
+  .summary-card-title {
+    font-size: 10px; text-transform: uppercase; letter-spacing: 1px;
+    color: var(--gray-400); margin-bottom: 8px; font-weight: 600;
+  }
+  .summary-item {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 3px 0; border-bottom: 1px solid var(--gray-200); font-size: 11.5px;
+  }
+  .summary-item:last-child { border-bottom: none; }
+  .summary-item-label { color: var(--gray-600); }
+  .summary-item-val { color: var(--dark); font-weight: 600; font-family: 'JetBrains Mono', monospace; font-size: 10.5px; }
+
+  /* ─── LAST PAGE FOOTER */
+  .page-footer {
+    margin-top: 48px;
+    padding-top: 14px;
+    border-top: 1px solid #e2e8f0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 10px;
+    color: #94a3b8;
+  }
+
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════════════ COVER -->
+<div class="cover">
+  <div class="cover-badge">Symulacja systemu</div>
+  <div class="cover-logo">Client<span>Ops</span></div>
+  <div class="cover-subtitle">CRM · SaaS · Agencje SEO</div>
+  <div class="cover-divider"></div>
+  <div class="cover-title">Symulacja Przepływu CRM</div>
+  <div class="cover-desc">
+    Krok po kroku — od pierwszego kontaktu do miesięcznego raportu SEO.<br>
+    Pokazuje jak dane przepływają przez tabele, kolejki i powiadomienia systemu.
+  </div>
+  <div class="cover-meta">
+    <div class="cover-meta-item">
+      <div class="cover-meta-label">Wersja</div>
+      <div class="cover-meta-value">v1.0.0</div>
+    </div>
+    <div class="cover-meta-item">
+      <div class="cover-meta-label">Dokument</div>
+      <div class="cover-meta-value">10 — Symulacja</div>
+    </div>
+    <div class="cover-meta-item">
+      <div class="cover-meta-label">Data</div>
+      <div class="cover-meta-value">Marzec 2026</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════ TOC -->
+<div class="toc-page">
+  <div class="toc-title">Spis treści</div>
+  <div class="toc-subtitle">8 kroków — od zimnego kontaktu do miesięcznego raportu SEO</div>
+  <ul class="toc-list">
+    <li class="toc-item">
+      <div class="toc-num">1</div>
+      <div class="toc-text">Nowy kontakt — tworzenie leada i karty Kanban</div>
+      <div class="toc-dots"></div>
+    </li>
+    <li class="toc-item">
+      <div class="toc-num">2</div>
+      <div class="toc-text">Pierwsza aktywność — logowanie rozmowy telefonicznej</div>
+      <div class="toc-dots"></div>
+    </li>
+    <li class="toc-item">
+      <div class="toc-num">3</div>
+      <div class="toc-text">Audyt „zaczepny" — analiza SEO przed ofertą</div>
+      <div class="toc-dots"></div>
+    </li>
+    <li class="toc-item">
+      <div class="toc-num">4</div>
+      <div class="toc-text">Oferta — dokument TipTap z audytem w załączniku</div>
+      <div class="toc-dots"></div>
+    </li>
+    <li class="toc-item">
+      <div class="toc-num">5</div>
+      <div class="toc-text">Konwersja — lead staje się klientem, aktywacja subdomeny</div>
+      <div class="toc-dots"></div>
+    </li>
+    <li class="toc-item">
+      <div class="toc-num">6</div>
+      <div class="toc-text">Projekt — przypisanie SLA, manager, zasoby</div>
+      <div class="toc-dots"></div>
+    </li>
+    <li class="toc-item">
+      <div class="toc-num">7</div>
+      <div class="toc-text">Pierwsze analizy SEO — widok w panelu klienta</div>
+      <div class="toc-dots"></div>
+    </li>
+    <li class="toc-item">
+      <div class="toc-num">8</div>
+      <div class="toc-text">Miesięczny audyt automatyczny — pipeline i powiadomienia</div>
+      <div class="toc-dots"></div>
+    </li>
+  </ul>
+
+  <div style="margin-top: 40px;">
+    <div style="font-size: 11px; font-weight: 700; color: var(--dark); margin-bottom: 10px;">Bohater symulacji</div>
+    <div style="background: var(--gray-50); border: 1px solid var(--gray-200); border-radius: 10px; padding: 16px 20px; display: flex; gap: 24px;">
+      <div>
+        <div style="font-size: 10px; color: var(--gray-400); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 3px;">Kontakt</div>
+        <div style="font-weight: 600; font-size: 13px;">Tomasz Kowalski</div>
+        <div style="color: var(--gray-400); font-size: 11px;">CEO · Agencja Kreatywna XYZ</div>
+      </div>
+      <div>
+        <div style="font-size: 10px; color: var(--gray-400); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 3px;">Email</div>
+        <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px;">t.kowalski@agencja-xyz.pl</div>
+      </div>
+      <div>
+        <div style="font-size: 10px; color: var(--gray-400); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 3px;">Strona</div>
+        <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px;">agencja-xyz.pl</div>
+      </div>
+      <div>
+        <div style="font-size: 10px; color: var(--gray-400); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 3px;">Manager</div>
+        <div style="font-size: 12px; font-weight: 500;">Ania (id: 3)</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════ STEP 1 -->
+<div class="page page-break">
+  <div class="section-header">
+    <div class="section-num">1</div>
+    <div>
+      <div class="section-label">Krok 1 · Sprzedaż</div>
+      <div class="section-title">Nowy kontakt — tworzenie leada i karty Kanban</div>
+    </div>
+  </div>
+
+  <p>Admin wchodzi w <strong>Leady → Nowy lead</strong>. Wypełnia formularz — imię, email, telefon, firma, strona WWW. System tworzy trzy rekordy w jednej transakcji.</p>
+
+  <div class="code-block">
+    <div class="code-block-label">tabela: leads</div>
+    <pre><span class="ck">id</span>:             <span class="cn">1</span>
+<span class="ck">slug</span>:           <span class="cv">"agencja-kreatywna-xyz"</span>
+<span class="ck">status</span>:         <span class="cv">"new"</span>            <span class="cc">-- enum LeadStatus</span>
+<span class="ck">source</span>:         <span class="cv">"cold_outreach"</span>
+<span class="ck">client_id</span>:      <span class="cs">null</span>             <span class="cc">-- jeszcze nie klient</span>
+<span class="ck">converted_at</span>:   <span class="cs">null</span></pre>
+  </div>
+
+  <div class="code-block">
+    <div class="code-block-label">tabela: contacts</div>
+    <pre><span class="ck">id</span>:             <span class="cn">1</span>
+<span class="ck">client_id</span>:      <span class="cs">null</span>             <span class="cc">-- wypełni się przy konwersji</span>
+<span class="ck">first_name</span>:     <span class="cv">"Tomasz"</span>
+<span class="ck">last_name</span>:      <span class="cv">"Kowalski"</span>
+<span class="ck">email</span>:          <span class="cv">"t.kowalski@agencja-xyz.pl"</span>
+<span class="ck">phone</span>:          <span class="cv">"+48 601 234 567"</span>
+<span class="ck">position</span>:       <span class="cv">"CEO"</span>
+<span class="ck">is_primary</span>:     <span class="cs">true</span></pre>
+  </div>
+
+  <div class="code-block">
+    <div class="code-block-label">tabela: kanban_cards — karta trafia do kolumny "new"</div>
+    <pre><span class="ck">board_id</span>:       <span class="cn">1</span>        <span class="cc">-- leads-board</span>
+<span class="ck">column_id</span>:      <span class="cv">"new"</span>
+<span class="ck">position</span>:       <span class="cn">1</span>
+<span class="ck">cardable_type</span>:  <span class="cv">"Lead"</span>
+<span class="ck">cardable_id</span>:    <span class="cn">1</span>
+<span class="ck">assigned_to</span>:    <span class="cn">3</span>        <span class="cc">-- manager Ania</span></pre>
+  </div>
+
+  <div style="margin-top: 20px;">
+    <div style="font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: var(--gray-400); margin-bottom: 10px;">Stan Kanbana po kroku 1</div>
+    <div class="kanban-flow">
+      <div class="kanban-col active">new</div>
+      <div class="kanban-arrow">›</div>
+      <div class="kanban-col">contacted</div>
+      <div class="kanban-arrow">›</div>
+      <div class="kanban-col">no_response</div>
+      <div class="kanban-arrow">›</div>
+      <div class="kanban-col">in_discussion</div>
+      <div class="kanban-arrow">›</div>
+      <div class="kanban-col">offer_sent</div>
+      <div class="kanban-arrow">›</div>
+      <div class="kanban-col">won</div>
+      <div class="kanban-arrow">›</div>
+      <div class="kanban-col">lost</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════ STEP 2 -->
+<div class="page page-break">
+  <div class="section-header">
+    <div class="section-num">2</div>
+    <div>
+      <div class="section-label">Krok 2 · CRM</div>
+      <div class="section-title">Pierwsza aktywność — logowanie rozmowy telefonicznej</div>
+    </div>
+  </div>
+
+  <p>Manager Ania dzwoni do Tomasza. Po rozmowie loguje aktywność w systemie. Tomasz pytał o audyt SEO — jest zainteresowany ale chce zobaczyć konkretne dane o swojej stronie.</p>
+
+  <div class="code-block">
+    <div class="code-block-label">tabela: lead_activities</div>
+    <pre><span class="ck">lead_id</span>:        <span class="cn">1</span>
+<span class="ck">user_id</span>:        <span class="cn">3</span>       <span class="cc">-- manager Ania</span>
+<span class="ck">type</span>:           <span class="cv">"call"</span>  <span class="cc">-- enum: call|email|meeting|note|status_change</span>
+<span class="ck">description</span>:   <span class="cv">"Wstępna rozmowa. Tomasz zainteresowany pozycjonowaniem.
+                 Strona: agencja-xyz.pl. Chce zobaczyć audyt."</span>
+<span class="ck">occurred_at</span>:   <span class="cv">"2026-03-29 10:15:00"</span></pre>
+  </div>
+
+  <p>Status leada zmienia się na <code>contacted</code>. Event <code>LeadStatusChanged</code> jest wyrzucany — listener automatycznie przesuwa kartę Kanbana do odpowiedniej kolumny.</p>
+
+  <div class="code-block">
+    <div class="code-block-label">event → listener: przesunięcie karty Kanban</div>
+    <pre><span class="cc">// LeadStatusChanged event</span>
+<span class="cm">LeadObserver</span>::<span class="cm">updated</span>(<span class="cs">$lead</span>)
+  → event(<span class="cs">new</span> <span class="cm">LeadStatusChanged</span>(<span class="cs">$lead</span>, <span class="cv">'new'</span>, <span class="cv">'contacted'</span>))
+
+<span class="cc">// SyncLeadKanbanCardListener</span>
+<span class="cm">KanbanCard</span>::where(<span class="cv">'cardable_type'</span>, <span class="cv">'Lead'</span>)
+           ->where(<span class="cv">'cardable_id'</span>, <span class="cn">1</span>)
+           ->update([<span class="cv">'column_id'</span> => <span class="cv">'contacted'</span>])</pre>
+  </div>
+
+  <div class="alert alert-info">
+    <div class="alert-icon">ℹ</div>
+    <div>
+      <div class="alert-title">activity_log — każda akcja jest rejestrowana</div>
+      <div class="alert-text">Spatie Activity Log zapisuje każdą zmianę: kto, co, kiedy, diff. Wpis zawiera <code>causer_id: 3</code> (Ania), <code>subject_type: "Lead"</code>, <code>properties.old.status: "new"</code>, <code>properties.new.status: "contacted"</code>.</div>
+    </div>
+  </div>
+
+  <div style="margin-top: 20px;">
+    <div style="font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: var(--gray-400); margin-bottom: 10px;">Stan Kanbana po kroku 2</div>
+    <div class="kanban-flow">
+      <div class="kanban-col done">new ✓</div>
+      <div class="kanban-arrow">›</div>
+      <div class="kanban-col active">contacted</div>
+      <div class="kanban-arrow">›</div>
+      <div class="kanban-col">no_response</div>
+      <div class="kanban-arrow">›</div>
+      <div class="kanban-col">in_discussion</div>
+      <div class="kanban-arrow">›</div>
+      <div class="kanban-col">offer_sent</div>
+      <div class="kanban-arrow">›</div>
+      <div class="kanban-col">won</div>
+      <div class="kanban-arrow">›</div>
+      <div class="kanban-col">lost</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════ STEP 3 -->
+<div class="page page-break">
+  <div class="section-header">
+    <div class="section-num">3</div>
+    <div>
+      <div class="section-label">Krok 3 · SEO</div>
+      <div class="section-title">Audyt „zaczepny" — analiza SEO przed ofertą</div>
+    </div>
+  </div>
+
+  <p>Ania tworzy samodzielną analizę SEO powiązaną z leadem — bez projektu i bez klienta (bo Tomasz jeszcze nim nie jest). Celem jest wygenerowanie konkretnych liczb które przekonają go do zakupu.</p>
+
+  <div class="code-block">
+    <div class="code-block-label">tabela: seo_analyses — analiza samodzielna (audit_id: null)</div>
+    <pre><span class="ck">id</span>:             <span class="cn">1</span>
+<span class="ck">audit_id</span>:       <span class="cs">null</span>    <span class="cc">-- samodzielna, nie składowa audytu</span>
+<span class="ck">client_id</span>:      <span class="cs">null</span>    <span class="cc">-- klient jeszcze nie istnieje</span>
+<span class="ck">project_id</span>:     <span class="cs">null</span>
+<span class="ck">lead_id</span>:        <span class="cn">1</span>       <span class="cc">-- powiązana z leadem</span>
+<span class="ck">url</span>:            <span class="cv">"https://agencja-xyz.pl"</span>
+<span class="ck">status</span>:         <span class="cv">"queued"</span></pre>
+  </div>
+
+  <p>Zapis rekordu wyzwala event <code>AuditRequestedEvent</code> → system wysyła joby do kolejek Horizon:</p>
+
+  <div class="pipeline">
+    <div class="pipeline-title">Pipeline kolejkowy — Laravel Horizon</div>
+    <div class="pipeline-row">
+      <div class="pipeline-queue">crawlers</div>
+      <div>
+        <div class="pipeline-job">CrawlWebsiteJob("agencja-xyz.pl")</div>
+        <div class="pipeline-desc">brak meta description: 12 stron · broken links: 3 · brak H1 na stronie głównej</div>
+      </div>
+    </div>
+    <div class="pipeline-arrow">↓</div>
+    <div class="pipeline-row">
+      <div class="pipeline-queue">google-apis</div>
+      <div>
+        <div class="pipeline-job">FetchGSCDataJob + FetchGA4DataJob</div>
+        <div class="pipeline-desc">brak danych — domena nie zweryfikowana w GSC (do uzupełnienia po konwersji)</div>
+      </div>
+    </div>
+    <div class="pipeline-arrow">↓</div>
+    <div class="pipeline-row">
+      <div class="pipeline-queue">ai-processing</div>
+      <div>
+        <div class="pipeline-job">AnalyzeSemanticsJob</div>
+        <div class="pipeline-desc">AI: „Treść zbyt ogólna, brak fraz long-tail, konkurencja dominuje na 'agencja kreatywna warszawa'"</div>
+      </div>
+    </div>
+    <div class="pipeline-arrow">↓</div>
+    <div class="pipeline-row">
+      <div class="pipeline-queue">pdf</div>
+      <div>
+        <div class="pipeline-job">GenerateAuditReportJob → Browsershot (Chromium)</div>
+        <div class="pipeline-desc">PDF zapisany w Spatie Media Library (S3/MinIO)</div>
+      </div>
+    </div>
+    <div class="pipeline-arrow">↓</div>
+    <div class="pipeline-row">
+      <div class="pipeline-queue">default</div>
+      <div>
+        <div class="pipeline-job">NotifyAuditCompleteJob</div>
+        <div class="pipeline-desc">powiadomienie in-app dla managera Ani: „Audyt agencja-xyz.pl gotowy"</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="code-block">
+    <div class="code-block-label">tabela: seo_issues — wyniki crawlera</div>
+    <pre><span class="cc">-- issue 1</span>
+<span class="ck">seo_analysis_id</span>: <span class="cn">1</span>, <span class="ck">severity</span>: <span class="cv">"critical"</span>
+<span class="ck">type</span>: <span class="cv">"missing_meta_description"</span>, <span class="ck">count</span>: <span class="cn">12</span>
+
+<span class="cc">-- issue 2</span>
+<span class="ck">seo_analysis_id</span>: <span class="cn">1</span>, <span class="ck">severity</span>: <span class="cv">"warning"</span>
+<span class="ck">type</span>: <span class="cv">"broken_links"</span>, <span class="ck">count</span>: <span class="cn">3</span>
+
+<span class="cc">-- issue 3</span>
+<span class="ck">seo_analysis_id</span>: <span class="cn">1</span>, <span class="ck">severity</span>: <span class="cv">"warning"</span>
+<span class="ck">type</span>: <span class="cv">"missing_h1"</span>, <span class="ck">count</span>: <span class="cn">1</span></pre>
+  </div>
+
+  <div class="code-block">
+    <div class="code-block-label">tabela: seo_recommendations — rekomendacje AI</div>
+    <pre><span class="ck">seo_analysis_id</span>: <span class="cn">1</span>
+<span class="ck">generated_by</span>:   <span class="cv">"claude-opus-4-6"</span>
+<span class="ck">content</span>:        <span class="cv">"Priorytet: uzupełnić meta opisy na 12 stronach.
+                 Potencjał wzrostu ruchu organicznego: +35% w 3 miesiące.
+                 Fraza docelowa: 'agencja kreatywna warszawa' — pozycja
+                 poza TOP 50, możliwa do poprawy w ciągu 60 dni."</span></pre>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════ STEP 4 -->
+<div class="page page-break">
+  <div class="section-header">
+    <div class="section-num">4</div>
+    <div>
+      <div class="section-label">Krok 4 · Sprzedaż</div>
+      <div class="section-title">Oferta — dokument TipTap z audytem w załączniku</div>
+    </div>
+  </div>
+
+  <p>Ania wysyła ofertę. W dokumencie TipTap wkleja wyniki audytu — konkretne liczby (12 stron bez meta, pozycja poza TOP 50, potencjał +35%). Oferta jest ważna 14 dni.</p>
+
+  <div class="code-block">
+    <div class="code-block-label">tabela: offers</div>
+    <pre><span class="ck">id</span>:                     <span class="cn">1</span>
+<span class="ck">lead_id</span>:                <span class="cn">1</span>
+<span class="ck">client_id</span>:              <span class="cs">null</span>    <span class="cc">-- wypełni się przy konwersji</span>
+<span class="ck">title</span>:                  <span class="cv">"Oferta SEO — Agencja Kreatywna XYZ"</span>
+<span class="ck">status</span>:                 <span class="cv">"sent"</span>
+<span class="ck">valid_until</span>:            <span class="cv">"2026-04-12"</span>
+<span class="ck">document_id</span>:            <span class="cn">1</span>       <span class="cc">-- TipTap doc z audytem</span>
+<span class="ck">accepted_at</span>:            <span class="cs">null</span>
+<span class="ck">converted_to_client_at</span>: <span class="cs">null</span></pre>
+  </div>
+
+  <div class="code-block">
+    <div class="code-block-label">tabela: documents — oferta jako dokument TipTap</div>
+    <pre><span class="ck">id</span>:                     <span class="cn">1</span>
+<span class="ck">documentable_type</span>:      <span class="cv">"Lead"</span>
+<span class="ck">documentable_id</span>:        <span class="cn">1</span>
+<span class="ck">title</span>:                  <span class="cv">"Oferta SEO — marzec 2026"</span>
+<span class="ck">content_json</span>:           <span class="cv">{ ... TipTap JSON ... }</span>   <span class="cc">-- headless ProseMirror</span>
+<span class="ck">content_html</span>:           <span class="cv">"&lt;h1&gt;Oferta SEO...&lt;/h1&gt;..."</span>
+<span class="ck">pdf_path</span>:               <span class="cv">"offers/01-agencja-xyz-oferta.pdf"</span>
+<span class="ck">version</span>:                <span class="cn">1</span></pre>
+  </div>
+
+  <div class="alert alert-info">
+    <div class="alert-icon">ℹ</div>
+    <div>
+      <div class="alert-title">document_versions — historia edycji</div>
+      <div class="alert-text">Każda zmiana dokumentu TipTap tworzy nowy rekord w <code>document_versions</code>. Wersja 1 to pierwotna oferta. Jeśli Ania doda rabat po negocjacjach, powstanie wersja 2 — obie zachowane w historii.</div>
+    </div>
+  </div>
+
+  <div style="margin-top: 20px;">
+    <div style="font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: var(--gray-400); margin-bottom: 10px;">Stan Kanbana po kroku 4</div>
+    <div class="kanban-flow">
+      <div class="kanban-col done">new ✓</div>
+      <div class="kanban-arrow">›</div>
+      <div class="kanban-col done">contacted ✓</div>
+      <div class="kanban-arrow">›</div>
+      <div class="kanban-col done">in_disc. ✓</div>
+      <div class="kanban-arrow">›</div>
+      <div class="kanban-col active">offer_sent</div>
+      <div class="kanban-arrow">›</div>
+      <div class="kanban-col">won</div>
+      <div class="kanban-arrow">›</div>
+      <div class="kanban-col">lost</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════ STEP 5 -->
+<div class="page page-break">
+  <div class="section-header">
+    <div class="section-num">5</div>
+    <div>
+      <div class="section-label">Krok 5 · Konwersja</div>
+      <div class="section-title">Konwersja — lead staje się klientem, aktywacja subdomeny</div>
+    </div>
+  </div>
+
+  <p>Tomasz odpisuje — zgadza się. Admin klika <strong>Konwertuj lead</strong>. System wykonuje całą operację w jednej transakcji bazodanowej.</p>
+
+  <div class="code-block">
+    <div class="code-block-label">LeadConversionService::convert($lead) — DB::transaction</div>
+    <pre><span class="cc">// 1. Tworzy klienta</span>
+<span class="ct">clients</span>::create([
+  <span class="cv">'slug'</span>  => <span class="cv">'agencja-xyz'</span>,          <span class="cc">// immutable slug</span>
+  <span class="cv">'name'</span>  => <span class="cv">'Agencja Kreatywna XYZ'</span>,
+  <span class="cv">'email'</span> => <span class="cv">'t.kowalski@agencja-xyz.pl'</span>,
+])
+
+<span class="cc">// 2. Kopiuje kontakty</span>
+<span class="ct">contacts</span>::where(<span class="cv">'lead_id'</span>, <span class="cn">1</span>)
+        ->update([<span class="cv">'client_id'</span> => <span class="cn">1</span>])
+
+<span class="cc">// 3. Zamyka lead jako won</span>
+<span class="ct">leads</span>::update([
+  <span class="cv">'status'</span>       => <span class="cv">'won'</span>,
+  <span class="cv">'converted_at'</span> => now(),
+  <span class="cv">'client_id'</span>    => <span class="cn">1</span>,
+])
+
+<span class="cc">// 4. Aktualizuje ofertę</span>
+<span class="ct">offers</span>::update([
+  <span class="cv">'client_id'</span>              => <span class="cn">1</span>,
+  <span class="cv">'status'</span>                 => <span class="cv">'accepted'</span>,
+  <span class="cv">'accepted_at'</span>            => now(),
+  <span class="cv">'converted_to_client_at'</span> => now(),
+])</pre>
+  </div>
+
+  <div class="alert alert-success">
+    <div class="alert-icon">✓</div>
+    <div>
+      <div class="alert-title">Subdomena aktywna — agencja-xyz.clientops.pl</div>
+      <div class="alert-text">Middleware odczytuje <code>agencja-xyz</code> z subdomeny i wstrzykuje tenant do kontenera. Tomasz dostaje email z zaproszeniem do panelu. Tworzone jest konto z rolą <code>client-admin</code> i możliwością dodania kolejnych <code>client-user</code>.</div>
+    </div>
+  </div>
+
+  <div style="margin-top: 20px;">
+    <div style="font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: var(--gray-400); margin-bottom: 10px;">Stan Kanbana po kroku 5 — kolumna terminalna</div>
+    <div class="kanban-flow">
+      <div class="kanban-col done">new ✓</div>
+      <div class="kanban-arrow">›</div>
+      <div class="kanban-col done">contacted ✓</div>
+      <div class="kanban-arrow">›</div>
+      <div class="kanban-col done">in_disc. ✓</div>
+      <div class="kanban-arrow">›</div>
+      <div class="kanban-col done">offer_sent ✓</div>
+      <div class="kanban-arrow">›</div>
+      <div class="kanban-col done" style="background:#0891b2;color:white;border-color:#0891b2;">won ★</div>
+      <div class="kanban-arrow">›</div>
+      <div class="kanban-col">lost</div>
+    </div>
+  </div>
+
+  <div style="margin-top: 20px; background: var(--gray-50); border: 1px solid var(--gray-200); border-radius: 10px; padding: 16px 20px;">
+    <div style="font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: var(--gray-400); margin-bottom: 10px;">Multi-tenancy — jak działa subdomena</div>
+    <div class="code-block" style="margin: 0;">
+      <pre><span class="cc">// TenantMiddleware.php</span>
+<span class="cs">$slug</span> = explode(<span class="cv">'.'</span>, <span class="cs">$request</span>->getHost())[<span class="cn">0</span>];
+<span class="cc">// "agencja-xyz.clientops.pl" → "agencja-xyz"</span>
+
+<span class="cs">$tenant</span> = <span class="ct">Client</span>::where(<span class="cv">'slug'</span>, <span class="cs">$slug</span>)->firstOrFail();
+app()->instance(<span class="cv">'tenant'</span>, <span class="cs">$tenant</span>);
+
+<span class="cc">// Trait BelongsToTenant — Global Scope na każdym modelu</span>
+<span class="cc">// zapytania automatycznie filtrują po client_id</span></pre>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════ STEP 6 -->
+<div class="page page-break">
+  <div class="section-header">
+    <div class="section-num">6</div>
+    <div>
+      <div class="section-label">Krok 6 · Realizacja</div>
+      <div class="section-title">Projekt — przypisanie SLA, manager, zasoby</div>
+    </div>
+  </div>
+
+  <p>Admin tworzy projekt pozycjonowania. Przypisuje politykę SLA odpowiednią dla tier Growth (response 4h, resolution 48h w godzinach biznesowych).</p>
+
+  <div class="code-block">
+    <div class="code-block-label">tabela: projects</div>
+    <pre><span class="ck">id</span>:             <span class="cn">1</span>
+<span class="ck">slug</span>:           <span class="cv">"pozycjonowanie-agencja-xyz-2026"</span>
+<span class="ck">client_id</span>:      <span class="cn">1</span>
+<span class="ck">name</span>:           <span class="cv">"Pozycjonowanie — Q2/Q3 2026"</span>
+<span class="ck">status</span>:         <span class="cv">"active"</span>
+<span class="ck">sla_policy_id</span>:  <span class="cn">2</span>
+<span class="ck">assigned_to</span>:    <span class="cn">3</span>    <span class="cc">-- manager Ania</span></pre>
+  </div>
+
+  <div class="code-block">
+    <div class="code-block-label">tabela: sla_policies — Growth tier</div>
+    <pre><span class="ck">id</span>:                       <span class="cn">2</span>
+<span class="ck">client_id</span>:                <span class="cn">1</span>
+<span class="ck">priority</span>:                 <span class="cv">"high"</span>
+<span class="ck">response_time_hours</span>:      <span class="cn">4</span>
+<span class="ck">resolution_time_hours</span>:    <span class="cn">48</span>
+<span class="ck">business_hours_only</span>:      <span class="cs">true</span>    <span class="cc">-- pon-pt 9-17</span></pre>
+  </div>
+
+  <div class="alert alert-warning">
+    <div class="alert-icon">⚠</div>
+    <div>
+      <div class="alert-title">CheckSlaBreachesJob — co 5 minut w tle</div>
+      <div class="alert-text">Scheduler uruchamia job co 5 minut. Sprawdza wszystkie otwarte tickety — czy przekroczone <code>sla_response_due_at</code> lub <code>sla_resolution_due_at</code>. Jeśli tak — tworzy <code>sla_incident</code> i wysyła powiadomienie do managera. Tomasz jako klient NIE widzi incydentów SLA — to widok tylko admin/manager.</div>
+    </div>
+  </div>
+
+  <h3>Autoryzacja — dwa poziomy</h3>
+
+  <div class="table-wrap">
+    <table>
+      <tr>
+        <th>Poziom</th>
+        <th>Mechanizm</th>
+        <th>Przykład</th>
+      </tr>
+      <tr>
+        <td><strong>Rola</strong></td>
+        <td>Spatie Permission</td>
+        <td><code>hasRole('manager')</code> — czy w ogóle może zarządzać projektami</td>
+      </tr>
+      <tr>
+        <td><strong>Rekord</strong></td>
+        <td>Laravel Policy</td>
+        <td><code>ProjectPolicy::update()</code> — czy jest przypisany do tego konkretnego projektu</td>
+      </tr>
+      <tr>
+        <td><strong>Tenant</strong></td>
+        <td>Global Scope</td>
+        <td>Automatyczny filtr <code>WHERE client_id = 1</code> — nie zobaczy danych innych klientów</td>
+      </tr>
+    </table>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════ STEP 7 -->
+<div class="page page-break">
+  <div class="section-header">
+    <div class="section-num">7</div>
+    <div>
+      <div class="section-label">Krok 7 · SEO</div>
+      <div class="section-title">Pierwsze analizy SEO — widok w panelu klienta</div>
+    </div>
+  </div>
+
+  <p>Teraz Tomasz ma projekt i konto. Analizy SEO tworzone są już z powiązaniem do projektu. Tomasz loguje się na <code>agencja-xyz.clientops.pl</code> i widzi wyniki w czasie rzeczywistym.</p>
+
+  <div class="code-block">
+    <div class="code-block-label">tabela: seo_analyses — analiza powiązana z projektem</div>
+    <pre><span class="ck">id</span>:             <span class="cn">2</span>
+<span class="ck">audit_id</span>:       <span class="cs">null</span>    <span class="cc">-- samodzielna, widoczna w zakładce "Analizy SEO"</span>
+<span class="ck">project_id</span>:     <span class="cn">1</span>
+<span class="ck">client_id</span>:      <span class="cn">1</span>
+<span class="ck">url</span>:            <span class="cv">"https://agencja-xyz.pl"</span>
+<span class="ck">status</span>:         <span class="cv">"completed"</span></pre>
+  </div>
+
+  <div class="code-block">
+    <div class="code-block-label">tabela: seo_keyword_ranks — TimescaleDB (time-series)</div>
+    <pre><span class="cc">-- pozycje keywordów śledzone 1× dziennie</span>
+<span class="ck">keyword</span>:        <span class="cv">"agencja kreatywna warszawa"</span>
+<span class="ck">position</span>:       <span class="cn">52</span>      <span class="cc">-- poza TOP 50 przy starcie</span>
+<span class="ck">clicks</span>:         <span class="cn">0</span>
+<span class="ck">impressions</span>:    <span class="cn">8</span>
+<span class="ck">recorded_at</span>:    <span class="cv">"2026-04-01 06:00:00"</span>
+
+<span class="ck">keyword</span>:        <span class="cv">"agencja kreatywna warszawa"</span>
+<span class="ck">position</span>:       <span class="cn">38</span>      <span class="cc">-- po 30 dniach optymalizacji</span>
+<span class="ck">recorded_at</span>:    <span class="cv">"2026-05-01 06:00:00"</span></pre>
+  </div>
+
+  <h3>Co widzi Tomasz na agencja-xyz.clientops.pl</h3>
+
+  <div class="summary-grid">
+    <div class="summary-card">
+      <div class="summary-card-title">Dashboard projektu</div>
+      <div class="summary-item"><span class="summary-item-label">Status projektu</span><span class="summary-item-val badge badge-green">active</span></div>
+      <div class="summary-item"><span class="summary-item-label">Ostatnia analiza</span><span class="summary-item-val">2026-04-01</span></div>
+      <div class="summary-item"><span class="summary-item-label">Krytycznych issues</span><span class="summary-item-val" style="color: var(--red);">1</span></div>
+      <div class="summary-item"><span class="summary-item-label">Warningów</span><span class="summary-item-val" style="color: var(--orange);">2</span></div>
+    </div>
+    <div class="summary-card">
+      <div class="summary-card-title">Moduły dostępne dla klienta</div>
+      <div class="summary-item"><span class="summary-item-label">Moje projekty</span><span class="summary-item-val badge badge-green">✓</span></div>
+      <div class="summary-item"><span class="summary-item-label">Analizy SEO</span><span class="summary-item-val badge badge-green">✓</span></div>
+      <div class="summary-item"><span class="summary-item-label">Dokumenty</span><span class="summary-item-val badge badge-green">✓</span></div>
+      <div class="summary-item"><span class="summary-item-label">Zgłoszenia (tickets)</span><span class="summary-item-val badge badge-green">✓</span></div>
+    </div>
+  </div>
+
+  <div class="alert alert-info">
+    <div class="alert-icon">📊</div>
+    <div>
+      <div class="alert-title">Wykresy ECharts — dane z TimescaleDB</div>
+      <div class="alert-text">Panel klienta wyświetla wykresy trendów pozycji keywordów (linia), porównanie miesięczne (słupki), heatmapę aktywności crawlera i gauge Core Web Vitals (LCP, CLS, INP). Dane pobierane przez TanStack Query z <code>api.clientops.pl</code>.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════ STEP 8 -->
+<div class="page">
+  <div class="section-header">
+    <div class="section-num">8</div>
+    <div>
+      <div class="section-label">Krok 8 · Automatyzacja</div>
+      <div class="section-title">Miesięczny audyt automatyczny — pipeline i powiadomienia</div>
+    </div>
+  </div>
+
+  <p>Pierwszego dnia miesiąca o 6:00 scheduler Laravel uruchamia <code>GenerateMonthlyAuditJob</code>. Tym razem analiza SEO jest <em>składową</em> audytu (nie samodzielną) — wyniki są agregowane w raporcie zbiorczym.</p>
+
+  <div class="code-block">
+    <div class="code-block-label">Scheduler — cron: 0 6 1 * *</div>
+    <pre><span class="cc">// app/Console/Kernel.php</span>
+<span class="cs">$schedule</span>->job(<span class="cs">new</span> <span class="cm">GenerateMonthlyAuditJob</span>)
+          ->cron(<span class="cv">'0 6 1 * *'</span>)
+          ->withoutOverlapping();</pre>
+  </div>
+
+  <div class="code-block">
+    <div class="code-block-label">tabela: audits + seo_analyses — audyt ze składową</div>
+    <pre><span class="cc">-- nadrzędny audyt</span>
+<span class="ct">audits</span>:
+  <span class="ck">id</span>: <span class="cn">1</span>, <span class="ck">client_id</span>: <span class="cn">1</span>, <span class="ck">project_id</span>: <span class="cn">1</span>
+  <span class="ck">type</span>: <span class="cv">"seo"</span>, <span class="ck">status</span>: <span class="cv">"completed"</span>
+  <span class="ck">triggered_by</span>: <span class="cv">"scheduler"</span>
+
+<span class="cc">-- analiza jako składowa audytu (audit_id ustawiony!)</span>
+<span class="ct">seo_analyses</span>:
+  <span class="ck">id</span>: <span class="cn">3</span>, <span class="ck">audit_id</span>: <span class="cn">1</span>    <span class="cc">← różnica vs analiza samodzielna</span>
+  <span class="ck">project_id</span>: <span class="cn">1</span>, <span class="ck">client_id</span>: <span class="cn">1</span>
+  <span class="ck">status</span>: <span class="cv">"completed"</span></pre>
+  </div>
+
+  <h3>Powiadomienia po zakończeniu audytu</h3>
+
+  <div class="notif-row">
+    <div class="notif-icon">👩‍💼</div>
+    <div>
+      <div class="notif-text"><strong>Manager Ania</strong> — powiadomienie in-app + broadcast Reverb</div>
+      <div style="margin-top: 3px;">
+        <span class="notif-channel">database</span>
+        <span class="notif-channel">broadcast</span>
+      </div>
+      <div class="notif-target" style="margin-top: 4px;">„Audyt miesięczny — Agencja Kreatywna XYZ — gotowy" · real-time przez Echo/Reverb</div>
+    </div>
+  </div>
+
+  <div class="notif-row">
+    <div class="notif-icon">👤</div>
+    <div>
+      <div class="notif-text"><strong>Tomasz Kowalski (client-admin)</strong> — email + in-app</div>
+      <div style="margin-top: 3px;">
+        <span class="notif-channel">mail</span>
+        <span class="notif-channel">database</span>
+      </div>
+      <div class="notif-target" style="margin-top: 4px;">„Twój miesięczny raport SEO jest gotowy" · link → agencja-xyz.clientops.pl/audyty/1</div>
+    </div>
+  </div>
+
+  <h3>Co zawiera raport PDF dla Tomasza</h3>
+
+  <div class="table-wrap">
+    <table>
+      <tr><th>Sekcja raportu</th><th>Źródło danych</th></tr>
+      <tr><td>Porównanie pozycji vs poprzedni miesiąc</td><td>TimescaleDB — <code>seo_keyword_ranks</code></td></tr>
+      <tr><td>Wykres trendu kliknięć i impressions</td><td>Google Search Console API</td></tr>
+      <tr><td>Ruch organiczny i konwersje</td><td>Google Analytics 4 API</td></tr>
+      <tr><td>Core Web Vitals (LCP, CLS, INP)</td><td>PageSpeed Insights API</td></tr>
+      <tr><td>Lista nowych i naprawionych issues</td><td>Crawler — <code>seo_issues</code></td></tr>
+      <tr><td>Rekomendacje AI na kolejny miesiąc</td><td>Claude API — <code>seo_recommendations</code></td></tr>
+    </table>
+  </div>
+
+  <div class="alert alert-success">
+    <div class="alert-icon">✓</div>
+    <div>
+      <div class="alert-title">Flow zakończony — zero ręcznej pracy po stronie agencji</div>
+      <div class="alert-text">Od momentu aktywacji projektu system sam generuje miesięczne raporty, śledzi pozycje keywordów, wykrywa naruszenia SLA i powiadamia odpowiednie osoby. Tomasz widzi wszystko w swoim panelu na <code>agencja-xyz.clientops.pl</code>. Agencja nie musi nic robić ręcznie.</div>
+    </div>
+  </div>
+
+  <div class="page-footer">
+    <span>Maciej Fiałkowski</span>
+    <span>ClientOps CRM</span>
+  </div>
+</div>
+
+</body>
+</html>

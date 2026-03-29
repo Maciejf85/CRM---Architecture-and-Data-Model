@@ -41,6 +41,7 @@ const FILE_ORDER = {
   'clientops-audit':          '07',
   'clientops-infrastructure': '08',
   'clientops-business':       '09',
+  'clientops-simulation':     '10',
 };
 
 // 'all' generuje wszystko oprócz indeksu (indeks generuj osobno)
