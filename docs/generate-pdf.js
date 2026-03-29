@@ -14,6 +14,7 @@
  *   node generate-pdf.js all 1.0.0                          → wszystkie pliki
  *
  * Numerowanie PDF:
+ *   00 - clientops-index        (indeks / biblioteka dokumentacji)
  *   01 - clientops-crm-spec
  *   02 - clientops-architecture
  *   03 - clientops-libraries
@@ -30,6 +31,7 @@ const fs = require('fs');
 
 // Mapa plików → numery w serii PDF
 const FILE_ORDER = {
+  'clientops-index':          '00',
   'clientops-crm-spec':       '01',
   'clientops-architecture':   '02',
   'clientops-libraries':      '03',
@@ -40,7 +42,8 @@ const FILE_ORDER = {
   'clientops-infrastructure': '08',
 };
 
-const ALL_FILES = Object.keys(FILE_ORDER);
+// 'all' generuje wszystko oprócz indeksu (indeks generuj osobno)
+const ALL_FILES = Object.keys(FILE_ORDER).filter(f => f !== 'clientops-index');
 
 // Parsuj argumenty: node generate-pdf.js [plik] [wersja]
 // Backward compat: node generate-pdf.js [wersja]  → zakłada clientops-crm-spec
