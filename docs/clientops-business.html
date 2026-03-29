@@ -1,0 +1,939 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ClientOps CRM — Model Biznesowy v1.0.0</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+  :root {
+    --primary: #be123c;
+    --primary-light: #fff1f2;
+    --accent: #f43f5e;
+    --dark: #0f172a;
+    --gray-800: #1e293b;
+    --gray-600: #475569;
+    --gray-400: #94a3b8;
+    --gray-200: #e2e8f0;
+    --gray-100: #f1f5f9;
+    --gray-50: #f8fafc;
+    --green: #059669;
+    --green-light: #ecfdf5;
+    --orange: #d97706;
+    --orange-light: #fffbeb;
+    --red: #dc2626;
+    --red-light: #fef2f2;
+    --blue: #1d4ed8;
+    --blue-light: #eff6ff;
+    --border: #e2e8f0;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', -apple-system, sans-serif;
+    color: var(--dark);
+    background: white;
+    font-size: 13px;
+    line-height: 1.6;
+  }
+
+  @page { margin: 14mm 0 10mm; size: A4; }
+  @page :first { margin: 0; }
+
+  /* ─── COVER */
+  .cover {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #0f172a 0%, #1a0a14 50%, #0f172a 100%);
+    display: flex; flex-direction: column;
+    justify-content: center; align-items: center;
+    text-align: center; padding: 60px 40px;
+    page-break-after: always;
+    position: relative; overflow: hidden;
+  }
+  .cover::before {
+    content: ''; position: absolute;
+    width: 500px; height: 500px;
+    background: radial-gradient(circle, rgba(190,18,60,0.20) 0%, transparent 70%);
+    top: -80px; right: -80px; border-radius: 50%;
+  }
+  .cover::after {
+    content: ''; position: absolute;
+    width: 400px; height: 400px;
+    background: radial-gradient(circle, rgba(244,63,94,0.12) 0%, transparent 70%);
+    bottom: -60px; left: -60px; border-radius: 50%;
+  }
+  .cover-badge {
+    background: rgba(190,18,60,0.2); border: 1px solid rgba(190,18,60,0.45);
+    color: #fda4af; padding: 6px 18px; border-radius: 20px;
+    font-size: 11px; font-weight: 500; letter-spacing: 1.5px;
+    text-transform: uppercase; margin-bottom: 24px; position: relative; z-index: 1;
+  }
+  .cover-logo {
+    font-size: 48px; font-weight: 700; color: white;
+    letter-spacing: -2px; margin-bottom: 6px; position: relative; z-index: 1;
+  }
+  .cover-logo span { color: #fb7185; }
+  .cover-subtitle { font-size: 16px; color: #64748b; font-weight: 300; margin-bottom: 40px; position: relative; z-index: 1; }
+  .cover-divider { width: 60px; height: 2px; background: linear-gradient(90deg, #be123c, #d97706); margin: 0 auto 40px; position: relative; z-index: 1; }
+  .cover-title { font-size: 30px; font-weight: 700; color: white; margin-bottom: 14px; line-height: 1.2; position: relative; z-index: 1; }
+  .cover-desc { font-size: 14px; color: #475569; max-width: 540px; margin-bottom: 56px; position: relative; z-index: 1; line-height: 1.7; }
+  .cover-meta { display: flex; gap: 48px; justify-content: center; position: relative; z-index: 1; }
+  .cover-meta-item { text-align: center; }
+  .cover-meta-label { font-size: 10px; text-transform: uppercase; letter-spacing: 1px; color: #334155; margin-bottom: 4px; }
+  .cover-meta-value { font-size: 13px; color: #cbd5e1; font-weight: 500; }
+
+  /* ─── TOC */
+  .toc-page { padding: 56px 60px; page-break-after: always; min-height: 100vh; }
+  .toc-title { font-size: 26px; font-weight: 700; color: var(--dark); margin-bottom: 6px; }
+  .toc-subtitle { color: var(--gray-400); font-size: 13px; margin-bottom: 36px; }
+  .toc-list { list-style: none; }
+  .toc-item {
+    display: flex; align-items: center; padding: 9px 14px;
+    border-radius: 8px; margin-bottom: 4px;
+  }
+  .toc-num {
+    width: 26px; height: 26px; background: var(--primary); color: white;
+    border-radius: 6px; display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 700; margin-right: 14px; flex-shrink: 0;
+  }
+  .toc-text { font-size: 13px; font-weight: 500; color: var(--gray-800); flex: 1; }
+  .toc-dots { flex: 1; border-bottom: 1px dashed var(--border); margin: 0 12px; height: 1px; align-self: flex-end; margin-bottom: 4px; }
+  .toc-sub {
+    display: flex; align-items: center; padding: 5px 14px 5px 54px;
+    color: var(--gray-600); font-size: 12px;
+  }
+  .toc-sub-dot { width: 4px; height: 4px; background: var(--gray-400); border-radius: 50%; margin-right: 10px; flex-shrink: 0; }
+
+  /* ─── CONTENT */
+  .page { padding: 48px 60px; }
+  .page-break { page-break-after: always; }
+
+  .section-header {
+    display: flex; align-items: flex-start; gap: 16px;
+    margin-bottom: 28px; padding-bottom: 18px;
+    border-bottom: 2px solid var(--border);
+  }
+  .section-num {
+    width: 44px; height: 44px; background: var(--primary); color: white;
+    border-radius: 10px; display: flex; align-items: center; justify-content: center;
+    font-size: 17px; font-weight: 700; flex-shrink: 0;
+  }
+  .section-label { font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; color: var(--primary); font-weight: 600; margin-bottom: 2px; }
+  .section-title { font-size: 22px; font-weight: 700; color: var(--dark); line-height: 1.2; }
+
+  h3 {
+    font-size: 14px; font-weight: 600; color: var(--dark);
+    margin: 24px 0 10px; display: flex; align-items: center; gap: 8px;
+    break-after: avoid;
+  }
+  h3::before { content: ''; display: inline-block; width: 3px; height: 14px; background: var(--primary); border-radius: 2px; }
+  h4 { font-size: 12px; font-weight: 600; color: var(--gray-600); margin: 18px 0 8px; text-transform: uppercase; letter-spacing: 0.5px; break-after: avoid; }
+
+  p { color: var(--gray-600); margin-bottom: 10px; line-height: 1.7; }
+  ul { padding-left: 20px; color: var(--gray-600); margin-bottom: 12px; }
+  li { margin-bottom: 5px; line-height: 1.6; }
+  strong { color: var(--dark); }
+
+  /* ─── TABLES */
+  .table-wrap { overflow: hidden; border-radius: 10px; border: 1px solid var(--border); margin: 12px 0 20px; break-inside: avoid; }
+  table { width: 100%; border-collapse: collapse; }
+  th { background: var(--gray-800); color: #e2e8f0; padding: 10px 14px; text-align: left; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+  td { padding: 9px 14px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  tr { break-inside: avoid; }
+  tr:last-child td { border-bottom: none; }
+  tr:nth-child(even) td { background: var(--gray-50); }
+
+  /* ─── ALERTS */
+  .alert { padding: 14px 16px; border-radius: 8px; margin: 14px 0; display: flex; gap: 12px; break-inside: avoid; }
+  .alert-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+  .alert-body { flex: 1; }
+  .alert-title { font-size: 12px; font-weight: 700; margin-bottom: 3px; }
+  .alert-text { font-size: 12px; line-height: 1.6; }
+  .alert-info    { background: var(--blue-light);    border-left: 3px solid var(--blue);    }
+  .alert-info    .alert-title { color: var(--blue);    } .alert-info    .alert-text { color: #1e3a8a; }
+  .alert-success { background: var(--green-light);   border-left: 3px solid var(--green);   }
+  .alert-success .alert-title { color: var(--green);  } .alert-success .alert-text { color: #065f46; }
+  .alert-warning { background: var(--orange-light);  border-left: 3px solid var(--orange);  }
+  .alert-warning .alert-title { color: var(--orange); } .alert-warning .alert-text { color: #92400e; }
+  .alert-primary { background: var(--primary-light); border-left: 3px solid var(--primary); }
+  .alert-primary .alert-title { color: var(--primary);} .alert-primary .alert-text { color: #9f1239; }
+
+  /* ─── VERDICT CARD */
+  .verdict {
+    background: linear-gradient(135deg, #0f172a 0%, #1a0a14 100%);
+    border-radius: 14px; padding: 28px 32px; margin: 20px 0;
+    text-align: center; break-inside: avoid;
+  }
+  .verdict-label { font-size: 11px; text-transform: uppercase; letter-spacing: 2px; color: #64748b; margin-bottom: 8px; }
+  .verdict-title { font-size: 28px; font-weight: 700; color: white; margin-bottom: 6px; }
+  .verdict-title span { color: #fb7185; }
+  .verdict-sub { font-size: 13px; color: #475569; }
+
+  /* ─── COMPARISON */
+  .comparison-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 16px 0 20px; }
+  .comp-card { border-radius: 12px; padding: 20px; break-inside: avoid; }
+  .comp-card.bad  { background: #fef2f2; border: 1px solid #fecaca; }
+  .comp-card.good { background: #ecfdf5; border: 1px solid #a7f3d0; }
+  .comp-header { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+  .comp-icon { font-size: 20px; }
+  .comp-card-title { font-size: 14px; font-weight: 700; }
+  .comp-card.bad  .comp-card-title { color: #991b1b; }
+  .comp-card.good .comp-card-title { color: #065f46; }
+  .comp-item { display: flex; align-items: flex-start; gap: 8px; margin-bottom: 8px; font-size: 12px; }
+  .comp-item-icon { flex-shrink: 0; margin-top: 1px; }
+  .comp-card.bad  .comp-item { color: #7f1d1d; }
+  .comp-card.good .comp-item { color: #064e3b; }
+
+  /* ─── PRICING TIERS */
+  .tiers-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 16px 0 20px; break-inside: avoid; }
+  .tier-card { border-radius: 12px; padding: 16px 14px; text-align: center; border: 1px solid var(--border); }
+  .tier-card.highlight { border-color: var(--primary); background: var(--primary-light); }
+  .tier-badge { font-size: 9.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; padding: 3px 10px; border-radius: 10px; display: inline-block; margin-bottom: 10px; }
+  .tier-card:not(.highlight) .tier-badge { background: var(--gray-100); color: var(--gray-600); }
+  .tier-card.highlight .tier-badge { background: var(--primary); color: white; }
+  .tier-name { font-size: 14px; font-weight: 700; color: var(--dark); margin-bottom: 4px; }
+  .tier-price { font-size: 22px; font-weight: 700; color: var(--primary); line-height: 1; margin-bottom: 2px; }
+  .tier-period { font-size: 10px; color: var(--gray-400); margin-bottom: 12px; }
+  .tier-divider { height: 1px; background: var(--border); margin: 10px 0; }
+  .tier-feature { font-size: 11px; color: var(--gray-600); margin-bottom: 5px; display: flex; align-items: center; gap: 5px; }
+  .tier-feature::before { content: '•'; color: var(--primary); font-weight: 700; flex-shrink: 0; }
+
+  /* ─── PHASE TIMELINE */
+  .timeline { margin: 16px 0; }
+  .phase { display: flex; gap: 16px; margin-bottom: 0; break-inside: avoid; }
+  .phase-left { display: flex; flex-direction: column; align-items: center; flex-shrink: 0; }
+  .phase-dot { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; color: white; flex-shrink: 0; }
+  .phase-line { width: 2px; flex: 1; background: var(--border); margin: 4px 0; min-height: 16px; }
+  .phase:last-child .phase-line { display: none; }
+  .phase-body { padding-bottom: 20px; flex: 1; padding-top: 6px; }
+  .phase-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 2px; }
+  .phase-title { font-size: 14px; font-weight: 700; color: var(--dark); margin-bottom: 4px; }
+  .phase-desc { font-size: 12px; color: var(--gray-600); line-height: 1.6; }
+  .phase-tag { display: inline-block; margin-top: 6px; font-size: 10px; padding: 2px 8px; border-radius: 4px; font-weight: 500; }
+
+  /* ─── VALUE PROP CARDS */
+  .value-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 14px 0; }
+  .value-card { border: 1px solid var(--border); border-radius: 10px; padding: 16px; break-inside: avoid; }
+  .value-card-icon { font-size: 22px; margin-bottom: 8px; }
+  .value-card-title { font-size: 13px; font-weight: 700; color: var(--dark); margin-bottom: 4px; }
+  .value-card-desc { font-size: 12px; color: var(--gray-600); line-height: 1.6; }
+  .value-card-badge { display: inline-block; margin-top: 8px; font-size: 10px; padding: 2px 8px; border-radius: 4px; background: var(--primary-light); color: var(--primary); border: 1px solid #fecdd3; font-weight: 600; }
+
+  /* ─── UNIT ECONOMICS */
+  .unit-row { display: flex; gap: 10px; margin: 14px 0; flex-wrap: wrap; }
+  .unit-card { border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; flex: 1; min-width: 120px; break-inside: avoid; }
+  .unit-val { font-size: 24px; font-weight: 700; color: var(--primary); line-height: 1; margin-bottom: 2px; }
+  .unit-lbl { font-size: 10px; color: var(--gray-400); text-transform: uppercase; letter-spacing: 0.5px; }
+  .unit-sub { font-size: 11px; color: var(--gray-600); margin-top: 4px; }
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════════════ COVER -->
+<div class="cover">
+  <div class="cover-badge">Strategia — Model Biznesowy</div>
+  <div class="cover-logo">Client<span>Ops</span></div>
+  <div class="cover-subtitle">Platforma CRM nowej generacji</div>
+  <div class="cover-divider"></div>
+  <div class="cover-title">Model Biznesowy</div>
+  <div class="cover-desc">
+    Analiza modeli monetyzacji — subskrypcja SaaS vs. sprzedaż instancji.
+    Struktura cenowa, fazy wdrożenia komercyjnego, unikalne wyróżniki
+    i rekomendacje dla polskiego rynku agencji digitalowych.
+  </div>
+  <div class="cover-meta">
+    <div class="cover-meta-item">
+      <div class="cover-meta-label">Wersja</div>
+      <div class="cover-meta-value">1.0.0</div>
+    </div>
+    <div class="cover-meta-item">
+      <div class="cover-meta-label">Data</div>
+      <div class="cover-meta-value">Marzec 2026</div>
+    </div>
+    <div class="cover-meta-item">
+      <div class="cover-meta-label">Rynek</div>
+      <div class="cover-meta-value">Polska — agencje</div>
+    </div>
+    <div class="cover-meta-item">
+      <div class="cover-meta-label">Model</div>
+      <div class="cover-meta-value">SaaS / MRR</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════ TOC -->
+<div class="toc-page">
+  <div class="toc-title">Spis treści</div>
+  <div class="toc-subtitle">Model Biznesowy — ClientOps CRM</div>
+
+  <ul class="toc-list">
+    <li class="toc-item">
+      <div class="toc-num">1</div>
+      <div class="toc-text">Werdykt — który model i dlaczego</div>
+      <div class="toc-dots"></div>
+    </li>
+    <li class="toc-item">
+      <div class="toc-num">2</div>
+      <div class="toc-text">Porównanie modeli — subskrypcja vs. sprzedaż instancji</div>
+      <div class="toc-dots"></div>
+    </li>
+    <li class="toc-sub"><div class="toc-sub-dot"></div>Dlaczego sprzedaż instancji nie działa</li>
+    <li class="toc-sub"><div class="toc-sub-dot"></div>Dlaczego architektura wymusza subskrypcję</li>
+    <li class="toc-item">
+      <div class="toc-num">3</div>
+      <div class="toc-text">Model subskrypcyjny — szczegóły</div>
+      <div class="toc-dots"></div>
+    </li>
+    <li class="toc-sub"><div class="toc-sub-dot"></div>Jednostka rozliczeniowa</li>
+    <li class="toc-sub"><div class="toc-sub-dot"></div>Czego nie limitować</li>
+    <li class="toc-item">
+      <div class="toc-num">4</div>
+      <div class="toc-text">Struktura cenowa — tiery</div>
+      <div class="toc-dots"></div>
+    </li>
+    <li class="toc-sub"><div class="toc-sub-dot"></div>Starter / Growth / Agency / Enterprise</li>
+    <li class="toc-sub"><div class="toc-sub-dot"></div>Szacunkowe przychody (unit economics)</li>
+    <li class="toc-item">
+      <div class="toc-num">5</div>
+      <div class="toc-text">Unikalne wyróżniki — propozycja wartości</div>
+      <div class="toc-dots"></div>
+    </li>
+    <li class="toc-item">
+      <div class="toc-num">6</div>
+      <div class="toc-text">Fazy monetyzacji</div>
+      <div class="toc-dots"></div>
+    </li>
+    <li class="toc-item">
+      <div class="toc-num">7</div>
+      <div class="toc-text">Kluczowa rekomendacja strategiczna</div>
+      <div class="toc-dots"></div>
+    </li>
+  </ul>
+</div>
+
+<!-- ══════════════════════════════════════════════════════ SECTION 1: Verdict -->
+<div class="page page-break">
+  <div class="section-header">
+    <div class="section-num">1</div>
+    <div>
+      <div class="section-label">Decyzja</div>
+      <div class="section-title">Werdykt — który model i dlaczego</div>
+    </div>
+  </div>
+
+  <div class="verdict">
+    <div class="verdict-label">Rekomendowany model biznesowy</div>
+    <div class="verdict-title">Subskrypcja <span>SaaS</span></div>
+    <div class="verdict-sub">Miesięczny abonament oparty na liczbie obsługiwanych klientów CRM</div>
+  </div>
+
+  <p>To nie jest trudna decyzja — architektura systemu już ją podjęła. <strong>ClientOps jest zbudowany jako multi-tenant SaaS</strong> od pierwszej linii kodu: global scopes, <code>client_id</code> na każdej tabeli, subdomeny <code>{slug}.clientops.pl</code>, centralny deployment. Sprzedaż instancji wymagałaby przepisania fundamentów systemu.</p>
+
+  <p>Ale to nie tylko kwestia techniczna. Subskrypcja to lepszy model biznesowy z każdej perspektywy:</p>
+
+  <div class="table-wrap" style="margin-top: 16px;">
+    <table>
+      <tr>
+        <th>Kryterium</th>
+        <th>Subskrypcja SaaS</th>
+        <th>Sprzedaż instancji</th>
+      </tr>
+      <tr>
+        <td>Przychody</td>
+        <td style="color: #059669; font-weight: 600;">Powtarzalne (MRR) — przewidywalne</td>
+        <td style="color: #dc2626;">Jednorazowe — nie można planować</td>
+      </tr>
+      <tr>
+        <td>Koszt utrzymania</td>
+        <td style="color: #059669; font-weight: 600;">Jeden deployment, skalowany centralnie</td>
+        <td style="color: #dc2626;">N deploymentów, N serwerów, N wersji</td>
+      </tr>
+      <tr>
+        <td>Aktualizacje</td>
+        <td style="color: #059669; font-weight: 600;">Jeden push — wszyscy na nowej wersji</td>
+        <td style="color: #dc2626;">Każdy klient na innej wersji, każda zmiana to projekt</td>
+      </tr>
+      <tr>
+        <td>Próg wejścia klienta</td>
+        <td style="color: #059669; font-weight: 600;">Niski — miesiąc z góry, brak inwestycji</td>
+        <td style="color: #dc2626;">Wysoki — zakup + serwer + wdrożenie</td>
+      </tr>
+      <tr>
+        <td>Wsparcie techniczne</td>
+        <td style="color: #059669; font-weight: 600;">Jedno środowisko, pełna kontrola</td>
+        <td style="color: #dc2626;">Każdy klient to osobne debug-session</td>
+      </tr>
+      <tr>
+        <td>Wycena firmy</td>
+        <td style="color: #059669; font-weight: 600;">ARR × 5–10× (MRR mnożnik)</td>
+        <td style="color: #dc2626;">Przychód × 1–2× (jak usługi)</td>
+      </tr>
+      <tr>
+        <td>Skalowalność</td>
+        <td style="color: #059669; font-weight: 600;">Dodaj klienta → brak nowej pracy devops</td>
+        <td style="color: #dc2626;">Każdy klient = nowe wdrożenie</td>
+      </tr>
+    </table>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════ SECTION 2: Comparison -->
+<div class="page page-break">
+  <div class="section-header">
+    <div class="section-num">2</div>
+    <div>
+      <div class="section-label">Analiza</div>
+      <div class="section-title">Porównanie modeli w szczegółach</div>
+    </div>
+  </div>
+
+  <div class="comparison-grid">
+    <div class="comp-card bad">
+      <div class="comp-header">
+        <div class="comp-icon">🏚</div>
+        <div class="comp-card-title">Sprzedaż instancji — problemy</div>
+      </div>
+      <div class="comp-item"><span class="comp-item-icon">✗</span><span>Panel klienta <code>{slug}.clientops.pl</code> nie działa przy self-hosted — subdomena wymaga centralnego serwera</span></div>
+      <div class="comp-item"><span class="comp-item-icon">✗</span><span>Google OAuth, Reverb WebSocket, Meilisearch — każdy klient musiałby to sam konfigurować i hostować</span></div>
+      <div class="comp-item"><span class="comp-item-icon">✗</span><span>TimescaleDB, Redis Cluster, Horizon — wymagania infrastrukturalne zbyt złożone dla samodzielnego deploymentu</span></div>
+      <div class="comp-item"><span class="comp-item-icon">✗</span><span>20 klientów = 20 serwerów do utrzymania, 20 różnych wersji kodu, 20 osobnych baz danych</span></div>
+      <div class="comp-item"><span class="comp-item-icon">✗</span><span>Jednorazowy przychód nie pozwala planować — nie wiesz ile zarobisz w przyszłym miesiącu</span></div>
+      <div class="comp-item"><span class="comp-item-icon">✗</span><span>Klient kupuje raz i odchodzi — brak relacji, brak kontraktu, brak powodu żeby wracać</span></div>
+      <div class="comp-item"><span class="comp-item-icon">✗</span><span>Architektura multi-tenant (Global Scopes, BelongsToTenant) jest bezużyteczna przy single-instance</span></div>
+    </div>
+    <div class="comp-card good">
+      <div class="comp-header">
+        <div class="comp-icon">🏗</div>
+        <div class="comp-card-title">Subskrypcja SaaS — zalety</div>
+      </div>
+      <div class="comp-item"><span class="comp-item-icon">✓</span><span>Architektura już gotowa — BelongsToTenant, Global Scopes, subdomenowe routowanie middleware</span></div>
+      <div class="comp-item"><span class="comp-item-icon">✓</span><span>Jeden deployment obsługuje 1, 100 i 5000 klientów — tylko skalowanie infrastruktury</span></div>
+      <div class="comp-item"><span class="comp-item-icon">✓</span><span>MRR (Monthly Recurring Revenue) — podstawa do planowania, zatrudniania, inwestycji</span></div>
+      <div class="comp-item"><span class="comp-item-icon">✓</span><span>Aktualizacje, bugfixy, nowe funkcje trafiają do wszystkich klientów jednocześnie</span></div>
+      <div class="comp-item"><span class="comp-item-icon">✓</span><span>Pełna kontrola nad środowiskiem — debugging, monitoring, SLA są możliwe</span></div>
+      <div class="comp-item"><span class="comp-item-icon">✓</span><span>Niski próg wejścia dla klienta — miesięczna opłata zamiast inwestycji kilkunastu tysięcy</span></div>
+      <div class="comp-item"><span class="comp-item-icon">✓</span><span>Churn (odejście klienta) jest widoczny i można na niego reagować zanim się stanie</span></div>
+    </div>
+  </div>
+
+  <h3>Jedyny wyjątek — kiedy instancja ma sens</h3>
+  <p>Sprzedaż instancji ma uzasadnienie wyłącznie dla <strong>klientów enterprise z wymogami prawnymi</strong>: dane nie mogą opuścić sieci firmy, własne centrum danych, umowy NDA. To niszowy edge case, nie model główny. Nawet wtedy — zamiast sprzedaży jednorazowej — lepszy jest <strong>managed private deployment</strong>: ty hostrujesz dedykowaną instancję, klient płaci miesięcznie więcej (np. 3–5× cena Agency tier).</p>
+
+  <div class="alert alert-info">
+    <div class="alert-icon">ℹ</div>
+    <div class="alert-body">
+      <div class="alert-title">Dlaczego architektura jest argumentem, nie tylko technikaliami</div>
+      <div class="alert-text">Każda godzina spędzona na budowaniu multi-tenancy (Global Scopes, BelongsToTenant, middleware subdomenowe, RLS) to inwestycja która się zwraca wyłącznie w modelu SaaS. Sprzedaż instancji dosłownie marnuje tę pracę — pojedyncza instancja nie potrzebuje żadnego z tych mechanizmów.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════ SECTION 3: Subscription details -->
+<div class="page page-break">
+  <div class="section-header">
+    <div class="section-num">3</div>
+    <div>
+      <div class="section-label">Mechanizm</div>
+      <div class="section-title">Model subskrypcyjny — szczegóły</div>
+    </div>
+  </div>
+
+  <h3>Jednostka rozliczeniowa — per klient CRM, nie per user</h3>
+  <p>Decyzja o tym <em>co</em> się liczy i rozlicza to fundament modelu cenowego. Istnieją dwa typowe podejścia:</p>
+
+  <div class="table-wrap">
+    <table>
+      <tr>
+        <th>Podejście</th>
+        <th>Przykład</th>
+        <th>Problem</th>
+        <th>Ocena</th>
+      </tr>
+      <tr>
+        <td><strong>Per seat (per user)</strong></td>
+        <td>Jira, Slack</td>
+        <td>Agencja to 2–3 adminów → niski przychód, klient combinuje żeby minimalizować seatów</td>
+        <td style="color: #dc2626;">✗ Nie dla nas</td>
+      </tr>
+      <tr>
+        <td><strong>Per klient CRM</strong></td>
+        <td>Klasyczny dla agencji</td>
+        <td>Wartość rośnie naturalnie z biznesem klienta — im więcej obsługuje firm, tym więcej płaci</td>
+        <td style="color: #059669;">✓ Rekomendowane</td>
+      </tr>
+      <tr>
+        <td><strong>Per feature (moduły)</strong></td>
+        <td>Wiele B2B SaaS</td>
+        <td>Skomplikowane, klient nie wie co kupuje, frustracja</td>
+        <td style="color: #d97706;">~ Tylko jako add-on</td>
+      </tr>
+    </table>
+  </div>
+
+  <p>Rozliczanie <strong>per klient CRM</strong> jest naturalne dla agencji — im większa, tym więcej klientów obsługuje, tym więcej płaci. Wartość rośnie liniowo razem z sukcesem klienta. To nie jest arbitralny limit — to odzwierciedlenie realnego zużycia infrastruktury (więcej analiz SEO, więcej PDF, więcej ticketów).</p>
+
+  <h3>Czego NIE limitować</h3>
+  <p>Limity które tworzą tarcie bez proporcjonalnej wartości powinny być wyeliminowane:</p>
+
+  <div class="table-wrap">
+    <table>
+      <tr>
+        <th>Element</th>
+        <th>Limitować?</th>
+        <th>Uzasadnienie</th>
+      </tr>
+      <tr>
+        <td>Liczba userów (adminów/managerów)</td>
+        <td style="color: #dc2626; font-weight: 600;">NIE</td>
+        <td>Agencja ma 2–5 adminów. Limity per seat frustują bez proporcjonalnego przychodu.</td>
+      </tr>
+      <tr>
+        <td>Przechowywanie dokumentów</td>
+        <td style="color: #dc2626; font-weight: 600;">NIE</td>
+        <td>Koszt marginalny S3/MinIO jest pomijalny. Limit tworzy tylko ból głowy.</td>
+      </tr>
+      <tr>
+        <td>Liczba ticketów / komentarzy</td>
+        <td style="color: #dc2626; font-weight: 600;">NIE</td>
+        <td>Aktywność w ticketach = klient używa produktu. Limitowanie tego jest anty-pattern.</td>
+      </tr>
+      <tr>
+        <td>Historia powiadomień</td>
+        <td style="color: #dc2626; font-weight: 600;">NIE</td>
+        <td>Dane historyczne mają wartość dla klienta i nie kosztują praktycznie nic.</td>
+      </tr>
+      <tr>
+        <td>Liczba klientów CRM</td>
+        <td style="color: #059669; font-weight: 600;">TAK</td>
+        <td>Główna jednostka rozliczeniowa — odpowiada realnemu zużyciu SEO i infrastruktury.</td>
+      </tr>
+      <tr>
+        <td>Analizy SEO / miesiąc</td>
+        <td style="color: #059669; font-weight: 600;">TAK</td>
+        <td>Kosztują realnie: Google API, AI, Browsershot. Różnicują tiery.</td>
+      </tr>
+      <tr>
+        <td>Miesięczne audyty (auto)</td>
+        <td style="color: #059669; font-weight: 600;">TAK</td>
+        <td>Każdy audyt = pipeline jobów + PDF przez Chromium. Koszt nieopomijalny przy skali.</td>
+      </tr>
+    </table>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════ SECTION 4: Pricing -->
+<div class="page page-break">
+  <div class="section-header">
+    <div class="section-num">4</div>
+    <div>
+      <div class="section-label">Cennik</div>
+      <div class="section-title">Struktura cenowa — tiery</div>
+    </div>
+  </div>
+
+  <div class="tiers-grid">
+    <div class="tier-card">
+      <div class="tier-badge">Starter</div>
+      <div class="tier-name">Starter</div>
+      <div class="tier-price">99 zł</div>
+      <div class="tier-period">/ miesiąc</div>
+      <div class="tier-divider"></div>
+      <div class="tier-feature">Do 5 klientów CRM</div>
+      <div class="tier-feature">Do 15 projektów</div>
+      <div class="tier-feature">20 analiz SEO / mies.</div>
+      <div class="tier-feature">Audyty manualne</div>
+      <div class="tier-feature">Panel klienta ✓</div>
+      <div class="tier-feature">Tickets + SLA ✓</div>
+      <div class="tier-feature">Email + in-app powiad.</div>
+    </div>
+    <div class="tier-card highlight">
+      <div class="tier-badge">Popularny</div>
+      <div class="tier-name">Growth</div>
+      <div class="tier-price">299 zł</div>
+      <div class="tier-period">/ miesiąc</div>
+      <div class="tier-divider"></div>
+      <div class="tier-feature">Do 20 klientów CRM</div>
+      <div class="tier-feature">Do 60 projektów</div>
+      <div class="tier-feature">100 analiz SEO / mies.</div>
+      <div class="tier-feature">1× audyt auto / mies.</div>
+      <div class="tier-feature">Raporty PDF ✓</div>
+      <div class="tier-feature">SMS powiadomienia ✓</div>
+      <div class="tier-feature">Priorytetowe wsparcie</div>
+    </div>
+    <div class="tier-card">
+      <div class="tier-badge">Agency</div>
+      <div class="tier-name">Agency</div>
+      <div class="tier-price">799 zł</div>
+      <div class="tier-period">/ miesiąc</div>
+      <div class="tier-divider"></div>
+      <div class="tier-feature">Do 100 klientów CRM</div>
+      <div class="tier-feature">Bez limitu projektów</div>
+      <div class="tier-feature">Bez limitu SEO</div>
+      <div class="tier-feature">Auto-audyty + AI ✓</div>
+      <div class="tier-feature">Białe etykiety (logo)</div>
+      <div class="tier-feature">Własna domena panelu</div>
+      <div class="tier-feature">SLA gwarantowane</div>
+    </div>
+    <div class="tier-card">
+      <div class="tier-badge">Enterprise</div>
+      <div class="tier-name">Enterprise</div>
+      <div class="tier-price">—</div>
+      <div class="tier-period">negocjacja</div>
+      <div class="tier-divider"></div>
+      <div class="tier-feature">Klientów bez limitu</div>
+      <div class="tier-feature">Dedykowana instancja</div>
+      <div class="tier-feature">Onboarding + szkolenie</div>
+      <div class="tier-feature">Integracje na zamówienie</div>
+      <div class="tier-feature">Umowa SLA 99.9%</div>
+      <div class="tier-feature">Dedykowany opiekun</div>
+      <div class="tier-feature">Billing roczny z rabatem</div>
+    </div>
+  </div>
+
+  <div class="alert alert-warning">
+    <div class="alert-icon">⚠</div>
+    <div class="alert-body">
+      <div class="alert-title">Ceny są orientacyjne — wymagają walidacji rynkowej</div>
+      <div class="alert-text">99/299/799 zł to rozsądny punkt startowy dla polskiego rynku agencji SEO (2026). Przed publicznym launchem zweryfikuj z 5–10 potencjalnymi klientami czy ceny są akceptowalne i czy tiery odpowiadają realnym potrzebom. Lepiej zacząć taniej i podnosić niż obniżać.</div>
+    </div>
+  </div>
+
+  <h3>Unit economics — szacunkowe przychody</h3>
+
+  <div class="unit-row">
+    <div class="unit-card">
+      <div class="unit-val">~4 800 zł</div>
+      <div class="unit-lbl">MRR przy 30 klientach</div>
+      <div class="unit-sub">Mix: 10× Starter + 15× Growth + 5× Agency</div>
+    </div>
+    <div class="unit-card">
+      <div class="unit-val">~22 000 zł</div>
+      <div class="unit-lbl">MRR przy 100 klientach</div>
+      <div class="unit-sub">Mix: 20× Starter + 50× Growth + 30× Agency</div>
+    </div>
+    <div class="unit-card">
+      <div class="unit-val">~75 000 zł</div>
+      <div class="unit-lbl">MRR przy 200 klientach</div>
+      <div class="unit-sub">Mix przesuwa się w stronę Growth i Agency</div>
+    </div>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <tr>
+        <th>Tier</th>
+        <th>Cena</th>
+        <th>Koszt infra (est.)</th>
+        <th>Marża brutto</th>
+        <th>Break-even klientów</th>
+      </tr>
+      <tr>
+        <td><strong>Starter</strong></td>
+        <td>99 zł/mies.</td>
+        <td>~5–8 zł/klient</td>
+        <td style="color: #059669; font-weight: 600;">~92%</td>
+        <td>Serwer €30 → ~13 Starter-ów</td>
+      </tr>
+      <tr>
+        <td><strong>Growth</strong></td>
+        <td>299 zł/mies.</td>
+        <td>~20–30 zł/klient</td>
+        <td style="color: #059669; font-weight: 600;">~90%</td>
+        <td>Serwer €100 → ~13 Growth-ów</td>
+      </tr>
+      <tr>
+        <td><strong>Agency</strong></td>
+        <td>799 zł/mies.</td>
+        <td>~80–120 zł/klient</td>
+        <td style="color: #059669; font-weight: 600;">~87%</td>
+        <td>Klaster €300 → ~15 Agency-ów</td>
+      </tr>
+    </table>
+  </div>
+
+  <p style="font-size: 11.5px; color: var(--gray-400); font-style: italic;">* Koszt infrastruktury per klient to szacunek przy pełnym obłożeniu serwera danego tiera. Rzeczywiste marże będą wyższe na początku (mało klientów, stały koszt serwera) i będą się stabilizować przy skali.</p>
+</div>
+
+<!-- ══════════════════════════════════════════════════════ SECTION 5: Value prop -->
+<div class="page page-break">
+  <div class="section-header">
+    <div class="section-num">5</div>
+    <div>
+      <div class="section-label">Rynek</div>
+      <div class="section-title">Unikalne wyróżniki — propozycja wartości</div>
+    </div>
+  </div>
+
+  <p>ClientOps nie jest kolejnym CRM. Polska ma dziesiątki agencji SEO i digitalowych które używają kombinacji: Pipedrive/HubSpot (CRM) + Google Sheets (SEO tracking) + emaila (komunikacja z klientem) + WordPressa (raporty). <strong>ClientOps łączy to wszystko w jednym miejscu.</strong></p>
+
+  <div class="value-grid">
+    <div class="value-card">
+      <div class="value-card-icon">🌐</div>
+      <div class="value-card-title">Panel klienta na subdomenie</div>
+      <div class="value-card-desc">Każdy klient agencji dostaje własny panel pod <code>{slug}.clientops.pl</code> — widzi swoje projekty, dokumenty, analizy SEO, audyty i może zgłaszać tickety. Żaden polski CRM tego nie oferuje.</div>
+      <div class="value-card-badge">Unikalny na rynku</div>
+    </div>
+    <div class="value-card">
+      <div class="value-card-icon">📊</div>
+      <div class="value-card-title">SEO wbudowane w CRM</div>
+      <div class="value-card-desc">Google Search Console, GA4, PageSpeed Insights i analiza AI w jednym miejscu — powiązane z kontem klienta, projektem i historią relacji. Bez przełączania między narzędziami.</div>
+      <div class="value-card-badge">Unikalny na rynku</div>
+    </div>
+    <div class="value-card">
+      <div class="value-card-icon">📋</div>
+      <div class="value-card-title">Automatyczny miesięczny raport PDF</div>
+      <div class="value-card-desc">System sam generuje i wysyła raport audytowy raz w miesiącu. Klient dostaje profesjonalny PDF ze stanem SEO, trendami pozycji i rekomendacjami AI — bez pracy agencji.</div>
+      <div class="value-card-badge">Oszczędność czasu</div>
+    </div>
+    <div class="value-card">
+      <div class="value-card-icon">🎯</div>
+      <div class="value-card-title">CRM zaprojektowany dla agencji</div>
+      <div class="value-card-desc">Kanban leadów z 7 kolumnami, konwersja lead → klient → projekt, oferty powiązane z TipTap, SLA per klient — to nie jest Salesforce przebrany za tool dla agencji. To narzędzie zbudowane od zera na ten przypadek użycia.</div>
+      <div class="value-card-badge">Dopasowany do use case</div>
+    </div>
+  </div>
+
+  <h3>Pozycjonowanie wobec konkurencji</h3>
+
+  <div class="table-wrap">
+    <table>
+      <tr>
+        <th>Narzędzie</th>
+        <th>CRM</th>
+        <th>SEO tracking</th>
+        <th>Panel klienta</th>
+        <th>Auto-raporty</th>
+        <th>Cena (est.)</th>
+      </tr>
+      <tr>
+        <td><strong>HubSpot Starter</strong></td>
+        <td style="color:#059669">✓</td>
+        <td style="color:#dc2626">✗</td>
+        <td style="color:#dc2626">✗</td>
+        <td style="color:#dc2626">✗</td>
+        <td>~€45/mies.</td>
+      </tr>
+      <tr>
+        <td><strong>Pipedrive</strong></td>
+        <td style="color:#059669">✓</td>
+        <td style="color:#dc2626">✗</td>
+        <td style="color:#dc2626">✗</td>
+        <td style="color:#dc2626">✗</td>
+        <td>~€25/mies./user</td>
+      </tr>
+      <tr>
+        <td><strong>Semrush CRM</strong></td>
+        <td style="color:#d97706">~</td>
+        <td style="color:#059669">✓</td>
+        <td style="color:#dc2626">✗</td>
+        <td style="color:#d97706">~</td>
+        <td>€120+/mies.</td>
+      </tr>
+      <tr>
+        <td><strong>AgencyAnalytics</strong></td>
+        <td style="color:#dc2626">✗</td>
+        <td style="color:#059669">✓</td>
+        <td style="color:#059669">✓</td>
+        <td style="color:#059669">✓</td>
+        <td>$12/klient/mies.</td>
+      </tr>
+      <tr style="background: #fff1f2;">
+        <td><strong>ClientOps (Growth)</strong></td>
+        <td style="color:#059669; font-weight:700">✓</td>
+        <td style="color:#059669; font-weight:700">✓</td>
+        <td style="color:#059669; font-weight:700">✓</td>
+        <td style="color:#059669; font-weight:700">✓</td>
+        <td style="font-weight:700; color: var(--primary)">299 zł/mies.</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="alert alert-success">
+    <div class="alert-icon">✓</div>
+    <div class="alert-body">
+      <div class="alert-title">AgencyAnalytics to najbliższy punkt odniesienia cenowy</div>
+      <div class="alert-text">AgencyAnalytics kosztuje $12 per klient per miesiąc — agencja z 20 klientami płaci $240/mies. (~1000 zł). Nasz Growth tier to 299 zł/mies. dla 20 klientów z pełnym CRM i raporty PDF w pakiecie. <strong>Wygrywamy ceną i kompletnością.</strong> To dobry argument sprzedażowy.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════ SECTION 6: Phases -->
+<div class="page page-break">
+  <div class="section-header">
+    <div class="section-num">6</div>
+    <div>
+      <div class="section-label">Roadmapa</div>
+      <div class="section-title">Fazy monetyzacji</div>
+    </div>
+  </div>
+
+  <div class="timeline">
+
+    <div class="phase">
+      <div class="phase-left">
+        <div class="phase-dot" style="background: #475569;">1</div>
+        <div class="phase-line"></div>
+      </div>
+      <div class="phase-body">
+        <div class="phase-label" style="color: #475569;">Faza 1 — Teraz</div>
+        <div class="phase-title">Internal Use — Budowanie Produktu</div>
+        <div class="phase-desc">System służy wam i waszemu biznesowi. Leady, klienci, oferty, projekty, SLA. Zero monetyzacji, ale maksymalna wartość: każdy problem na który natrafiacie jako użytkownicy to bug lub brakująca funkcja którą rozwiązujecie zanim narzeknie zewnętrzny klient. Najlepszy user research jaki istnieje.</div>
+        <span class="phase-tag" style="background: #f1f5f9; color: #475569;">0 klientów płacących · pełna kontrola · zero presji</span>
+      </div>
+    </div>
+
+    <div class="phase">
+      <div class="phase-left">
+        <div class="phase-dot" style="background: #d97706;">2</div>
+        <div class="phase-line"></div>
+      </div>
+      <div class="phase-body">
+        <div class="phase-label" style="color: #d97706;">Faza 2 — 3–6 miesięcy po Fazie 1</div>
+        <div class="phase-title">Beta — 3–5 Agencji Znajomych</div>
+        <div class="phase-desc">Zapraszasz kilku zaufanych znajomych z branży. Symboliczna opłata (50% ceny lub za feedback). Cel: walidacja czy tiery mają sens, odkrycie problemów których sam nie widzisz, pierwsza prawdziwa konfiguracja onboardingu. Na tym etapie otwierasz system na real-world chaos — każda agencja używa narzędzi inaczej.</div>
+        <span class="phase-tag" style="background: var(--orange-light); color: #92400e;">3–5 klientów beta · feedback loop · iteracje szybkie</span>
+      </div>
+    </div>
+
+    <div class="phase">
+      <div class="phase-left">
+        <div class="phase-dot" style="background: var(--primary);">3</div>
+        <div class="phase-line"></div>
+      </div>
+      <div class="phase-body">
+        <div class="phase-label" style="color: var(--primary);">Faza 3 — Public Launch</div>
+        <div class="phase-title">Publiczny Launch — Polska Agencji SEO</div>
+        <div class="phase-desc">Pełne tiery cenowe, landing page, onboarding flow, Stripe billing. Cel: 30–50 płacących klientów w ciągu 12 miesięcy. Kanały dotarcia: LinkedIn (agencje SEO), grupy FB dla branży digital, networking na konferencjach (np. semKRK, I Love Marketing). Polska ma ~2000 aktywnych agencji SEO — jest z kogo wybierać.</div>
+        <span class="phase-tag" style="background: var(--primary-light); color: var(--primary);">Starter + Growth tiery · Stripe · self-service onboarding</span>
+      </div>
+    </div>
+
+    <div class="phase">
+      <div class="phase-left">
+        <div class="phase-dot" style="background: #059669;">4</div>
+        <div class="phase-line"></div>
+      </div>
+      <div class="phase-body">
+        <div class="phase-label" style="color: #059669;">Faza 4 — Opcjonalna</div>
+        <div class="phase-title">White-Label i Ekspansja</div>
+        <div class="phase-desc">Większe agencje płacą więcej za białe etykiety: własna domena panelu klienta (<code>crm.agencja.pl</code>), własne logo w interfejsie, brak brandingu ClientOps. To premium tier Agency lub osobny add-on. Opcjonalnie: ekspansja na rynki CEE (Czechy, Węgry, Rumunia) gdzie konkurencja jest jeszcze słabsza.</div>
+        <span class="phase-tag" style="background: var(--green-light); color: #065f46;">Agency + Enterprise tiery · white-label · ekspansja regionalna</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════ SECTION 7: Key recommendation -->
+<div class="page">
+  <div class="section-header">
+    <div class="section-num">7</div>
+    <div>
+      <div class="section-label">Najważniejsze</div>
+      <div class="section-title">Kluczowa rekomendacja strategiczna</div>
+    </div>
+  </div>
+
+  <div class="alert alert-primary">
+    <div class="alert-icon">🎯</div>
+    <div class="alert-body">
+      <div class="alert-title">Moduł SEO to główny argument sprzedażowy — nie odkładaj go na koniec</div>
+      <div class="alert-text">W obecnym planie implementacji SEO to faza 6 — ostatnia. Ale to prawdopodobnie <strong>największa unikalna wartość</strong> dla agencji SEO. CRM mają wszyscy. CRM z automatyczną analizą SEO, trendami pozycji i miesięcznym raportem PDF dla klienta — prawie nikt. Rozważ przyspieszenie modułu SEO do fazy 3–4 i uczynienie go głównym argumentem w pitchu sprzedażowym.</div>
+    </div>
+  </div>
+
+  <h3>Priorytet funkcji vs. wartość sprzedażowa</h3>
+
+  <div class="table-wrap">
+    <table>
+      <tr>
+        <th>Moduł</th>
+        <th>Faza techniczna</th>
+        <th>Wartość sprzedażowa</th>
+        <th>Trudność dla klienta bez niego</th>
+      </tr>
+      <tr>
+        <td><strong>Auth + Multi-tenancy</strong></td>
+        <td>1 (fundament)</td>
+        <td style="color: #94a3b8;">Niewidoczna</td>
+        <td>—</td>
+      </tr>
+      <tr>
+        <td><strong>CRM + Kanban</strong></td>
+        <td>2</td>
+        <td style="color: #d97706;">Średnia</td>
+        <td>Ma alternatywy (Pipedrive)</td>
+      </tr>
+      <tr>
+        <td><strong>SLA + Tickets</strong></td>
+        <td>3</td>
+        <td style="color: #d97706;">Średnia</td>
+        <td>Ma alternatywy (Zendesk lite)</td>
+      </tr>
+      <tr>
+        <td><strong>Dokumenty TipTap + PDF</strong></td>
+        <td>4</td>
+        <td style="color: #059669; font-weight: 600;">Wysoka</td>
+        <td>Google Docs osobno, brak integracji</td>
+      </tr>
+      <tr>
+        <td><strong>Panel klienta na subdomenie</strong></td>
+        <td>1 (architektura)</td>
+        <td style="color: #059669; font-weight: 600;">Wysoka — unikalna</td>
+        <td>Brak alternatywy w tej cenie</td>
+      </tr>
+      <tr>
+        <td><strong>SEO + AI + Raporty</strong></td>
+        <td>6 (ostatnia)</td>
+        <td style="color: #be123c; font-weight: 700;">Bardzo wysoka — unikalna</td>
+        <td>AgencyAnalytics $12/klient lub Semrush €120+</td>
+      </tr>
+      <tr>
+        <td><strong>Audyty miesięczne auto</strong></td>
+        <td>7 (pochodna SEO)</td>
+        <td style="color: #be123c; font-weight: 700;">Bardzo wysoka — unikalna</td>
+        <td>Ręczna praca agencji, 2–4h/klient/mies.</td>
+      </tr>
+    </table>
+  </div>
+
+  <h3>Trzy rzeczy do zrobienia zanim zaczniesz monetyzację</h3>
+
+  <div class="table-wrap">
+    <table>
+      <tr>
+        <th>#</th>
+        <th>Zadanie</th>
+        <th>Dlaczego ważne</th>
+      </tr>
+      <tr>
+        <td style="font-weight: 700; font-size: 16px; color: var(--primary);">1</td>
+        <td><strong>Landing page z cenami przed zakończeniem buildu</strong></td>
+        <td>Zbierasz email-e zainteresowanych zanim product jest gotowy. 100 zapisanych maili = walidacja popytu.</td>
+      </tr>
+      <tr>
+        <td style="font-weight: 700; font-size: 16px; color: var(--primary);">2</td>
+        <td><strong>5 rozmów z potencjalnymi klientami o bólu którego nie masz</strong></td>
+        <td>Zapytaj agencje SEO jak dziś raportują klientom i ile to kosztuje czasowo. Jeśli odpowiadają "Google Sheets i 3h/mies." — masz pitch.</td>
+      </tr>
+      <tr>
+        <td style="font-weight: 700; font-size: 16px; color: var(--primary);">3</td>
+        <td><strong>Stripe billing skonfigurowany przed pierwszym klientem</strong></td>
+        <td>Nigdy nie zacznij od ręcznych faktur i przelewów. Stripe Billing z webhookami od dnia 1 — to wymóg, nie opcja.</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="alert alert-success">
+    <div class="alert-icon">💡</div>
+    <div class="alert-body">
+      <div class="alert-title">Pitch w jednym zdaniu</div>
+      <div class="alert-text">"ClientOps to CRM dla agencji SEO który automatycznie generuje miesięczne raporty dla Twoich klientów — każdy klient dostaje własny panel z wynikami, trendami pozycji i rekomendacjami AI, bez godzin Twojej pracy."</div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
