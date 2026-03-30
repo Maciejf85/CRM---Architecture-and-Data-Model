@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ClientOps — Gap Analysis vs OwnCRM TODO v2.0.0</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    font-size: 13px;
+    line-height: 1.6;
+    color: #1a1a2e;
+    background: #fff;
+  }
+
+  /* ── Cover ── */
+  .cover {
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 80px 72px;
+    background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+    page-break-after: always;
+  }
+  .cover-badge {
+    font-size: 11px; font-weight: 600; letter-spacing: 2px;
+    text-transform: uppercase; color: #a78bfa; margin-bottom: 24px;
+  }
+  .cover h1 {
+    font-size: 44px; font-weight: 800; color: #fff;
+    line-height: 1.15; margin-bottom: 16px;
+  }
+  .cover h1 span { color: #a78bfa; }
+  .cover-sub {
+    font-size: 17px; color: #c4b5fd; margin-bottom: 48px; max-width: 560px;
+  }
+  .cover-meta { display: flex; gap: 32px; flex-wrap: wrap; }
+  .cover-meta-item { display: flex; flex-direction: column; gap: 4px; }
+  .cover-meta-label {
+    font-size: 10px; font-weight: 600; letter-spacing: 1.5px;
+    text-transform: uppercase; color: #7c3aed;
+  }
+  .cover-meta-value { font-size: 14px; font-weight: 600; color: #e9d5ff; }
+
+  /* ── Layout ── */
+  .page { padding: 56px 72px 48px; }
+
+  h2 {
+    font-size: 24px; font-weight: 800; color: #1a1a2e;
+    margin-bottom: 8px; padding-bottom: 10px;
+    border-bottom: 3px solid #7c3aed;
+  }
+  .section-intro {
+    font-size: 12.5px; color: #6b7280; margin-bottom: 28px; margin-top: 8px;
+  }
+  h3 {
+    font-size: 15px; font-weight: 700; color: #1a1a2e;
+    margin: 28px 0 12px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  h3::before {
+    content: '';
+    display: inline-block;
+    width: 4px; height: 16px;
+    background: #7c3aed;
+    border-radius: 2px;
+    flex-shrink: 0;
+  }
+
+  /* ── Summary boxes ── */
+  .summary-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 32px;
+  }
+  .summary-box {
+    padding: 18px 20px;
+    border-radius: 10px;
+    border: 1px solid #e5e7eb;
+  }
+  .summary-box-label {
+    font-size: 10px; font-weight: 700; letter-spacing: 1px;
+    text-transform: uppercase; margin-bottom: 6px;
+  }
+  .summary-box-value {
+    font-size: 28px; font-weight: 800; line-height: 1;
+    margin-bottom: 4px;
+  }
+  .summary-box-desc { font-size: 11px; color: #6b7280; }
+  .box-green { background: #f0fdf4; border-color: #86efac; }
+  .box-green .summary-box-label { color: #15803d; }
+  .box-green .summary-box-value { color: #15803d; }
+  .box-red { background: #fef2f2; border-color: #fca5a5; }
+  .box-red .summary-box-label { color: #dc2626; }
+  .box-red .summary-box-value { color: #dc2626; }
+  .box-yellow { background: #fefce8; border-color: #fde68a; }
+  .box-yellow .summary-box-label { color: #ca8a04; }
+  .box-yellow .summary-box-value { color: #ca8a04; }
+  .box-purple { background: #faf5ff; border-color: #d8b4fe; }
+  .box-purple .summary-box-label { color: #7c3aed; }
+  .box-purple .summary-box-value { color: #7c3aed; }
+  .box-gray { background: #f9fafb; border-color: #e5e7eb; }
+  .box-gray .summary-box-label { color: #6b7280; }
+  .box-gray .summary-box-value { color: #374151; }
+
+  /* ── Tables ── */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 24px;
+    font-size: 12px;
+  }
+  thead tr { background: #f9fafb; }
+  thead th {
+    font-size: 10px; font-weight: 700; letter-spacing: 1px;
+    text-transform: uppercase; color: #6b7280;
+    padding: 9px 14px; text-align: left;
+    border-bottom: 2px solid #e5e7eb;
+  }
+  tbody tr { border-bottom: 1px solid #f3f4f6; }
+  tbody tr:last-child { border-bottom: none; }
+  tbody td { padding: 9px 14px; vertical-align: top; }
+
+  .col-module { font-weight: 700; color: #1a1a2e; font-family: 'Courier New', monospace; font-size: 11.5px; }
+  .col-desc { color: #374151; }
+  .col-prior { white-space: nowrap; }
+
+  /* ── Status badges ── */
+  .badge {
+    display: inline-block;
+    font-size: 9px; font-weight: 700; letter-spacing: 0.5px;
+    padding: 2px 8px; border-radius: 20px;
+    text-transform: uppercase; white-space: nowrap;
+  }
+  .badge-ok { background: #d1fae5; color: #065f46; }
+  .badge-partial { background: #fef3c7; color: #92400e; }
+  .badge-missing { background: #fee2e2; color: #991b1b; }
+  .badge-critical { background: #7c3aed; color: #fff; }
+  .badge-high { background: #dbeafe; color: #1d4ed8; }
+  .badge-medium { background: #f3f4f6; color: #374151; }
+
+  /* ── Progress bar ── */
+  .progress-row { margin-bottom: 14px; }
+  .progress-label {
+    display: flex; justify-content: space-between;
+    font-size: 12px; margin-bottom: 5px;
+  }
+  .progress-name { font-weight: 600; color: #1a1a2e; }
+  .progress-pct { color: #6b7280; font-size: 11px; }
+  .progress-bar-bg {
+    height: 8px; background: #f3f4f6; border-radius: 4px; overflow: hidden;
+  }
+  .progress-bar-fill { height: 100%; border-radius: 4px; }
+  .fill-green { background: #10b981; }
+  .fill-yellow { background: #f59e0b; }
+  .fill-red { background: #ef4444; }
+  .fill-gray { background: #d1d5db; }
+
+  /* ── Info box ── */
+  .info-box {
+    padding: 14px 18px;
+    border-radius: 8px;
+    margin-bottom: 16px;
+    border-left: 4px solid;
+  }
+  .info-box-title { font-size: 11px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 4px; }
+  .info-box-body { font-size: 12px; }
+  .info-missing { background: #fef2f2; border-color: #ef4444; }
+  .info-missing .info-box-title { color: #dc2626; }
+  .info-partial { background: #fefce8; border-color: #f59e0b; }
+  .info-partial .info-box-title { color: #ca8a04; }
+  .info-ok { background: #f0fdf4; border-color: #10b981; }
+  .info-ok .info-box-title { color: #059669; }
+  .info-note { background: #faf5ff; border-color: #7c3aed; }
+  .info-note .info-box-title { color: #7c3aed; }
+
+  /* ── List ── */
+  ul.check-list { list-style: none; padding: 0; }
+  ul.check-list li {
+    padding: 5px 0 5px 22px;
+    position: relative;
+    font-size: 12px;
+    color: #374151;
+    border-bottom: 1px dotted #f3f4f6;
+  }
+  ul.check-list li:last-child { border-bottom: none; }
+  ul.check-list li::before {
+    position: absolute; left: 0; top: 5px;
+    font-size: 13px; line-height: 1.5;
+  }
+  ul.check-list li.ok::before { content: '✓'; color: #10b981; }
+  ul.check-list li.missing::before { content: '✗'; color: #ef4444; }
+  ul.check-list li.partial::before { content: '◐'; color: #f59e0b; }
+
+  /* ── Page break ── */
+  .page-break { page-break-before: always; }
+
+  /* ── Footer note ── */
+  .doc-footer {
+    margin-top: 40px; padding-top: 16px;
+    border-top: 1px solid #e5e7eb;
+    font-size: 10.5px; color: #9ca3af;
+    display: flex; justify-content: space-between;
+  }
+</style>
+</head>
+<body>
+
+<!-- COVER -->
+<div class="cover">
+  <div class="cover-badge">ClientOps CRM — Analiza wewnętrzna</div>
+  <h1>Gap Analysis<br><span>ClientOps vs OwnCRM</span></h1>
+  <p class="cover-sub">
+    Co już jest zaprojektowane w ClientOps, a czego brakuje względem
+    specyfikacji TODO v2.0.0 (Kordian + Maciej, Marzec 2026).
+  </p>
+  <div class="cover-meta">
+    <div class="cover-meta-item">
+      <span class="cover-meta-label">Data</span>
+      <span class="cover-meta-value">Marzec 2026</span>
+    </div>
+    <div class="cover-meta-item">
+      <span class="cover-meta-label">Podstawa</span>
+      <span class="cover-meta-value">TODO v2.0.0 + CLAUDE.md</span>
+    </div>
+    <div class="cover-meta-item">
+      <span class="cover-meta-label">Pokrycie audytów</span>
+      <span class="cover-meta-value">~40% wg TODO</span>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 1 — OVERVIEW -->
+<div class="page">
+  <h2>Przegląd ogólny</h2>
+  <p class="section-intro">
+    Szybki obraz — co z TODO v2.0.0 jest już w projekcie ClientOps, co jest częściowo, a czego w ogóle nie ma.
+  </p>
+
+  <div class="summary-grid">
+    <div class="summary-box box-green">
+      <div class="summary-box-label">Gotowe w ClientOps</div>
+      <div class="summary-box-value">~70%</div>
+      <div class="summary-box-desc">SEO engine — tabele, pipeline, Google APIs</div>
+    </div>
+    <div class="summary-box box-yellow">
+      <div class="summary-box-label">Częściowo</div>
+      <div class="summary-box-value">~15%</div>
+      <div class="summary-box-desc">Kategorie są w schemacie, silniki brak</div>
+    </div>
+    <div class="summary-box box-red">
+      <div class="summary-box-label">Brak całkowicie</div>
+      <div class="summary-box-value">~15%</div>
+      <div class="summary-box-desc">Cały filar Discovery/OwnCRM</div>
+    </div>
+    <div class="summary-box box-purple">
+      <div class="summary-box-label">Moduły OwnCRM</div>
+      <div class="summary-box-value">0%</div>
+      <div class="summary-box-desc">Workshop, AI Agents, Knowledge — nie istnieją w ClientOps</div>
+    </div>
+    <div class="summary-box box-red">
+      <div class="summary-box-label">PDF raporty audytowe</div>
+      <div class="summary-box-value">0%</div>
+      <div class="summary-box-desc">Browsershot jest, szablony raportów — brak</div>
+    </div>
+    <div class="summary-box box-gray">
+      <div class="summary-box-label">Sekcje audytowe (3 typy)</div>
+      <div class="summary-box-value">~14/30</div>
+      <div class="summary-box-desc">6 gotowych, 8 częściowych, ~16 brakujących</div>
+    </div>
+  </div>
+
+  <h3>Stopień gotowości per obszar</h3>
+
+  <div class="progress-row">
+    <div class="progress-label"><span class="progress-name">SEO audit engine (tabele, pipeline, APIs)</span><span class="progress-pct">~70%</span></div>
+    <div class="progress-bar-bg"><div class="progress-bar-fill fill-yellow" style="width:70%"></div></div>
+  </div>
+  <div class="progress-row">
+    <div class="progress-label"><span class="progress-name">Google APIs (GSC, GA4, PageSpeed)</span><span class="progress-pct">~80%</span></div>
+    <div class="progress-bar-bg"><div class="progress-bar-fill fill-green" style="width:80%"></div></div>
+  </div>
+  <div class="progress-row">
+    <div class="progress-label"><span class="progress-name">Audyt UX / WCAG (engine)</span><span class="progress-pct">5%</span></div>
+    <div class="progress-bar-bg"><div class="progress-bar-fill fill-red" style="width:5%"></div></div>
+  </div>
+  <div class="progress-row">
+    <div class="progress-label"><span class="progress-name">Audyt Security (engine)</span><span class="progress-pct">10%</span></div>
+    <div class="progress-bar-bg"><div class="progress-bar-fill fill-red" style="width:10%"></div></div>
+  </div>
+  <div class="progress-row">
+    <div class="progress-label"><span class="progress-name">PDF szablony raportów audytowych</span><span class="progress-pct">0%</span></div>
+    <div class="progress-bar-bg"><div class="progress-bar-fill fill-gray" style="width:1%"></div></div>
+  </div>
+  <div class="progress-row">
+    <div class="progress-label"><span class="progress-name">Ahrefs / Semrush API</span><span class="progress-pct">0%</span></div>
+    <div class="progress-bar-bg"><div class="progress-bar-fill fill-gray" style="width:1%"></div></div>
+  </div>
+  <div class="progress-row">
+    <div class="progress-label"><span class="progress-name">Delta view / YoY (dane są, widok brak)</span><span class="progress-pct">20%</span></div>
+    <div class="progress-bar-bg"><div class="progress-bar-fill fill-red" style="width:20%"></div></div>
+  </div>
+  <div class="progress-row">
+    <div class="progress-label"><span class="progress-name">Work log + Planning module</span><span class="progress-pct">0%</span></div>
+    <div class="progress-bar-bg"><div class="progress-bar-fill fill-gray" style="width:1%"></div></div>
+  </div>
+  <div class="progress-row">
+    <div class="progress-label"><span class="progress-name">Discovery Workshop + AI Agents (OwnCRM)</span><span class="progress-pct">0%</span></div>
+    <div class="progress-bar-bg"><div class="progress-bar-fill fill-gray" style="width:1%"></div></div>
+  </div>
+  <div class="progress-row">
+    <div class="progress-label"><span class="progress-name">Knowledge System + pgvector (OwnCRM)</span><span class="progress-pct">0%</span></div>
+    <div class="progress-bar-bg"><div class="progress-bar-fill fill-gray" style="width:1%"></div></div>
+  </div>
+  <div class="progress-row">
+    <div class="progress-label"><span class="progress-name">Lead Classification + Block Templates (OwnCRM)</span><span class="progress-pct">0%</span></div>
+    <div class="progress-bar-bg"><div class="progress-bar-fill fill-gray" style="width:1%"></div></div>
+  </div>
+  <div class="progress-row">
+    <div class="progress-label"><span class="progress-name">AI Visibility Score (OwnCRM)</span><span class="progress-pct">0%</span></div>
+    <div class="progress-bar-bg"><div class="progress-bar-fill fill-gray" style="width:1%"></div></div>
+  </div>
+  <div class="progress-row">
+    <div class="progress-label"><span class="progress-name">SEO Workshop + WP REST API (OwnCRM)</span><span class="progress-pct">0%</span></div>
+    <div class="progress-bar-bg"><div class="progress-bar-fill fill-gray" style="width:1%"></div></div>
+  </div>
+
+  <div class="doc-footer">
+    <span>ClientOps — Gap Analysis vs OwnCRM TODO v2.0.0</span>
+    <span>Marzec 2026 — dokument wewnętrzny</span>
+  </div>
+</div>
+
+<!-- PAGE 2 — CO JEST -->
+<div class="page page-break">
+  <h2>Co już jest w ClientOps</h2>
+  <p class="section-intro">
+    Elementy zaprojektowane w schemacie bazy danych, stacku technicznym lub pipeline'ach kolejkowych.
+  </p>
+
+  <h3>SEO Audit Engine — baza danych</h3>
+  <ul class="check-list">
+    <li class="ok"><strong>seo_analyses</strong> — status, score 0–100, gsc_connected, ga4_connected, pipeline statusy</li>
+    <li class="ok"><strong>seo_issues</strong> — severity (critical/warning/info), type, url, recommendation, assigned_to, fixed_at, previous_issue_id (regresja)</li>
+    <li class="ok"><strong>seo_cwv_snapshots</strong> (TimescaleDB) — LCP, CLS, INP, FCP, TTFB, performance_score, mobile/desktop, źródło pagespeed/gsc_field</li>
+    <li class="ok"><strong>seo_keyword_ranks</strong> (TimescaleDB) — pozycje fraz z GSC w czasie, clicks, impressions, CTR, per device</li>
+    <li class="ok"><strong>seo_monthly_snapshots</strong> — sesje organiczne, konwersje, CTR, avg position, top 3/10/50, backlinki nowe/utracone, referring domains</li>
+    <li class="ok"><strong>seo_backlinks</strong> — referring domain, target URL, anchor, domain_rating, is_toxic, first/last/lost_at</li>
+    <li class="ok"><strong>seo_competitors</strong> + <strong>seo_competitor_ranks</strong> (TimescaleDB) — tracking pozycji konkurentów per fraza</li>
+    <li class="ok"><strong>seo_keyword_opportunities</strong> — content gap, volume, difficulty, competitor_positions (JSON), has_dedicated_page, recommendation AI</li>
+  </ul>
+
+  <h3>Audyty zbiorcze</h3>
+  <ul class="check-list">
+    <li class="ok"><strong>audits</strong> — type: seo | technical | ux | security | full, overall_score, pipeline statusy</li>
+    <li class="ok"><strong>audit_issues</strong> — category: ux | security | performance | technical | content | seo, severity, assigned_to, fixed_at</li>
+    <li class="ok"><strong>audit_scores</strong> — wynik per kategoria 0–100, details JSON (critical/warnings/info/passed)</li>
+  </ul>
+
+  <h3>Pipeline kolejkowy (zaplanowany)</h3>
+  <ul class="check-list">
+    <li class="ok">CrawlWebsiteJob → FetchGSCDataJob + FetchGA4DataJob (równolegle) → AnalyzeKeywordsJob + AnalyzeSemanticsJob (AI) → GenerateAuditReportJob → NotifyAuditCompleteJob</li>
+    <li class="ok">Laravel Horizon — monitoring kolejek, balansowanie workerów</li>
+    <li class="ok">Osobne kolejki: crawlers, google-apis, ai-processing</li>
+  </ul>
+
+  <h3>Integracje Google (zaplanowane)</h3>
+  <ul class="check-list">
+    <li class="ok">Google Search Console API — pozycje, kliknięcia, impressions, CTR</li>
+    <li class="ok">Google Analytics 4 API — ruch organiczny, konwersje</li>
+    <li class="ok">PageSpeed Insights API — Core Web Vitals (LCP, CLS, INP)</li>
+  </ul>
+
+  <h3>AI (zaplanowane)</h3>
+  <ul class="check-list">
+    <li class="ok">Claude / OpenAI — analiza semantyczna treści, rekomendacje optymalizacji</li>
+    <li class="ok">AnalyzeKeywordsJob + AnalyzeSemanticsJob w pipeline</li>
+    <li class="ok">seo_keyword_opportunities.recommendation — generowane przez AI</li>
+    <li class="ok">audit_issues.recommendation — może być generowane przez AI</li>
+  </ul>
+
+  <h3>PDF Export</h3>
+  <ul class="check-list">
+    <li class="ok">Laravel Browsershot — headless Chromium, async w kolejce</li>
+    <li class="ok">documents.pdf_path — ścieżka do PDF w S3/MinIO</li>
+    <li class="partial">Browsershot działa dla dokumentów TipTap — <strong>brak dedykowanych szablonów raportów audytowych</strong></li>
+  </ul>
+
+  <h3>Reszta CRM (poza zakresem TODO v2.0.0 ale w ClientOps)</h3>
+  <ul class="check-list">
+    <li class="ok">Leady + Kanban (7 kolumn) + lead_activities + konwersja do klienta</li>
+    <li class="ok">Klienci, Kontakty, Projekty, Oferty (dokument TipTap)</li>
+    <li class="ok">Tickety + SLA + sla_incidents (CheckSlaBreachesJob co 5 min)</li>
+    <li class="ok">Powiadomienia (email/SMS/in-app/WebSocket Reverb) z quiet hours</li>
+    <li class="ok">Multi-tenancy (subdomeny {slug}.clientops.pl, Global Scopes)</li>
+    <li class="ok">RBAC (Spatie Permission, 6 ról) + Policies per rekord</li>
+    <li class="ok">Audit log (Spatie Activity Log) — każda akcja z diffem</li>
+  </ul>
+
+  <div class="doc-footer">
+    <span>ClientOps — Gap Analysis vs OwnCRM TODO v2.0.0</span>
+    <span>Marzec 2026 — dokument wewnętrzny</span>
+  </div>
+</div>
+
+<!-- PAGE 3 — BRAKI KRYTYCZNE -->
+<div class="page page-break">
+  <h2>Czego brakuje — Faza 2 (krytyczne)</h2>
+  <p class="section-intro">
+    Moduły nieobecne w ClientOps, oznaczone jako KRYTYCZNE w roadmapie TODO v2.0.0.
+    Bez nich system nie może wygenerować pełnych raportów audytowych.
+  </p>
+
+  <div class="info-box info-missing">
+    <div class="info-box-title">PDF Raport Generator — 0% gotowości</div>
+    <div class="info-box-body">
+      ClientOps ma Browsershot (generowanie PDF z HTML), ale brak dedykowanych szablonów raportów audytowych.
+      Potrzebne 3 typy: <strong>Prospekt SEO</strong> (8–15 stron, dla właściciela firmy, cel: zamknąć sprzedaż),
+      <strong>Klient miesięczny</strong> (20–40 stron, pełne dane, ton partnerski),
+      <strong>Ogólny audyt strony</strong> (10–18 stron, 4 kategorie). Każdy z tytułówką, tabelami, wykresami echarts, CTA.
+    </div>
+  </div>
+
+  <div class="info-box info-missing">
+    <div class="info-box-title">Ahrefs / Semrush API — 0% gotowości</div>
+    <div class="info-box-body">
+      Tabele <code>seo_backlinks</code>, <code>seo_competitors</code>, <code>seo_keyword_opportunities</code> są w schemacie,
+      ale nie mają źródła danych. Google Search Console nie daje Domain Rating, toxic score, content gap ani danych konkurentów.
+      Bez Ahrefs/Semrush: sekcja backlinków w raporcie jest pusta, content gap niemożliwy, "wow efekt" prospektowy — brak.
+    </div>
+  </div>
+
+  <div class="info-box info-missing">
+    <div class="info-box-title">UX / WCAG 2.1 Audit Engine — 0% gotowości</div>
+    <div class="info-box-body">
+      <code>audits.type</code> ma wartość <code>ux</code> i <code>audit_issues.category</code> ma <code>ux</code>,
+      ale brak silnika sprawdzającego. Potrzebna integracja axe-core lub WAVE API. Zakres:
+      kontrast kolorów, ARIA landmarks, nawigacja klawiaturą, tap targets (mobile),
+      formularze (labele, błędy), popupy, font size, responsive layout.
+    </div>
+  </div>
+
+  <div class="info-box info-missing">
+    <div class="info-box-title">Security Audit Engine — ~10% gotowości</div>
+    <div class="info-box-body">
+      <code>audit_issues.category = security</code> istnieje + <code>seo_backlinks.is_toxic</code>.
+      Brakuje: security headers (CSP, HSTS, X-Frame-Options — securityheaders.com API),
+      wykrywanie wersji CMS (WordPress/Drupal/Joomla outdated), exposed admin panel (<code>/wp-admin</code>),
+      malware scan (Sucuri API), RODO compliance (cookie consent, dane kontaktowe), mixed content HTTPS.
+    </div>
+  </div>
+
+  <h3>Braki w silniku SEO (rozszerzenie istniejącego)</h3>
+  <table>
+    <thead>
+      <tr>
+        <th style="width:30%">Element</th>
+        <th style="width:15%">Status</th>
+        <th>Co brakuje</th>
+        <th style="width:15%">Priorytet</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="col-module">Executive Summary</td>
+        <td><span class="badge badge-partial">Częściowo</span></td>
+        <td class="col-desc">Score per URL jest. Brak: agregacja do jednego wyniku /100, auto-generowanie 3–5 krytycznych problemów i tekstu "dlaczego teraz" przez AI.</td>
+        <td class="col-prior"><span class="badge badge-critical">Krytyczny</span></td>
+      </tr>
+      <tr>
+        <td class="col-module">Widoczność w Google</td>
+        <td><span class="badge badge-partial">Częściowo</span></td>
+        <td class="col-desc">GSC dane są (top frazy, trend). Brak: porównanie z 2–3 konkurentami (wymaga Ahrefs/Semrush).</td>
+        <td class="col-prior"><span class="badge badge-critical">Krytyczny</span></td>
+      </tr>
+      <tr>
+        <td class="col-module">Content Gap / Słowa kluczowe</td>
+        <td><span class="badge badge-missing">Brak</span></td>
+        <td class="col-desc">Tabela <code>seo_keyword_opportunities</code> jest, ale bez Ahrefs sekcja jest pusta. Branded, lokalne, long-tail, komentarz sprzedażowy.</td>
+        <td class="col-prior"><span class="badge badge-critical">Krytyczny</span></td>
+      </tr>
+      <tr>
+        <td class="col-module">Profil linków</td>
+        <td><span class="badge badge-partial">Częściowo</span></td>
+        <td class="col-desc">Schema <code>seo_backlinks</code> z DR i is_toxic istnieje. Tylko Open PageRank bez Ahrefs. Brak: DR trend, toxic score, porównanie z konkurentami.</td>
+        <td class="col-prior"><span class="badge badge-high">Wysoki</span></td>
+      </tr>
+      <tr>
+        <td class="col-module">Quick wins tabela</td>
+        <td><span class="badge badge-partial">Częściowo</span></td>
+        <td class="col-desc"><code>seo_issues</code> ma severity i recommendation. Brak: sformatowanej tabeli max 10 pozycji z kolumnami: problem, trudność, wpływ, priorytet — w PDF raporcie.</td>
+        <td class="col-prior"><span class="badge badge-high">Wysoki</span></td>
+      </tr>
+      <tr>
+        <td class="col-module">Delta view m/m + YoY</td>
+        <td><span class="badge badge-partial">Częściowo</span></td>
+        <td class="col-desc"><code>seo_monthly_snapshots</code> przechowuje dane historyczne. Brak: widoku porównawczego bieżący vs poprzedni miesiąc vs rok temu z procentowymi zmianami.</td>
+        <td class="col-prior"><span class="badge badge-high">Wysoki</span></td>
+      </tr>
+      <tr>
+        <td class="col-module">CTA / Następne kroki</td>
+        <td><span class="badge badge-missing">Brak</span></td>
+        <td class="col-desc">W raporcie PDF brak sekcji ofertowej: oferta, termin ważności, kontakt, link do kalendarza.</td>
+        <td class="col-prior"><span class="badge badge-high">Wysoki</span></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="doc-footer">
+    <span>ClientOps — Gap Analysis vs OwnCRM TODO v2.0.0</span>
+    <span>Marzec 2026 — dokument wewnętrzny</span>
+  </div>
+</div>
+
+<!-- PAGE 4 — BRAKI W RAPORTACH -->
+<div class="page page-break">
+  <h2>Braki w sekcjach raportów audytowych</h2>
+  <p class="section-intro">
+    Szczegółowe zestawienie 3 typów raportów z TODO v2.0.0 — co jest w ClientOps, a czego nie ma.
+  </p>
+
+  <h3>Audyt 1 — Prospekt SEO (8–15 stron)</h3>
+  <p style="font-size:11.5px;color:#6b7280;margin-bottom:12px;font-style:italic;">Dla właściciela firmy. Cel: zaimponować, wzbudzić ból, zamknąć sprzedaż.</p>
+  <ul class="check-list">
+    <li class="missing"><strong>Strona tytułowa</strong> — logo klienta + agencji, domena, data, osoba, klauzula poufności. Szablon PDF z placeholderami — brak.</li>
+    <li class="partial"><strong>Executive Summary</strong> — score per URL jest. Brak: agregacja /100, 3–5 krytycznych problemów, "dlaczego teraz".</li>
+    <li class="partial"><strong>Widoczność w Google</strong> — GSC (frazy top 3/10/50, trend). Brak: porównanie z 2–3 konkurentami (Ahrefs).</li>
+    <li class="ok"><strong>Techniczne SEO</strong> — 30 checków + PageSpeed. Gotowe.</li>
+    <li class="ok"><strong>On-page SEO (próbka)</strong> — title, meta, H1, treść, obrazy, linki. Gotowe.</li>
+    <li class="missing"><strong>Słowa kluczowe</strong> — content gap, branded, lokalne, long-tail. Brak (wymaga Ahrefs/Semrush).</li>
+    <li class="partial"><strong>Profil linków</strong> — <code>seo_backlinks</code> w schemacie. Tylko Open PageRank. Brak DR, toxic, trend 6m.</li>
+    <li class="partial"><strong>Quick wins tabela</strong> — <code>seo_issues</code> z impact_score. Brak sformatowanej tabeli w PDF.</li>
+    <li class="missing"><strong>CTA / Następne kroki</strong> — oferta, termin, kontakt, link do kalendarza. Brak.</li>
+  </ul>
+
+  <h3>Audyt 2 — Klient aktywny miesięczny/kwartalny (20–40 stron)</h3>
+  <p style="font-size:11.5px;color:#6b7280;margin-bottom:12px;font-style:italic;">Pełny dostęp do danych. Ton: partnerski.</p>
+  <ul class="check-list">
+    <li class="partial"><strong>Dashboard KPI m/m + YoY</strong> — dane w <code>seo_monthly_snapshots</code>. Brak widoku porównawczego.</li>
+    <li class="partial"><strong>Widoczność i rankingi</strong> — queries w GSC. Brak: zmiany pozycji m/m, nowe/utracone top 10.</li>
+    <li class="partial"><strong>Ruch organiczny GA4</strong> — GA4 jest. Brak: segmentacja, ścieżki konwersji, mobile vs desktop.</li>
+    <li class="ok"><strong>GSC pełna analiza</strong> — coverage, CWV, enhancements, linki wewnętrzne. Gotowe.</li>
+    <li class="partial"><strong>Techniczne SEO delta</strong> — historia jest (<code>seo_monthly_snapshots</code>). Brak delta view crawl m/m.</li>
+    <li class="ok"><strong>On-page postępy</strong> — checklist jest. Brak content gap.</li>
+    <li class="missing"><strong>Link building</strong> — nowe/utracone linki, DR trend, toksyczne, działania + plan. Brak (wymaga Ahrefs).</li>
+    <li class="missing"><strong>Monitoring konkurencji</strong> — tabela <code>seo_competitors</code> jest, brak alertów o zmianach pozycji/treści.</li>
+    <li class="missing"><strong>Zrealizowane prace (Work log)</strong> — logowanie prac: teksty, optymalizacje, linki, zmiany. Brak modułu.</li>
+    <li class="missing"><strong>Plan na następny miesiąc</strong> — 5 priorytetów z właścicielem + terminem. Brak modułu.</li>
+    <li class="missing"><strong>Komentarz stratega</strong> — pole tekstowe: interpretacja, ryzyka, szanse. Brak.</li>
+  </ul>
+
+  <h3>Audyt 3 — Ogólny audyt strony (10–18 stron)</h3>
+  <p style="font-size:11.5px;color:#6b7280;margin-bottom:12px;font-style:italic;">4 kategorie. Ton: "widzimy ryzyko w 4 obszarach".</p>
+  <ul class="check-list">
+    <li class="missing"><strong>Executive Summary 4 kategorii</strong> — scoring SEO + Wydajność + UX + Bezpieczeństwo. Tylko SEO+Wydajność. Brak 2 kategorii.</li>
+    <li class="ok"><strong>Wydajność techniczna</strong> — CWV, PageSpeed API. Gotowe.</li>
+    <li class="ok"><strong>SEO stan podstawowy</strong> — 30 checków. Gotowe.</li>
+    <li class="missing"><strong>UX i dostępność</strong> — menu, breadcrumbs, tap targets, kontrast, ARIA, keyboard nav, formularze. Brak silnika (axe-core/WAVE).</li>
+    <li class="partial"><strong>Bezpieczeństwo</strong> — HTTPS jest. Brak: security headers, CMS wersje, malware scan, RODO, cookie consent.</li>
+    <li class="missing"><strong>Analityka</strong> — audyt narzędzi: GA4/GSC/GTM/konwersje/heatmapy na stronie klienta. Brak.</li>
+    <li class="partial"><strong>Treści i wizerunek</strong> — favicon jest. Brak: aktualność, blog, spójność, jakość zdjęć, błędy, 404.</li>
+    <li class="missing"><strong>Tabela priorytetów cross-category</strong> — SEO + Wydajność + UX + Bezpieczeństwo w jednej tabeli. Brak.</li>
+    <li class="missing"><strong>Metodologia + CTA</strong> — narzędzia, 3 opcje współpracy, termin, kontakt. Szablony brak.</li>
+  </ul>
+
+  <div class="doc-footer">
+    <span>ClientOps — Gap Analysis vs OwnCRM TODO v2.0.0</span>
+    <span>Marzec 2026 — dokument wewnętrzny</span>
+  </div>
+</div>
+
+<!-- PAGE 5 — FILAR OWNCRM -->
+<div class="page page-break">
+  <h2>Filar OwnCRM — całkowicie nieobecny w ClientOps</h2>
+  <p class="section-intro">
+    Poniższe moduły to unikalna wartość OwnCRM. W ClientOps nie istnieje ani jedna tabela, serwis ani komponent
+    z tego filaru. Decyzja o integracji / migracji jest otwarta.
+  </p>
+
+  <table>
+    <thead>
+      <tr>
+        <th style="width:25%">Moduł</th>
+        <th>Co robi</th>
+        <th style="width:15%">Status w ClientOps</th>
+        <th style="width:12%">Priorytet wg TODO</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="col-module">Discovery Workshop<br>(9 kroków V2)</td>
+        <td class="col-desc">AI-prowadzony workshop: wiedza o firmie → analiza konkurencji → persony → user journey → brand voice → strategia konwersji → IA → wireframe → copywriting. Każdy krok = dependency chain.</td>
+        <td><span class="badge badge-missing">Brak</span></td>
+        <td><span class="badge badge-critical">Krytyczny</span></td>
+      </tr>
+      <tr>
+        <td class="col-module">AI Agents<br>(StepAgentService)</td>
+        <td class="col-desc">Claude Sonnet jako persona 'Kasia'. Streaming SSE. MCP tools per step: save_knowledge(), update_step_output(), update_sitemap_pages(), update_block_content(). Output approval flow: proposed → approved/rejected.</td>
+        <td><span class="badge badge-missing">Brak</span></td>
+        <td><span class="badge badge-critical">Krytyczny</span></td>
+      </tr>
+      <tr>
+        <td class="col-module">Knowledge System<br>(3 warstwy)</td>
+        <td class="col-desc"><strong>Facts:</strong> pgvector 1536-dim, typed (decision/exclusion/requirement), confidence levels. ~242 per lead. <strong>Entities + Graph:</strong> relationship triples, wizualizacja grafu. <strong>Knowledge Items:</strong> tree via parent_id, flow: proposed → confirmed → export to Facts.</td>
+        <td><span class="badge badge-missing">Brak</span></td>
+        <td><span class="badge badge-critical">Krytyczny</span></td>
+      </tr>
+      <tr>
+        <td class="col-module">Agent Knowledge</td>
+        <td class="col-desc">Globalna baza materiałów referencyjnych z PDF-ów. Vector search. NIE per-lead (~1245 wierszy). Używana przez AI agenta jako baza wiedzy.</td>
+        <td><span class="badge badge-missing">Brak</span></td>
+        <td><span class="badge badge-critical">Krytyczny</span></td>
+      </tr>
+      <tr>
+        <td class="col-module">Lead Classification<br>(8 wymiarów)</td>
+        <td class="col-desc">Scorowanie per lead: business_type, audience_mix, content_scale, service_complexity, price_point, sales_cycle, trust_requirements, geographic_scope. Napędza automatyczny dobór block templates.</td>
+        <td><span class="badge badge-missing">Brak</span></td>
+        <td><span class="badge badge-critical">Krytyczny</span></td>
+      </tr>
+      <tr>
+        <td class="col-module">Block Templates (~20)</td>
+        <td class="col-desc">Szablony sekcji stron: hero (4 warianty), features (3), testimonials (2), pricing (3), CTA (3+). Każdy z fit_scores (0–1 per wymiar klasyfikacji), visual_weight, placement_rules. BlockComposerNode wybiera najlepsze per strona.</td>
+        <td><span class="badge badge-missing">Brak</span></td>
+        <td><span class="badge badge-critical">Krytyczny</span></td>
+      </tr>
+      <tr>
+        <td class="col-module">Sitemap / IA Editor</td>
+        <td class="col-desc">3 widoki (drzewo, flat, wizualny), flat array z parentId, guessTemplate(). AI agent generuje IA, user edytuje w interfejsie drag & drop.</td>
+        <td><span class="badge badge-missing">Brak</span></td>
+        <td><span class="badge badge-high">Wysoki</span></td>
+      </tr>
+      <tr>
+        <td class="col-module">AI Visibility Score</td>
+        <td class="col-desc">8-czynnikowy scoring gotowości strony na AI search: schema.org, content depth, E-E-A-T signals, semantic HTML, FAQ, author markup, topical authority, structured answers. Unikalne — brak u konkurencji.</td>
+        <td><span class="badge badge-missing">Brak</span></td>
+        <td><span class="badge badge-critical">Krytyczny</span></td>
+      </tr>
+      <tr>
+        <td class="col-module">SEO Workshop (4 kroki)</td>
+        <td class="col-desc">Przegląd wyników → Lista zadań → Plan wdrożenia → Auto-wdrożenie przez WP REST API (Yoast meta tagi + alt tagi na obrazach). Unikalne — real-time zmiany na stronie klienta.</td>
+        <td><span class="badge badge-missing">Brak</span></td>
+        <td><span class="badge badge-critical">Krytyczny</span></td>
+      </tr>
+      <tr>
+        <td class="col-module">Pipeline Builder (V1)</td>
+        <td class="col-desc">Wizualny edytor (ReactFlow), 25+ node types (ai, conditional, loop, guardian, fact_saver, block_composer, gdrive_source, semantic_chunker...), BFS graph traversal. 18 gotowych pipeline'ów. Decyzja: migracja vs sunset.</td>
+        <td><span class="badge badge-missing">Brak</span></td>
+        <td><span class="badge badge-high">Wysoki</span></td>
+      </tr>
+      <tr>
+        <td class="col-module">Offer / Slide Deck</td>
+        <td class="col-desc">Prezentacja oferty: canvas 1920×1080, CoverSlide, MethodologySlide, StepIntroSlide, PricingSlide, NextStepsSlide. PDF export przez jsPDF + html2canvas. ClientOps ma oferty jako dokument TipTap — inny format.</td>
+        <td><span class="badge badge-partial">Inne podejście</span></td>
+        <td><span class="badge badge-high">Wysoki</span></td>
+      </tr>
+      <tr>
+        <td class="col-module">MCP Tools</td>
+        <td class="col-desc">3 narzędzia dla AI agentów: get-seo-audit-overview, get-seo-page-detail, get-seo-task-list. AI może samodzielnie analizować audyty używając tych narzędzi.</td>
+        <td><span class="badge badge-missing">Brak</span></td>
+        <td><span class="badge badge-high">Wysoki</span></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="info-box info-note">
+    <div class="info-box-title">Uwaga — pgvector</div>
+    <div class="info-box-body">
+      Knowledge System wymaga rozszerzenia PostgreSQL <strong>pgvector</strong> — nie ma go w stacku ClientOps.
+      Dodaje typ <code>vector(n)</code> i operatory cosine similarity. Konieczne do Facts (1536-dim embeddingi OpenAI/Anthropic) i Agent Knowledge (vector search). Instalacja prosta — <code>CREATE EXTENSION vector;</code> — ale wymaga świadomej decyzji architektonicznej o dodaniu do stacku.
+    </div>
+  </div>
+
+  <div class="doc-footer">
+    <span>ClientOps — Gap Analysis vs OwnCRM TODO v2.0.0</span>
+    <span>Marzec 2026 — dokument wewnętrzny</span>
+  </div>
+</div>
+
+<!-- PAGE 6 — ROADMAPA -->
+<div class="page page-break">
+  <h2>Roadmapa wdrożenia (wg TODO v2.0.0)</h2>
+  <p class="section-intro">
+    Priorytety z dokumentu TODO — co i w jakiej kolejności. Kolor = priorytet.
+  </p>
+
+  <h3>Faza 1 — Core: zachować i zmigrować (OwnCRM)</h3>
+  <table>
+    <thead>
+      <tr><th style="width:30%">Element</th><th>Co zachować / zrobić</th><th style="width:15%">Priorytet</th></tr>
+    </thead>
+    <tbody>
+      <tr><td class="col-module">V2 Agent Workshop (9 steps)</td><td class="col-desc">Cały flow discovery — USP systemu</td><td><span class="badge badge-critical">Krytyczny</span></td></tr>
+      <tr><td class="col-module">Knowledge System (4 warstwy)</td><td class="col-desc">Facts + Entities + Graph + Items + Agent Knowledge</td><td><span class="badge badge-critical">Krytyczny</span></td></tr>
+      <tr><td class="col-module">Lead Classification + Block Templates</td><td class="col-desc">8 wymiarów + ~20 szablonów z fit scoring</td><td><span class="badge badge-critical">Krytyczny</span></td></tr>
+      <tr><td class="col-module">SEO Audit Engine (30 checków)</td><td class="col-desc">Scoring, on-page, off-page, PageSpeed — rozszerzyć</td><td><span class="badge badge-critical">Krytyczny</span></td></tr>
+      <tr><td class="col-module">AI Visibility Score</td><td class="col-desc">8-czynnikowy scoring AI search readiness</td><td><span class="badge badge-critical">Krytyczny</span></td></tr>
+      <tr><td class="col-module">SEO Workshop + Auto-wdrożenie</td><td class="col-desc">4 kroki + Yoast/alt via WP REST API</td><td><span class="badge badge-critical">Krytyczny</span></td></tr>
+      <tr><td class="col-module">GSC / GA4 / PageSpeed APIs</td><td class="col-desc">Działające integracje Google — zachować</td><td><span class="badge badge-critical">Krytyczny</span></td></tr>
+      <tr><td class="col-module">Offer / Prezentacja + PDF</td><td class="col-desc">Slide deck, pricing, export</td><td><span class="badge badge-high">Wysoki</span></td></tr>
+      <tr><td class="col-module">MCP Tools</td><td class="col-desc">Narzędzia dla AI agentów — zachować i rozszerzać</td><td><span class="badge badge-high">Wysoki</span></td></tr>
+      <tr><td class="col-module">Sitemap / IA Editor</td><td class="col-desc">3 widoki, AI generuje, user edytuje</td><td><span class="badge badge-high">Wysoki</span></td></tr>
+      <tr><td class="col-module">Pipeline Builder (engine)</td><td class="col-desc">BFS execution, 25+ node types — decyzja: standalone vs V2</td><td><span class="badge badge-high">Wysoki</span></td></tr>
+    </tbody>
+  </table>
+
+  <h3>Faza 2 — Krytyczne braki (nowe moduły)</h3>
+  <table>
+    <thead>
+      <tr><th style="width:30%">Zadanie</th><th>Zakres</th><th style="width:15%">Priorytet</th></tr>
+    </thead>
+    <tbody>
+      <tr><td class="col-module">PDF Raport Generator</td><td class="col-desc">3 szablony raportów (prospekt 8–15s, klient 20–40s, ogólny 10–18s). Tytułówka, tabele, wykresy, CTA.</td><td><span class="badge badge-critical">Krytyczny</span></td></tr>
+      <tr><td class="col-module">Ahrefs / Semrush API</td><td class="col-desc">Konkurencja (frazy, ruch), backlinki (DR, toxic), content gap. "Wow efekt" prospektowy.</td><td><span class="badge badge-critical">Krytyczny</span></td></tr>
+      <tr><td class="col-module">Audyt UX / WCAG 2.1</td><td class="col-desc">axe-core/WAVE: kontrast, ARIA, keyboard nav, tap targets, formularze, mobile UX. Nowa kategoria scoringu.</td><td><span class="badge badge-critical">Krytyczny</span></td></tr>
+      <tr><td class="col-module">Audyt Bezpieczeństwa</td><td class="col-desc">securityheaders.com, CMS wersje, exposed admin, Sucuri malware scan, RODO compliance. Nowa kategoria.</td><td><span class="badge badge-critical">Krytyczny</span></td></tr>
+    </tbody>
+  </table>
+
+  <h3>Faza 3 — Tracking i porównania</h3>
+  <table>
+    <thead>
+      <tr><th style="width:30%">Zadanie</th><th>Zakres</th><th style="width:15%">Priorytet</th></tr>
+    </thead>
+    <tbody>
+      <tr><td class="col-module">Delta view m/m + YoY</td><td class="col-desc">Dashboard KPI: bieżący vs poprzedni vs rok temu. Procentowe zmiany automatycznie.</td><td><span class="badge badge-high">Wysoki</span></td></tr>
+      <tr><td class="col-module">Link building tracking</td><td class="col-desc">Nowe/utracone linki, DR trend, integracja Ahrefs. Tabela z domeną, anchor, URL.</td><td><span class="badge badge-high">Wysoki</span></td></tr>
+      <tr><td class="col-module">Work log module</td><td class="col-desc">Logowanie prac: teksty, optymalizacje, linki, zmiany. Kategoryzacja + timeline.</td><td><span class="badge badge-high">Wysoki</span></td></tr>
+      <tr><td class="col-module">Planning module</td><td class="col-desc">Plan na miesiąc: 5 priorytetów z właścicielem i terminem. Planowane treści i działania.</td><td><span class="badge badge-high">Wysoki</span></td></tr>
+      <tr><td class="col-module">Public offer URL</td><td class="col-desc">Sharing link do oferty bez auth, opcjonalne hasło.</td><td><span class="badge badge-medium">Średni</span></td></tr>
+    </tbody>
+  </table>
+
+  <h3>Faza 4 — Rozszerzenia</h3>
+  <table>
+    <thead>
+      <tr><th style="width:30%">Zadanie</th><th>Zakres</th><th style="width:15%">Priorytet</th></tr>
+    </thead>
+    <tbody>
+      <tr><td class="col-module">Monitoring konkurencji</td><td class="col-desc">Ciągły tracking pozycji, alerty o dużych zmianach, nowe treści/linki konkurentów.</td><td><span class="badge badge-medium">Średni</span></td></tr>
+      <tr><td class="col-module">Content gap analysis</td><td class="col-desc">Automatyczne wykrywanie fraz konkurencji bez dedykowanej strony klienta.</td><td><span class="badge badge-medium">Średni</span></td></tr>
+      <tr><td class="col-module">Cross-category priorytetyzacja</td><td class="col-desc">Tabela łącząca SEO + Wydajność + UX + Bezpieczeństwo.</td><td><span class="badge badge-medium">Średni</span></td></tr>
+      <tr><td class="col-module">Audyt analityki</td><td class="col-desc">Sprawdzanie GA4, GSC, GTM, konwersji, heatmap na stronie klienta.</td><td><span class="badge badge-medium">Średni</span></td></tr>
+      <tr><td class="col-module">Audyt treści / wizerunku</td><td class="col-desc">Aktualność, blog, spójność wizualna, jakość zdjęć, strona 404.</td><td><span class="badge badge-medium">Niski</span></td></tr>
+      <tr><td class="col-module">Komentarz stratega (field)</td><td class="col-desc">Pole tekstowe + dedykowana sekcja w raporcie PDF — pisane przez człowieka.</td><td><span class="badge badge-medium">Niski</span></td></tr>
+    </tbody>
+  </table>
+
+  <div class="doc-footer">
+    <span>ClientOps — Gap Analysis vs OwnCRM TODO v2.0.0</span>
+    <span>Marzec 2026 — dokument wewnętrzny</span>
+  </div>
+</div>
+
+</body>
+</html>

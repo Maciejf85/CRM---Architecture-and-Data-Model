@@ -419,11 +419,11 @@
     </div>
     <div class="cover-meta-item">
       <span class="cover-meta-label">Baza danych</span>
-      <span class="cover-meta-value">PostgreSQL 16 + TimescaleDB</span>
+      <span class="cover-meta-value">PostgreSQL 16 + TimescaleDB + pgvector</span>
     </div>
     <div class="cover-meta-item">
       <span class="cover-meta-label">Liczba tabel</span>
-      <span class="cover-meta-value">36</span>
+      <span class="cover-meta-value">55</span>
     </div>
   </div>
 </div>
@@ -444,20 +444,26 @@
   </div>
 
   <div class="toc-section">
-    <div class="toc-section-title">Warstwa 2 — Sprzedaż (3 tabele)</div>
+    <div class="toc-section-title">Warstwa 2 — Sprzedaż (7 tabel)</div>
     <div class="toc-grid">
       <div class="toc-item"><div class="toc-item-dot"></div><div class="toc-item-text"><span class="toc-item-name">leads</span><span class="toc-item-desc">Leady sprzedażowe</span></div></div>
       <div class="toc-item"><div class="toc-item-dot"></div><div class="toc-item-text"><span class="toc-item-name">lead_activities</span><span class="toc-item-desc">Historia kontaktów</span></div></div>
       <div class="toc-item"><div class="toc-item-dot"></div><div class="toc-item-text"><span class="toc-item-name">offers</span><span class="toc-item-desc">Oferty handlowe</span></div></div>
+      <div class="toc-item"><div class="toc-item-dot"></div><div class="toc-item-text"><span class="toc-item-name">lead_classifications</span><span class="toc-item-desc">Scoring AI leadów (8 wymiarów)</span></div></div>
+      <div class="toc-item"><div class="toc-item-dot"></div><div class="toc-item-text"><span class="toc-item-name">discovery_workshops</span><span class="toc-item-desc">Warsztaty Discovery (AI agent)</span></div></div>
+      <div class="toc-item"><div class="toc-item-dot"></div><div class="toc-item-text"><span class="toc-item-name">workshop_steps</span><span class="toc-item-desc">Kroki warsztatu (9 etapów)</span></div></div>
+      <div class="toc-item"><div class="toc-item-dot"></div><div class="toc-item-text"><span class="toc-item-name">workshop_step_outputs</span><span class="toc-item-desc">Wyjścia kroków warsztatu</span></div></div>
     </div>
   </div>
 
   <div class="toc-section">
-    <div class="toc-section-title">Warstwa 3 — Realizacja (30 tabel)</div>
+    <div class="toc-section-title">Warstwa 3 — Realizacja (45 tabel)</div>
     <div class="toc-grid">
       <div class="toc-item"><div class="toc-item-dot"></div><div class="toc-item-text"><span class="toc-item-name">projects</span><span class="toc-item-desc">Projekty klientów</span></div></div>
       <div class="toc-item"><div class="toc-item-dot"></div><div class="toc-item-text"><span class="toc-item-name">documents</span><span class="toc-item-desc">Dokumenty TipTap</span></div></div>
       <div class="toc-item"><div class="toc-item-dot"></div><div class="toc-item-text"><span class="toc-item-name">document_versions</span><span class="toc-item-desc">Historia wersji</span></div></div>
+      <div class="toc-item"><div class="toc-item-dot"></div><div class="toc-item-text"><span class="toc-item-name">block_templates</span><span class="toc-item-desc">Szablony bloków TipTap</span></div></div>
+      <div class="toc-item"><div class="toc-item-dot"></div><div class="toc-item-text"><span class="toc-item-name">block_template_scores</span><span class="toc-item-desc">Scoring szablonów</span></div></div>
       <div class="toc-item"><div class="toc-item-dot"></div><div class="toc-item-text"><span class="toc-item-name">sla_policies</span><span class="toc-item-desc">Polityki SLA</span></div></div>
       <div class="toc-item"><div class="toc-item-dot"></div><div class="toc-item-text"><span class="toc-item-name">tickets</span><span class="toc-item-desc">Zgłoszenia klientów</span></div></div>
       <div class="toc-item"><div class="toc-item-dot"></div><div class="toc-item-text"><span class="toc-item-name">ticket_comments</span><span class="toc-item-desc">Komentarze do zgłoszeń</span></div></div>
@@ -473,6 +479,9 @@
       <div class="toc-item"><div class="toc-item-dot"></div><div class="toc-item-text"><span class="toc-item-name">mentions</span><span class="toc-item-desc">Oznaczenia @</span></div></div>
       <div class="toc-item"><div class="toc-item-dot"></div><div class="toc-item-text"><span class="toc-item-name">activity_log</span><span class="toc-item-desc">Audit trail (Spatie)</span></div></div>
       <div class="toc-item"><div class="toc-item-dot"></div><div class="toc-item-text"><span class="toc-item-name">slug_redirects</span><span class="toc-item-desc">Przekierowania slugów</span></div></div>
+      <div class="toc-item"><div class="toc-item-dot"></div><div class="toc-item-text"><span class="toc-item-name">work_logs</span><span class="toc-item-desc">Dziennik pracy</span></div></div>
+      <div class="toc-item"><div class="toc-item-dot"></div><div class="toc-item-text"><span class="toc-item-name">work_plans</span><span class="toc-item-desc">Plany pracy</span></div></div>
+      <div class="toc-item"><div class="toc-item-dot"></div><div class="toc-item-text"><span class="toc-item-name">work_plan_items</span><span class="toc-item-desc">Elementy planu pracy</span></div></div>
       <div class="toc-item"><div class="toc-item-dot"></div><div class="toc-item-text"><span class="toc-item-name">seo_analyses</span><span class="toc-item-desc">Analizy SEO</span></div></div>
       <div class="toc-item"><div class="toc-item-dot"></div><div class="toc-item-text"><span class="toc-item-name">seo_issues</span><span class="toc-item-desc">Problemy SEO</span></div></div>
       <div class="toc-item"><div class="toc-item-dot"></div><div class="toc-item-text"><span class="toc-item-name">seo_keyword_ranks</span><span class="toc-item-desc">Rankingi słów kluczowych</span></div></div>
@@ -482,9 +491,19 @@
       <div class="toc-item"><div class="toc-item-dot"></div><div class="toc-item-text"><span class="toc-item-name">seo_competitors</span><span class="toc-item-desc">Konkurenci</span></div></div>
       <div class="toc-item"><div class="toc-item-dot"></div><div class="toc-item-text"><span class="toc-item-name">seo_competitor_ranks</span><span class="toc-item-desc">Rankingi konkurentów</span></div></div>
       <div class="toc-item"><div class="toc-item-dot"></div><div class="toc-item-text"><span class="toc-item-name">seo_keyword_opportunities</span><span class="toc-item-desc">Szanse słów kluczowych</span></div></div>
+      <div class="toc-item"><div class="toc-item-dot"></div><div class="toc-item-text"><span class="toc-item-name">seo_workshop_steps</span><span class="toc-item-desc">SEO Workshop (4 etapy)</span></div></div>
+      <div class="toc-item"><div class="toc-item-dot"></div><div class="toc-item-text"><span class="toc-item-name">ai_visibility_scores</span><span class="toc-item-desc">AI Visibility Score (8 czynników)</span></div></div>
       <div class="toc-item"><div class="toc-item-dot"></div><div class="toc-item-text"><span class="toc-item-name">audits</span><span class="toc-item-desc">Audyty zbiorcze</span></div></div>
       <div class="toc-item"><div class="toc-item-dot"></div><div class="toc-item-text"><span class="toc-item-name">audit_issues</span><span class="toc-item-desc">Problemy audytów</span></div></div>
       <div class="toc-item"><div class="toc-item-dot"></div><div class="toc-item-text"><span class="toc-item-name">audit_scores</span><span class="toc-item-desc">Wyniki kategorii</span></div></div>
+      <div class="toc-item"><div class="toc-item-dot"></div><div class="toc-item-text"><span class="toc-item-name">audit_reports</span><span class="toc-item-desc">Raporty PDF audytów</span></div></div>
+      <div class="toc-item"><div class="toc-item-dot"></div><div class="toc-item-text"><span class="toc-item-name">ux_audit_results</span><span class="toc-item-desc">Wyniki audytu UX (axe-core)</span></div></div>
+      <div class="toc-item"><div class="toc-item-dot"></div><div class="toc-item-text"><span class="toc-item-name">security_audit_results</span><span class="toc-item-desc">Wyniki audytu bezpieczeństwa</span></div></div>
+      <div class="toc-item"><div class="toc-item-dot"></div><div class="toc-item-text"><span class="toc-item-name">knowledge_facts</span><span class="toc-item-desc">Fakty (pgvector)</span></div></div>
+      <div class="toc-item"><div class="toc-item-dot"></div><div class="toc-item-text"><span class="toc-item-name">knowledge_entities</span><span class="toc-item-desc">Encje wiedzy</span></div></div>
+      <div class="toc-item"><div class="toc-item-dot"></div><div class="toc-item-text"><span class="toc-item-name">knowledge_entity_relations</span><span class="toc-item-desc">Relacje encji</span></div></div>
+      <div class="toc-item"><div class="toc-item-dot"></div><div class="toc-item-text"><span class="toc-item-name">knowledge_items</span><span class="toc-item-desc">Drzewo wiedzy</span></div></div>
+      <div class="toc-item"><div class="toc-item-dot"></div><div class="toc-item-text"><span class="toc-item-name">agent_knowledge</span><span class="toc-item-desc">Wiedza agentów AI</span></div></div>
     </div>
   </div>
 </div>
@@ -892,7 +911,7 @@
   <div class="layer-header">
     <div class="layer-number">Warstwa 2</div>
     <h2>Sprzedaż</h2>
-    <p>Lejek sprzedażowy — od pierwszego kontaktu do podpisania umowy. Leady przechodzą przez 7 statusów Kanban; wygrany lead konwertuje do klienta.</p>
+    <p>Lejek sprzedażowy — od pierwszego kontaktu do podpisania umowy. Leady przechodzą przez 7 statusów Kanban; wygrany lead konwertuje do klienta. Discovery Workshop i kwalifikacja AI wspierają kwalifikację leadów. 7 tabel.</p>
   </div>
 
   <!-- ────────────────────────────────────────────────────
@@ -1233,6 +1252,18 @@
           <td class="col-desc">Data, kiedy lead powiązany z ofertą został skonwertowany do klienta. Pozwala mierzyć czas od oferty do zamknięcia sprzedaży.</td>
         </tr>
         <tr>
+          <td><span class="col-name">public_token</span></td>
+          <td><span class="col-type">uuid</span></td>
+          <td><div class="col-flags"><span class="flag flag-nullable">NULL</span></div></td>
+          <td class="col-desc">Token UUID do publicznego podglądu oferty bez logowania. Generowany przy wysyłce (status: sent). Link: <code>/oferta/{public_token}</code>. Może być unieważniony przez usunięcie tokenu.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">public_expires_at</span></td>
+          <td><span class="col-type">timestamp</span></td>
+          <td><div class="col-flags"><span class="flag flag-nullable">NULL</span></div></td>
+          <td class="col-desc">Opcjonalna data wygaśnięcia publicznego linku. Po tej dacie link przestaje działać niezależnie od statusu oferty. <code>null</code> = link aktywny do ręcznego unieważnienia.</td>
+        </tr>
+        <tr>
           <td><span class="col-name fk">created_by</span></td>
           <td><span class="col-type">bigint</span></td>
           <td><div class="col-flags"><span class="flag flag-fk">FK</span></div></td>
@@ -1263,13 +1294,340 @@
     </div>
   </div>
 
+  <!-- ────────────────────────────────────────────────────
+       TABLE: lead_classifications
+  ──────────────────────────────────────────────────── -->
+  <div class="table-card">
+    <div class="table-card-header">
+      <div class="table-card-header-left">
+        <h3>lead_classifications</h3>
+        <p class="table-desc">
+          8-wymiarowy scoring kwalifikacyjny leadu generowany przez AI po zakończeniu Discovery Workshop
+          lub uzupełniany ręcznie przez managera. Każdy wymiar oceniany w skali 1–10.
+          Wynik ogólny to ważona średnia wszystkich wymiarów. Jeden rekord per lead (unique constraint).
+        </p>
+      </div>
+      <div class="table-badge-group">
+        <span class="badge badge-layer2">Warstwa 2</span>
+      </div>
+    </div>
+    <table class="cols-table">
+      <thead>
+        <tr>
+          <th>Kolumna</th><th>Typ</th><th>Flagi</th><th>Opis</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="col-name pk">id</span></td>
+          <td><span class="col-type">bigint</span></td>
+          <td><div class="col-flags"><span class="flag flag-pk">PK</span></div></td>
+          <td class="col-desc">Unikalny identyfikator rekordu klasyfikacji.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name fk">lead_id</span></td>
+          <td><span class="col-type">bigint</span></td>
+          <td><div class="col-flags"><span class="flag flag-fk">FK</span></div></td>
+          <td class="col-desc">Lead którego dotyczy klasyfikacja → <code>leads.id</code>. Unique — jeden rekord per lead.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">budget_score</span></td>
+          <td><span class="col-type">tinyint</span></td>
+          <td></td>
+          <td class="col-desc">Budżet klienta (1–10). 10 = budżet w pełni zgodny z ofertą agencji.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">timeline_score</span></td>
+          <td><span class="col-type">tinyint</span></td>
+          <td></td>
+          <td class="col-desc">Zgodność terminów (1–10). 10 = termin realizacji realistyczny i zgodny z zasobami.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">decision_score</span></td>
+          <td><span class="col-type">tinyint</span></td>
+          <td></td>
+          <td class="col-desc">Decyzyjność osoby kontaktowej (1–10). 10 = kontakt jest ostatecznym decydentem.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">problem_score</span></td>
+          <td><span class="col-type">tinyint</span></td>
+          <td></td>
+          <td class="col-desc">Jasność problemu do rozwiązania (1–10). 10 = klient precyzyjnie definiuje problem.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">fit_score</span></td>
+          <td><span class="col-type">tinyint</span></td>
+          <td></td>
+          <td class="col-desc">Dopasowanie klienta do profilu idealnego klienta agencji (1–10).</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">competition_score</span></td>
+          <td><span class="col-type">tinyint</span></td>
+          <td></td>
+          <td class="col-desc">Poziom konkurencji w procesie zakupowym (1–10). 10 = agencja jedynym wyborem.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">urgency_score</span></td>
+          <td><span class="col-type">tinyint</span></td>
+          <td></td>
+          <td class="col-desc">Pilność potrzeby klienta (1–10). 10 = klient potrzebuje natychmiastowego działania.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">ltv_score</span></td>
+          <td><span class="col-type">tinyint</span></td>
+          <td></td>
+          <td class="col-desc">Potencjalna wartość długoterminowa (Lifetime Value) klienta (1–10).</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">overall_score</span></td>
+          <td><span class="col-type">decimal(4,2)</span></td>
+          <td></td>
+          <td class="col-desc">Ważona średnia wszystkich 8 wymiarów. Zakres 1.00–10.00. Używana do sortowania leadów w pipeline.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">ai_reasoning</span></td>
+          <td><span class="col-type">text</span></td>
+          <td><div class="col-flags"><span class="flag flag-nullable">NULL</span></div></td>
+          <td class="col-desc">Uzasadnienie scoringu wygenerowane przez AI (Claude). Opis mocnych i słabych stron leadu.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">classified_at</span></td>
+          <td><span class="col-type">timestamp</span></td>
+          <td></td>
+          <td class="col-desc">Data i czas przeprowadzenia klasyfikacji.</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="rel-section">
+      <div class="rel-section-title">Relacje</div>
+      <div class="rel-list">
+        <span class="rel-chip">belongsTo → <code>leads</code> (unique — 1:1)</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ────────────────────────────────────────────────────
+       TABLE: discovery_workshops
+  ──────────────────────────────────────────────────── -->
+  <div class="table-card">
+    <div class="table-card-header">
+      <div class="table-card-header-left">
+        <h3>discovery_workshops</h3>
+        <p class="table-desc">
+          Warsztaty Discovery prowadzone przez AI agenta "Kasia" (Claude Sonnet). 9-krokowy wywiad
+          który pozwala agencji zrozumieć potrzeby klienta przed stworzeniem oferty.
+          Wyniki warsztatu są podstawą dla klasyfikacji AI leadu (<code>lead_classifications</code>).
+          Jeden lead może mieć wiele warsztatów (np. ponowne przeprowadzenie po czasie).
+        </p>
+      </div>
+      <div class="table-badge-group">
+        <span class="badge badge-layer2">Warstwa 2</span>
+      </div>
+    </div>
+    <table class="cols-table">
+      <thead>
+        <tr>
+          <th>Kolumna</th><th>Typ</th><th>Flagi</th><th>Opis</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="col-name pk">id</span></td>
+          <td><span class="col-type">bigint</span></td>
+          <td><div class="col-flags"><span class="flag flag-pk">PK</span></div></td>
+          <td class="col-desc">Unikalny identyfikator warsztatu.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name fk">lead_id</span></td>
+          <td><span class="col-type">bigint</span></td>
+          <td><div class="col-flags"><span class="flag flag-fk">FK</span></div></td>
+          <td class="col-desc">Lead dla którego prowadzony jest warsztat → <code>leads.id</code>.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name fk">conducted_by</span></td>
+          <td><span class="col-type">bigint</span></td>
+          <td><div class="col-flags"><span class="flag flag-fk">FK</span></div></td>
+          <td class="col-desc">Pracownik agencji który zainicjował warsztat → <code>users.id</code>. Agent AI prowadzi wywiad, ale człowiek inicjuje sesję.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">status</span></td>
+          <td><span class="col-type">enum</span></td>
+          <td><div class="col-flags"><span class="flag flag-enum">ENUM</span></div></td>
+          <td class="col-desc"><code>in_progress</code> — warsztat trwa, <code>completed</code> — wszystkie 9 kroków zakończone, <code>abandoned</code> — przerwany przed ukończeniem.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">started_at</span></td>
+          <td><span class="col-type">timestamp</span></td>
+          <td></td>
+          <td class="col-desc">Data i czas rozpoczęcia warsztatu.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">completed_at</span></td>
+          <td><span class="col-type">timestamp</span></td>
+          <td><div class="col-flags"><span class="flag flag-nullable">NULL</span></div></td>
+          <td class="col-desc">Data i czas ukończenia warsztatu (wszystkie kroki zakończone). <code>null</code> = warsztat niezakończony.</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="rel-section">
+      <div class="rel-section-title">Relacje</div>
+      <div class="rel-list">
+        <span class="rel-chip">belongsTo → <code>leads</code></span>
+        <span class="rel-chip">belongsTo → <code>users</code> (conducted_by)</span>
+        <span class="rel-chip">hasMany → <code>workshop_steps</code></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ────────────────────────────────────────────────────
+       TABLE: workshop_steps
+  ──────────────────────────────────────────────────── -->
+  <div class="table-card">
+    <div class="table-card-header">
+      <div class="table-card-header-left">
+        <h3>workshop_steps</h3>
+        <p class="table-desc">
+          Pojedynczy krok warsztatu Discovery (1 z 9). Każdy krok ma przypisany prompt systemowy
+          dla agenta AI oraz przechowuje stan (aktywny/zakończony/pominięty).
+          Kolejność kroków: cel projektu → obecna sytuacja → problemy → budżet → timeline
+          → decyzyjność → konkurencja → oczekiwania → podsumowanie.
+        </p>
+      </div>
+      <div class="table-badge-group">
+        <span class="badge badge-layer2">Warstwa 2</span>
+      </div>
+    </div>
+    <table class="cols-table">
+      <thead>
+        <tr>
+          <th>Kolumna</th><th>Typ</th><th>Flagi</th><th>Opis</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="col-name pk">id</span></td>
+          <td><span class="col-type">bigint</span></td>
+          <td><div class="col-flags"><span class="flag flag-pk">PK</span></div></td>
+          <td class="col-desc">Unikalny identyfikator kroku.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name fk">workshop_id</span></td>
+          <td><span class="col-type">bigint</span></td>
+          <td><div class="col-flags"><span class="flag flag-fk">FK</span></div></td>
+          <td class="col-desc">Warsztat do którego należy krok → <code>discovery_workshops.id</code>.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">step_number</span></td>
+          <td><span class="col-type">tinyint</span></td>
+          <td></td>
+          <td class="col-desc">Numer kroku (1–9). Determinuje kolejność w wywiadzie.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">title</span></td>
+          <td><span class="col-type">varchar</span></td>
+          <td></td>
+          <td class="col-desc">Tytuł kroku np. "Cel projektu", "Budżet i timeline".</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">status</span></td>
+          <td><span class="col-type">enum</span></td>
+          <td><div class="col-flags"><span class="flag flag-enum">ENUM</span></div></td>
+          <td class="col-desc"><code>pending</code> — oczekuje, <code>active</code> — aktualnie prowadzony przez agenta, <code>completed</code> — zakończony, <code>skipped</code> — pominięty przez użytkownika.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">agent_prompt</span></td>
+          <td><span class="col-type">text</span></td>
+          <td></td>
+          <td class="col-desc">Prompt systemowy dla agenta AI "Kasia" specyficzny dla tego kroku. Determinuje jakie pytania zadaje agent.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">completed_at</span></td>
+          <td><span class="col-type">timestamp</span></td>
+          <td><div class="col-flags"><span class="flag flag-nullable">NULL</span></div></td>
+          <td class="col-desc">Data i czas ukończenia kroku.</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="rel-section">
+      <div class="rel-section-title">Relacje</div>
+      <div class="rel-list">
+        <span class="rel-chip">belongsTo → <code>discovery_workshops</code></span>
+        <span class="rel-chip">hasMany → <code>workshop_step_outputs</code></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ────────────────────────────────────────────────────
+       TABLE: workshop_step_outputs
+  ──────────────────────────────────────────────────── -->
+  <div class="table-card">
+    <div class="table-card-header">
+      <div class="table-card-header-left">
+        <h3>workshop_step_outputs</h3>
+        <p class="table-desc">
+          Wyjścia z pojedynczego kroku warsztatu — odpowiedzi agenta AI, inputy użytkownika
+          i podsumowania. Jeden krok może mieć wiele wpisów (wielokrotna wymiana w ramach kroku).
+          Przesyłane przez SSE (Server-Sent Events) w czasie rzeczywistym do frontendu.
+        </p>
+      </div>
+      <div class="table-badge-group">
+        <span class="badge badge-layer2">Warstwa 2</span>
+      </div>
+    </div>
+    <table class="cols-table">
+      <thead>
+        <tr>
+          <th>Kolumna</th><th>Typ</th><th>Flagi</th><th>Opis</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="col-name pk">id</span></td>
+          <td><span class="col-type">bigint</span></td>
+          <td><div class="col-flags"><span class="flag flag-pk">PK</span></div></td>
+          <td class="col-desc">Unikalny identyfikator wyjścia.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name fk">step_id</span></td>
+          <td><span class="col-type">bigint</span></td>
+          <td><div class="col-flags"><span class="flag flag-fk">FK</span></div></td>
+          <td class="col-desc">Krok warsztatu do którego należy wyjście → <code>workshop_steps.id</code>.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">output_type</span></td>
+          <td><span class="col-type">enum</span></td>
+          <td><div class="col-flags"><span class="flag flag-enum">ENUM</span></div></td>
+          <td class="col-desc"><code>agent_response</code> — odpowiedź AI "Kasia" (streaming), <code>user_input</code> — wiadomość od użytkownika, <code>summary</code> — podsumowanie kroku generowane przez AI.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">content</span></td>
+          <td><span class="col-type">text</span></td>
+          <td></td>
+          <td class="col-desc">Treść wyjścia. Dla <code>agent_response</code> — pełna odpowiedź po zakończeniu streamingu. Dla <code>summary</code> — wyekstrahowane kluczowe informacje z kroku.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">created_at</span></td>
+          <td><span class="col-type">timestamp</span></td>
+          <td></td>
+          <td class="col-desc">Data i czas utworzenia wyjścia.</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="rel-section">
+      <div class="rel-section-title">Relacje</div>
+      <div class="rel-list">
+        <span class="rel-chip">belongsTo → <code>workshop_steps</code></span>
+      </div>
+    </div>
+  </div>
+
   <!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
        WARSTWA 3 — REALIZACJA
   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
   <div class="layer-header">
     <div class="layer-number">Warstwa 3</div>
     <h2>Realizacja</h2>
-    <p>Właściwa praca dla klientów — projekty, dokumenty, zgłoszenia, SLA, SEO, audyty, komunikacja i logi. 30 tabel.</p>
+    <p>Właściwa praca dla klientów — projekty, dokumenty, zgłoszenia, SLA, SEO, audyty, komunikacja i logi. 45 tabel.</p>
   </div>
 
   <!-- ────────────────────────────────────────────────────
@@ -3975,6 +4333,1364 @@
       <div class="rel-section-title">Relacje</div>
       <div class="rel-list">
         <span class="rel-chip">belongsTo → <code>audits</code></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ────────────────────────────────────────────────────
+       TABLE: audit_reports
+  ──────────────────────────────────────────────────── -->
+  <div class="table-card">
+    <div class="table-card-header">
+      <div class="table-card-header-left">
+        <h3>audit_reports</h3>
+        <p class="table-desc">
+          Raporty PDF generowane po zakończeniu audytu. Jeden raport per audyt (unique).
+          Zawiera publiczny token umożliwiający klientowi przeglądanie raportu bez logowania.
+          Strategist może dodać ręczny komentarz przed wysyłką. Śledzony jest moment
+          i wykonawca wysyłki do klienta.
+        </p>
+      </div>
+      <div class="table-badge-group">
+        <span class="badge badge-layer3">Warstwa 3</span>
+      </div>
+    </div>
+    <table class="cols-table">
+      <thead>
+        <tr>
+          <th>Kolumna</th><th>Typ</th><th>Flagi</th><th>Opis</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="col-name pk">id</span></td>
+          <td><span class="col-type">bigint</span></td>
+          <td><div class="col-flags"><span class="flag flag-pk">PK</span></div></td>
+          <td class="col-desc">Unikalny identyfikator raportu.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name fk">audit_id</span></td>
+          <td><span class="col-type">bigint</span></td>
+          <td><div class="col-flags"><span class="flag flag-fk">FK</span></div></td>
+          <td class="col-desc">Audyt do którego należy raport → <code>audits.id</code>. Unique — jeden raport per audyt.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">report_type</span></td>
+          <td><span class="col-type">enum</span></td>
+          <td><div class="col-flags"><span class="flag flag-enum">ENUM</span></div></td>
+          <td class="col-desc">Typ raportu: <code>seo</code>, <code>ux</code>, <code>security</code>, <code>full</code> (wszystkie komponenty połączone).</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">pdf_path</span></td>
+          <td><span class="col-type">varchar</span></td>
+          <td><div class="col-flags"><span class="flag flag-nullable">NULL</span></div></td>
+          <td class="col-desc">Ścieżka do pliku PDF w S3/MinIO (np. <code>reports/2026/03/audit-abc123.pdf</code>). <code>null</code> = PDF jeszcze nie wygenerowany.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">pdf_generated_at</span></td>
+          <td><span class="col-type">timestamp</span></td>
+          <td><div class="col-flags"><span class="flag flag-nullable">NULL</span></div></td>
+          <td class="col-desc">Data i czas wygenerowania PDF przez Browsershot (headless Chromium).</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">public_token</span></td>
+          <td><span class="col-type">uuid</span></td>
+          <td><div class="col-flags"><span class="flag flag-nullable">NULL</span></div></td>
+          <td class="col-desc">Token UUID do publicznego podglądu raportu bez logowania. Generowany przy wysyłce do klienta. Link: <code>/raport/{public_token}</code>.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">public_expires_at</span></td>
+          <td><span class="col-type">timestamp</span></td>
+          <td><div class="col-flags"><span class="flag flag-nullable">NULL</span></div></td>
+          <td class="col-desc">Opcjonalna data wygaśnięcia publicznego linku. <code>null</code> = link aktywny bezterminowo.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">strategist_comment</span></td>
+          <td><span class="col-type">text</span></td>
+          <td><div class="col-flags"><span class="flag flag-nullable">NULL</span></div></td>
+          <td class="col-desc">Ręczny komentarz stratega dodawany przed wysyłką do klienta. Pojawia się jako wstęp w raporcie. Może wyjaśniać priorytety i kontekst.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">sent_to_client_at</span></td>
+          <td><span class="col-type">timestamp</span></td>
+          <td><div class="col-flags"><span class="flag flag-nullable">NULL</span></div></td>
+          <td class="col-desc">Data i czas wysyłki raportu do klienta (email z linkiem).</td>
+        </tr>
+        <tr>
+          <td><span class="col-name fk">sent_by</span></td>
+          <td><span class="col-type">bigint</span></td>
+          <td><div class="col-flags"><span class="flag flag-fk">FK</span><span class="flag flag-nullable">NULL</span></div></td>
+          <td class="col-desc">Pracownik który wysłał raport → <code>users.id</code>.</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="rel-section">
+      <div class="rel-section-title">Relacje</div>
+      <div class="rel-list">
+        <span class="rel-chip">belongsTo → <code>audits</code> (unique — 1:1)</span>
+        <span class="rel-chip">belongsTo → <code>users</code> (sent_by)</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ────────────────────────────────────────────────────
+       TABLE: ux_audit_results
+  ──────────────────────────────────────────────────── -->
+  <div class="table-card">
+    <div class="table-card-header">
+      <div class="table-card-header-left">
+        <h3>ux_audit_results</h3>
+        <p class="table-desc">
+          Wyniki automatycznego audytu UX/dostępności przeprowadzonego przez axe-core lub WAVE API.
+          Jeden rekord per strona per audyt. Zawiera pełny raport naruszeń WCAG,
+          liczbę problemów kontrastowych, brakujących atrybutów alt,
+          oraz zagregowane oceny nawigacji klawiaturowej i responsywności.
+        </p>
+      </div>
+      <div class="table-badge-group">
+        <span class="badge badge-layer3">Warstwa 3</span>
+      </div>
+    </div>
+    <table class="cols-table">
+      <thead>
+        <tr>
+          <th>Kolumna</th><th>Typ</th><th>Flagi</th><th>Opis</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="col-name pk">id</span></td>
+          <td><span class="col-type">bigint</span></td>
+          <td><div class="col-flags"><span class="flag flag-pk">PK</span></div></td>
+          <td class="col-desc">Unikalny identyfikator wyniku UX.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name fk">audit_id</span></td>
+          <td><span class="col-type">bigint</span></td>
+          <td><div class="col-flags"><span class="flag flag-fk">FK</span></div></td>
+          <td class="col-desc">Audyt do którego należy wynik → <code>audits.id</code>.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">page_url</span></td>
+          <td><span class="col-type">varchar</span></td>
+          <td></td>
+          <td class="col-desc">URL przeskanowanej strony.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">wcag_violations</span></td>
+          <td><span class="col-type">json</span></td>
+          <td><div class="col-flags"><span class="flag flag-json">JSON</span></div></td>
+          <td class="col-desc">Pełny output axe-core: lista naruszeń WCAG z ID, opisem, impactem i selektorami CSS elementów naruszających.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">contrast_issues</span></td>
+          <td><span class="col-type">int</span></td>
+          <td></td>
+          <td class="col-desc">Liczba problemów kontrastowych (kolor tekstu vs tło) niezgodnych z WCAG AA.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">missing_alt_count</span></td>
+          <td><span class="col-type">int</span></td>
+          <td></td>
+          <td class="col-desc">Liczba obrazów bez atrybutu <code>alt</code>.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">keyboard_nav_score</span></td>
+          <td><span class="col-type">tinyint</span></td>
+          <td></td>
+          <td class="col-desc">Ocena nawigacji klawiaturowej (1–10). Opiera się na analizie focus order, pułapek focusu i widocznych outline'ów.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">mobile_usability_score</span></td>
+          <td><span class="col-type">tinyint</span></td>
+          <td></td>
+          <td class="col-desc">Ocena użyteczności mobilnej (1–10). Opiera się na wielkości elementów kliknięcia, viewport meta i responsywności layoutu.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">overall_score</span></td>
+          <td><span class="col-type">decimal(4,2)</span></td>
+          <td></td>
+          <td class="col-desc">Zagregowana ocena UX strony (0.00–100.00). Wchodzi do scoring audytu (<code>audit_scores</code>).</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">raw_report</span></td>
+          <td><span class="col-type">json</span></td>
+          <td><div class="col-flags"><span class="flag flag-json">JSON</span><span class="flag flag-nullable">NULL</span></div></td>
+          <td class="col-desc">Surowy raport z axe-core/WAVE — pełne dane do ewentualnego re-parsowania lub eksportu.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">analyzed_at</span></td>
+          <td><span class="col-type">timestamp</span></td>
+          <td></td>
+          <td class="col-desc">Data i czas przeprowadzenia analizy.</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="rel-section">
+      <div class="rel-section-title">Relacje</div>
+      <div class="rel-list">
+        <span class="rel-chip">belongsTo → <code>audits</code></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ────────────────────────────────────────────────────
+       TABLE: security_audit_results
+  ──────────────────────────────────────────────────── -->
+  <div class="table-card">
+    <div class="table-card-header">
+      <div class="table-card-header-left">
+        <h3>security_audit_results</h3>
+        <p class="table-desc">
+          Wyniki automatycznego audytu bezpieczeństwa HTTP — nagłówki bezpieczeństwa,
+          konfiguracja SSL/TLS. Dane pobierane przez securityheaders.com API i własny skaner.
+          Jeden rekord per URL per audyt.
+        </p>
+      </div>
+      <div class="table-badge-group">
+        <span class="badge badge-layer3">Warstwa 3</span>
+      </div>
+    </div>
+    <table class="cols-table">
+      <thead>
+        <tr>
+          <th>Kolumna</th><th>Typ</th><th>Flagi</th><th>Opis</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="col-name pk">id</span></td>
+          <td><span class="col-type">bigint</span></td>
+          <td><div class="col-flags"><span class="flag flag-pk">PK</span></div></td>
+          <td class="col-desc">Unikalny identyfikator wyniku security.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name fk">audit_id</span></td>
+          <td><span class="col-type">bigint</span></td>
+          <td><div class="col-flags"><span class="flag flag-fk">FK</span></div></td>
+          <td class="col-desc">Audyt do którego należy wynik → <code>audits.id</code>.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">target_url</span></td>
+          <td><span class="col-type">varchar</span></td>
+          <td></td>
+          <td class="col-desc">URL przeskanowanej domeny/strony.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">https_enabled</span></td>
+          <td><span class="col-type">boolean</span></td>
+          <td></td>
+          <td class="col-desc">Czy strona serwowana przez HTTPS. Podstawowy wymóg bezpieczeństwa.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">hsts_enabled</span></td>
+          <td><span class="col-type">boolean</span></td>
+          <td></td>
+          <td class="col-desc">Czy nagłówek <code>Strict-Transport-Security</code> jest ustawiony poprawnie.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">csp_score</span></td>
+          <td><span class="col-type">tinyint</span></td>
+          <td></td>
+          <td class="col-desc">Ocena Content Security Policy (1–10). 10 = restrykcyjna polityka bez <code>unsafe-inline</code>.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">headers_score</span></td>
+          <td><span class="col-type">tinyint</span></td>
+          <td></td>
+          <td class="col-desc">Ogólna ocena nagłówków HTTP bezpieczeństwa (1–10) bazowana na securityheaders.com.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">ssl_grade</span></td>
+          <td><span class="col-type">varchar(4)</span></td>
+          <td><div class="col-flags"><span class="flag flag-nullable">NULL</span></div></td>
+          <td class="col-desc">Ocena konfiguracji SSL/TLS wg Qualys SSL Labs: <code>A+</code>, <code>A</code>, <code>B</code>, <code>C</code>, <code>F</code>.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">ssl_expires_at</span></td>
+          <td><span class="col-type">date</span></td>
+          <td><div class="col-flags"><span class="flag flag-nullable">NULL</span></div></td>
+          <td class="col-desc">Data wygaśnięcia certyfikatu SSL. Używana do alertów o zbliżającym się wygaśnięciu.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">vulnerabilities</span></td>
+          <td><span class="col-type">json</span></td>
+          <td><div class="col-flags"><span class="flag flag-json">JSON</span><span class="flag flag-nullable">NULL</span></div></td>
+          <td class="col-desc">Lista znalezionych podatności: <code>[{"type": "missing_csp", "severity": "high", "description": "..."}]</code>.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">overall_score</span></td>
+          <td><span class="col-type">decimal(4,2)</span></td>
+          <td></td>
+          <td class="col-desc">Zagregowana ocena bezpieczeństwa (0.00–100.00). Wchodzi do scoring audytu.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">raw_report</span></td>
+          <td><span class="col-type">json</span></td>
+          <td><div class="col-flags"><span class="flag flag-json">JSON</span><span class="flag flag-nullable">NULL</span></div></td>
+          <td class="col-desc">Surowy raport z zewnętrznych API do ewentualnego re-parsowania.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">analyzed_at</span></td>
+          <td><span class="col-type">timestamp</span></td>
+          <td></td>
+          <td class="col-desc">Data i czas przeprowadzenia analizy.</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="rel-section">
+      <div class="rel-section-title">Relacje</div>
+      <div class="rel-list">
+        <span class="rel-chip">belongsTo → <code>audits</code></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ────────────────────────────────────────────────────
+       TABLE: block_templates
+  ──────────────────────────────────────────────────── -->
+  <div class="table-card">
+    <div class="table-card-header">
+      <div class="table-card-header-left">
+        <h3>block_templates</h3>
+        <p class="table-desc">
+          Predefiniowane szablony bloków TipTap (~20 typów). Każdy szablon zawiera
+          strukturę JSON dokumentu TipTap z wypełnionymi zmiennymi do podstawienia.
+          Używane przy tworzeniu ofert, dokumentów projektowych i treści SEO.
+          Szablony mogą być globalne lub customizowane per projekt.
+        </p>
+      </div>
+      <div class="table-badge-group">
+        <span class="badge badge-layer3">Warstwa 3</span>
+      </div>
+    </div>
+    <table class="cols-table">
+      <thead>
+        <tr>
+          <th>Kolumna</th><th>Typ</th><th>Flagi</th><th>Opis</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="col-name pk">id</span></td>
+          <td><span class="col-type">bigint</span></td>
+          <td><div class="col-flags"><span class="flag flag-pk">PK</span></div></td>
+          <td class="col-desc">Unikalny identyfikator szablonu.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">slug</span></td>
+          <td><span class="col-type">varchar</span></td>
+          <td></td>
+          <td class="col-desc">Unikalny identyfikator tekstowy szablonu (unique). Używany w kodzie do referencji np. <code>intro-problem-solution</code>.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">name</span></td>
+          <td><span class="col-type">varchar</span></td>
+          <td></td>
+          <td class="col-desc">Czytelna nazwa szablonu np. "Wprowadzenie + Problem + Rozwiązanie".</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">category</span></td>
+          <td><span class="col-type">enum</span></td>
+          <td><div class="col-flags"><span class="flag flag-enum">ENUM</span></div></td>
+          <td class="col-desc">Kategoria bloku: <code>intro</code>, <code>problem</code>, <code>solution</code>, <code>cta</code>, <code>testimonial</code>, <code>faq</code>, <code>pricing</code>, <code>about</code>, <code>team</code>, <code>portfolio</code> i inne.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">description</span></td>
+          <td><span class="col-type">text</span></td>
+          <td><div class="col-flags"><span class="flag flag-nullable">NULL</span></div></td>
+          <td class="col-desc">Opis kiedy i jak używać szablonu. Pomaga użytkownikowi wybrać odpowiedni blok.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">content_json</span></td>
+          <td><span class="col-type">json</span></td>
+          <td><div class="col-flags"><span class="flag flag-json">JSON</span></div></td>
+          <td class="col-desc">Struktura bloku w formacie TipTap JSON ze zmiennymi do podstawienia np. <code>{{company_name}}</code>, <code>{{main_benefit}}</code>.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">variables</span></td>
+          <td><span class="col-type">json</span></td>
+          <td><div class="col-flags"><span class="flag flag-json">JSON</span><span class="flag flag-nullable">NULL</span></div></td>
+          <td class="col-desc">Lista zmiennych szablonu: <code>[{"name": "company_name", "description": "Nazwa firmy klienta", "placeholder": "np. Acme Sp. z o.o."}]</code>.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">is_active</span></td>
+          <td><span class="col-type">boolean</span></td>
+          <td></td>
+          <td class="col-desc">Czy szablon jest aktywny i dostępny do wyboru. <code>false</code> = ukryty (deprecated ale zachowany dla starych dokumentów).</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="rel-section">
+      <div class="rel-section-title">Relacje</div>
+      <div class="rel-list">
+        <span class="rel-chip">hasMany → <code>block_template_scores</code></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ────────────────────────────────────────────────────
+       TABLE: block_template_scores
+  ──────────────────────────────────────────────────── -->
+  <div class="table-card">
+    <div class="table-card-header">
+      <div class="table-card-header-left">
+        <h3>block_template_scores</h3>
+        <p class="table-desc">
+          Scoring efektywności szablonów bloków — ocena AI i dane o częstotliwości użycia.
+          Może być globalny (bez powiązanego projektu) lub specyficzny dla projektu
+          (na podstawie wyników tego klienta). Pozwala AI rekomendować najlepsze bloki.
+        </p>
+      </div>
+      <div class="table-badge-group">
+        <span class="badge badge-layer3">Warstwa 3</span>
+      </div>
+    </div>
+    <table class="cols-table">
+      <thead>
+        <tr>
+          <th>Kolumna</th><th>Typ</th><th>Flagi</th><th>Opis</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="col-name pk">id</span></td>
+          <td><span class="col-type">bigint</span></td>
+          <td><div class="col-flags"><span class="flag flag-pk">PK</span></div></td>
+          <td class="col-desc">Unikalny identyfikator rekordu scoringu.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name fk">template_id</span></td>
+          <td><span class="col-type">bigint</span></td>
+          <td><div class="col-flags"><span class="flag flag-fk">FK</span></div></td>
+          <td class="col-desc">Szablon bloku → <code>block_templates.id</code>.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name fk">project_id</span></td>
+          <td><span class="col-type">bigint</span></td>
+          <td><div class="col-flags"><span class="flag flag-fk">FK</span><span class="flag flag-nullable">NULL</span></div></td>
+          <td class="col-desc">Projekt dla którego dotyczy scoring. <code>null</code> = scoring globalny (dla wszystkich projektów).</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">score</span></td>
+          <td><span class="col-type">decimal(4,2)</span></td>
+          <td></td>
+          <td class="col-desc">Ocena efektywności szablonu (0.00–100.00).</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">usage_count</span></td>
+          <td><span class="col-type">int</span></td>
+          <td></td>
+          <td class="col-desc">Liczba użyć szablonu (per projekt lub globalnie). Używana do priorytetyzacji rekomendacji.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">ai_feedback</span></td>
+          <td><span class="col-type">text</span></td>
+          <td><div class="col-flags"><span class="flag flag-nullable">NULL</span></div></td>
+          <td class="col-desc">Feedback AI na temat efektywności szablonu — dlaczego działa dobrze lub co można poprawić.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">scored_at</span></td>
+          <td><span class="col-type">timestamp</span></td>
+          <td></td>
+          <td class="col-desc">Data i czas ostatniego przeliczenia scoringu.</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="rel-section">
+      <div class="rel-section-title">Relacje</div>
+      <div class="rel-list">
+        <span class="rel-chip">belongsTo → <code>block_templates</code></span>
+        <span class="rel-chip">belongsTo → <code>projects</code> (opcjonalnie)</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ────────────────────────────────────────────────────
+       TABLE: knowledge_facts
+  ──────────────────────────────────────────────────── -->
+  <div class="table-card">
+    <div class="table-card-header">
+      <div class="table-card-header-left">
+        <h3>knowledge_facts</h3>
+        <p class="table-desc">
+          Fakty Bazy Wiedzy — atomowe informacje o kliencie, projekcie lub domenie.
+          Każdy fakt ma typ (decyzja, wykluczenie, wymaganie itp.) oraz wektor embeddingu (1536-dim, pgvector)
+          umożliwiający semantic search. Fakty mogą być globalne (np. zasady agencji) lub per klient.
+          Przeszukiwanie przez IVFFlat index — nearest-neighbor w czasie &lt;50ms.
+        </p>
+      </div>
+      <div class="table-badge-group">
+        <span class="badge badge-layer3">Warstwa 3</span>
+      </div>
+    </div>
+    <table class="cols-table">
+      <thead>
+        <tr>
+          <th>Kolumna</th><th>Typ</th><th>Flagi</th><th>Opis</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="col-name pk">id</span></td>
+          <td><span class="col-type">bigint</span></td>
+          <td><div class="col-flags"><span class="flag flag-pk">PK</span></div></td>
+          <td class="col-desc">Unikalny identyfikator faktu.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name fk">client_id</span></td>
+          <td><span class="col-type">bigint</span></td>
+          <td><div class="col-flags"><span class="flag flag-fk">FK</span><span class="flag flag-nullable">NULL</span></div></td>
+          <td class="col-desc">Klient do którego należy fakt. <code>null</code> = fakt globalny (dotyczy wszystkich klientów lub agencji).</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">type</span></td>
+          <td><span class="col-type">enum</span></td>
+          <td><div class="col-flags"><span class="flag flag-enum">ENUM</span></div></td>
+          <td class="col-desc">Typ faktu: <code>decision</code> — podjęta decyzja, <code>exclusion</code> — wykluczenie/czego nie robić, <code>requirement</code> — wymaganie techniczne, <code>preference</code> — preferencja klienta, <code>constraint</code> — ograniczenie.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">content</span></td>
+          <td><span class="col-type">text</span></td>
+          <td></td>
+          <td class="col-desc">Treść faktu w języku naturalnym np. "Klient nie chce używać WordPress — wymaga React SPA".</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">confidence</span></td>
+          <td><span class="col-type">decimal(3,2)</span></td>
+          <td></td>
+          <td class="col-desc">Pewność faktu (0.00–1.00). 1.00 = fakt potwierdzony, niższe wartości = fakt inferencyjny lub niepewny.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">embedding</span></td>
+          <td><span class="col-type">vector(1536)</span></td>
+          <td></td>
+          <td class="col-desc">Wektor embeddingu (OpenAI text-embedding-3-small lub Claude). Używany do semantic search przez pgvector IVFFlat index.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">source_type</span></td>
+          <td><span class="col-type">varchar</span></td>
+          <td><div class="col-flags"><span class="flag flag-poly">POLY</span></div></td>
+          <td class="col-desc">Typ źródła skąd pochodzi fakt: <code>Lead</code>, <code>Project</code>, <code>Ticket</code>, <code>Manual</code> (ręcznie wprowadzony).</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">source_id</span></td>
+          <td><span class="col-type">bigint</span></td>
+          <td><div class="col-flags"><span class="flag flag-poly">POLY</span><span class="flag flag-nullable">NULL</span></div></td>
+          <td class="col-desc">ID rekordu źródłowego (morphs z source_type). <code>null</code> dla <code>Manual</code>.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">is_active</span></td>
+          <td><span class="col-type">boolean</span></td>
+          <td></td>
+          <td class="col-desc">Czy fakt jest aktywny. <code>false</code> = fakt zdezaktualizowany (soft delete).</td>
+        </tr>
+        <tr>
+          <td><span class="col-name fk">created_by</span></td>
+          <td><span class="col-type">bigint</span></td>
+          <td><div class="col-flags"><span class="flag flag-fk">FK</span><span class="flag flag-nullable">NULL</span></div></td>
+          <td class="col-desc">Użytkownik który stworzył fakt. <code>null</code> = generowany przez AI.</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="rel-section">
+      <div class="rel-section-title">Relacje</div>
+      <div class="rel-list">
+        <span class="rel-chip">belongsTo → <code>clients</code> (opcjonalnie)</span>
+        <span class="rel-chip">morphsTo → <code>leads</code> | <code>projects</code> | <code>tickets</code></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ────────────────────────────────────────────────────
+       TABLE: knowledge_entities
+  ──────────────────────────────────────────────────── -->
+  <div class="table-card">
+    <div class="table-card-header">
+      <div class="table-card-header-left">
+        <h3>knowledge_entities</h3>
+        <p class="table-desc">
+          Encje Bazy Wiedzy — nazwane byty (technologie, firmy, osoby, produkty, koncepty).
+          Każda encja ma wektor embeddingu do semantic search i metadane JSON.
+          Encje łączą się ze sobą przez <code>knowledge_entity_relations</code> tworząc graf wiedzy.
+        </p>
+      </div>
+      <div class="table-badge-group">
+        <span class="badge badge-layer3">Warstwa 3</span>
+      </div>
+    </div>
+    <table class="cols-table">
+      <thead>
+        <tr>
+          <th>Kolumna</th><th>Typ</th><th>Flagi</th><th>Opis</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="col-name pk">id</span></td>
+          <td><span class="col-type">bigint</span></td>
+          <td><div class="col-flags"><span class="flag flag-pk">PK</span></div></td>
+          <td class="col-desc">Unikalny identyfikator encji.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name fk">client_id</span></td>
+          <td><span class="col-type">bigint</span></td>
+          <td><div class="col-flags"><span class="flag flag-fk">FK</span><span class="flag flag-nullable">NULL</span></div></td>
+          <td class="col-desc">Klient do którego należy encja. <code>null</code> = encja globalna.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">name</span></td>
+          <td><span class="col-type">varchar</span></td>
+          <td></td>
+          <td class="col-desc">Nazwa encji np. "React", "Google Search Console", "Acme S.A.", "Jan Kowalski".</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">entity_type</span></td>
+          <td><span class="col-type">varchar</span></td>
+          <td></td>
+          <td class="col-desc">Typ encji np. <code>technology</code>, <code>company</code>, <code>person</code>, <code>product</code>, <code>concept</code>, <code>tool</code>.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">description</span></td>
+          <td><span class="col-type">text</span></td>
+          <td><div class="col-flags"><span class="flag flag-nullable">NULL</span></div></td>
+          <td class="col-desc">Opis encji w kontekście projektu/klienta.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">embedding</span></td>
+          <td><span class="col-type">vector(1536)</span></td>
+          <td></td>
+          <td class="col-desc">Wektor embeddingu encji (1536-dim). Używany do semantic search i znajdowania podobnych encji.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">metadata</span></td>
+          <td><span class="col-type">json</span></td>
+          <td><div class="col-flags"><span class="flag flag-json">JSON</span><span class="flag flag-nullable">NULL</span></div></td>
+          <td class="col-desc">Dowolne dodatkowe atrybuty encji np. URL, wersja, alias, powiązane słowa kluczowe.</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="rel-section">
+      <div class="rel-section-title">Relacje</div>
+      <div class="rel-list">
+        <span class="rel-chip">belongsTo → <code>clients</code> (opcjonalnie)</span>
+        <span class="rel-chip">hasMany → <code>knowledge_entity_relations</code> (subject)</span>
+        <span class="rel-chip">hasMany → <code>knowledge_entity_relations</code> (object)</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ────────────────────────────────────────────────────
+       TABLE: knowledge_entity_relations
+  ──────────────────────────────────────────────────── -->
+  <div class="table-card">
+    <div class="table-card-header">
+      <div class="table-card-header-left">
+        <h3>knowledge_entity_relations</h3>
+        <p class="table-desc">
+          Relacje między encjami Bazy Wiedzy — trójki (subject, predicate, object).
+          Tworzą graf wiedzy: np. "React <em>is a</em> JavaScript Framework",
+          "Projekt X <em>requires</em> PHP 8.3", "Klient Y <em>dislikes</em> WordPress".
+          Każda relacja ma współczynnik pewności.
+        </p>
+      </div>
+      <div class="table-badge-group">
+        <span class="badge badge-layer3">Warstwa 3</span>
+      </div>
+    </div>
+    <table class="cols-table">
+      <thead>
+        <tr>
+          <th>Kolumna</th><th>Typ</th><th>Flagi</th><th>Opis</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="col-name pk">id</span></td>
+          <td><span class="col-type">bigint</span></td>
+          <td><div class="col-flags"><span class="flag flag-pk">PK</span></div></td>
+          <td class="col-desc">Unikalny identyfikator relacji.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name fk">subject_id</span></td>
+          <td><span class="col-type">bigint</span></td>
+          <td><div class="col-flags"><span class="flag flag-fk">FK</span></div></td>
+          <td class="col-desc">Podmiot relacji → <code>knowledge_entities.id</code>.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">predicate</span></td>
+          <td><span class="col-type">varchar</span></td>
+          <td></td>
+          <td class="col-desc">Predykat relacji np. <code>is_a</code>, <code>has</code>, <code>requires</code>, <code>conflicts_with</code>, <code>uses</code>, <code>replaces</code>, <code>dislikes</code>.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name fk">object_id</span></td>
+          <td><span class="col-type">bigint</span></td>
+          <td><div class="col-flags"><span class="flag flag-fk">FK</span></div></td>
+          <td class="col-desc">Dopełnienie relacji → <code>knowledge_entities.id</code>.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">confidence</span></td>
+          <td><span class="col-type">decimal(3,2)</span></td>
+          <td></td>
+          <td class="col-desc">Pewność relacji (0.00–1.00). Relacje inferencyjne mają niższe wartości.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">created_at</span></td>
+          <td><span class="col-type">timestamp</span></td>
+          <td></td>
+          <td class="col-desc">Data i czas utworzenia relacji.</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="rel-section">
+      <div class="rel-section-title">Relacje</div>
+      <div class="rel-list">
+        <span class="rel-chip">belongsTo → <code>knowledge_entities</code> (subject)</span>
+        <span class="rel-chip">belongsTo → <code>knowledge_entities</code> (object)</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ────────────────────────────────────────────────────
+       TABLE: knowledge_items
+  ──────────────────────────────────────────────────── -->
+  <div class="table-card">
+    <div class="table-card-header">
+      <div class="table-card-header-left">
+        <h3>knowledge_items</h3>
+        <p class="table-desc">
+          Hierarchiczne drzewo wiedzy — elementy z możliwością zagnieżdżenia (self-referential przez <code>parent_id</code>).
+          Każdy item ma status cyklu życia (proponowany → potwierdzony → odrzucony)
+          i wektor embeddingu. Używane do budowania strukturyzowanej bazy wiedzy per klient.
+        </p>
+      </div>
+      <div class="table-badge-group">
+        <span class="badge badge-layer3">Warstwa 3</span>
+      </div>
+    </div>
+    <table class="cols-table">
+      <thead>
+        <tr>
+          <th>Kolumna</th><th>Typ</th><th>Flagi</th><th>Opis</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="col-name pk">id</span></td>
+          <td><span class="col-type">bigint</span></td>
+          <td><div class="col-flags"><span class="flag flag-pk">PK</span></div></td>
+          <td class="col-desc">Unikalny identyfikator elementu wiedzy.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name fk">client_id</span></td>
+          <td><span class="col-type">bigint</span></td>
+          <td><div class="col-flags"><span class="flag flag-fk">FK</span><span class="flag flag-nullable">NULL</span></div></td>
+          <td class="col-desc">Klient do którego należy element. <code>null</code> = element globalny.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name fk">parent_id</span></td>
+          <td><span class="col-type">bigint</span></td>
+          <td><div class="col-flags"><span class="flag flag-fk">FK</span><span class="flag flag-nullable">NULL</span></div></td>
+          <td class="col-desc">Rodzic elementu w hierarchii → <code>knowledge_items.id</code>. <code>null</code> = element główny (root).</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">title</span></td>
+          <td><span class="col-type">varchar</span></td>
+          <td></td>
+          <td class="col-desc">Tytuł elementu wiedzy.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">content</span></td>
+          <td><span class="col-type">text</span></td>
+          <td><div class="col-flags"><span class="flag flag-nullable">NULL</span></div></td>
+          <td class="col-desc">Treść elementu — rozwinięty opis, instrukcje lub kontekst.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">item_type</span></td>
+          <td><span class="col-type">varchar</span></td>
+          <td></td>
+          <td class="col-desc">Typ elementu np. <code>category</code>, <code>guideline</code>, <code>example</code>, <code>template</code>, <code>note</code>.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">status</span></td>
+          <td><span class="col-type">enum</span></td>
+          <td><div class="col-flags"><span class="flag flag-enum">ENUM</span></div></td>
+          <td class="col-desc"><code>proposed</code> — proponowany przez AI lub użytkownika, <code>confirmed</code> — zatwierdzony przez managera, <code>rejected</code> — odrzucony.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">embedding</span></td>
+          <td><span class="col-type">vector(1536)</span></td>
+          <td></td>
+          <td class="col-desc">Wektor embeddingu (1536-dim). Indeksowany IVFFlat dla semantic search w Bazie Wiedzy.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name fk">created_by</span></td>
+          <td><span class="col-type">bigint</span></td>
+          <td><div class="col-flags"><span class="flag flag-fk">FK</span><span class="flag flag-nullable">NULL</span></div></td>
+          <td class="col-desc">Użytkownik który stworzył element. <code>null</code> = generowany przez AI.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name fk">confirmed_by</span></td>
+          <td><span class="col-type">bigint</span></td>
+          <td><div class="col-flags"><span class="flag flag-fk">FK</span><span class="flag flag-nullable">NULL</span></div></td>
+          <td class="col-desc">Manager który zatwierdził element → <code>users.id</code>. <code>null</code> = niezatwierdzony.</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="rel-section">
+      <div class="rel-section-title">Relacje</div>
+      <div class="rel-list">
+        <span class="rel-chip">belongsTo → <code>clients</code> (opcjonalnie)</span>
+        <span class="rel-chip">belongsTo → <code>knowledge_items</code> (parent — self-referential)</span>
+        <span class="rel-chip">hasMany → <code>knowledge_items</code> (children)</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ────────────────────────────────────────────────────
+       TABLE: agent_knowledge
+  ──────────────────────────────────────────────────── -->
+  <div class="table-card">
+    <div class="table-card-header">
+      <div class="table-card-header-left">
+        <h3>agent_knowledge</h3>
+        <p class="table-desc">
+          Globalna pamięć robocza agentów AI (np. "Kasia"). Przechowuje key-value pairs
+          z wektorem embeddingu umożliwiającym semantic retrieval. Agent może odczytać
+          relevantne wpisy do swojego kontekstu przed każdą rozmową. Niezależna od per-klientowej Bazy Wiedzy.
+        </p>
+      </div>
+      <div class="table-badge-group">
+        <span class="badge badge-layer3">Warstwa 3</span>
+      </div>
+    </div>
+    <table class="cols-table">
+      <thead>
+        <tr>
+          <th>Kolumna</th><th>Typ</th><th>Flagi</th><th>Opis</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="col-name pk">id</span></td>
+          <td><span class="col-type">bigint</span></td>
+          <td><div class="col-flags"><span class="flag flag-pk">PK</span></div></td>
+          <td class="col-desc">Unikalny identyfikator wpisu wiedzy agenta.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">agent_id</span></td>
+          <td><span class="col-type">varchar</span></td>
+          <td></td>
+          <td class="col-desc">Identyfikator agenta np. <code>kasia</code>, <code>seo-analyst</code>. Umożliwia izolację wiedzy per agent.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">key</span></td>
+          <td><span class="col-type">varchar</span></td>
+          <td></td>
+          <td class="col-desc">Klucz wpisu np. <code>agency_tone_of_voice</code>, <code>discovery_best_practices</code>.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">value</span></td>
+          <td><span class="col-type">text</span></td>
+          <td></td>
+          <td class="col-desc">Wartość wpisu — instrukcje, wytyczne lub kontekst dla agenta w języku naturalnym.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">embedding</span></td>
+          <td><span class="col-type">vector(1536)</span></td>
+          <td></td>
+          <td class="col-desc">Wektor embeddingu wartości. Umożliwia semantic retrieval — agent wyszukuje relevantne wpisy do swojego bieżącego kontekstu.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">updated_at</span></td>
+          <td><span class="col-type">timestamp</span></td>
+          <td></td>
+          <td class="col-desc">Data i czas ostatniej aktualizacji wpisu.</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="rel-section">
+      <div class="rel-section-title">Relacje</div>
+      <div class="rel-list">
+        <span class="rel-chip">Brak relacji FK — globalna tabela agentów</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ────────────────────────────────────────────────────
+       TABLE: ai_visibility_scores
+  ──────────────────────────────────────────────────── -->
+  <div class="table-card">
+    <div class="table-card-header">
+      <div class="table-card-header-left">
+        <h3>ai_visibility_scores</h3>
+        <p class="table-desc">
+          8-czynnikowy scoring widoczności AI projektu/klienta w modelach językowych.
+          Mierzy jak bardzo treści klienta są "AI-friendly" — cytowalne, strukturalne,
+          autorytatywne. Historia scoringów zachowywana — jeden rekord per pomiar (może być wiele per projekt).
+          Wyniki wyświetlane na dashboardzie jako trend w czasie.
+        </p>
+      </div>
+      <div class="table-badge-group">
+        <span class="badge badge-layer3">Warstwa 3</span>
+      </div>
+    </div>
+    <table class="cols-table">
+      <thead>
+        <tr>
+          <th>Kolumna</th><th>Typ</th><th>Flagi</th><th>Opis</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="col-name pk">id</span></td>
+          <td><span class="col-type">bigint</span></td>
+          <td><div class="col-flags"><span class="flag flag-pk">PK</span></div></td>
+          <td class="col-desc">Unikalny identyfikator pomiaru.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name fk">project_id</span></td>
+          <td><span class="col-type">bigint</span></td>
+          <td><div class="col-flags"><span class="flag flag-fk">FK</span></div></td>
+          <td class="col-desc">Projekt dla którego przeprowadzono pomiar → <code>projects.id</code>.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name fk">client_id</span></td>
+          <td><span class="col-type">bigint</span></td>
+          <td><div class="col-flags"><span class="flag flag-fk">FK</span></div></td>
+          <td class="col-desc">Klient (multi-tenancy) → <code>clients.id</code>.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">brand_mentions_score</span></td>
+          <td><span class="col-type">tinyint</span></td>
+          <td></td>
+          <td class="col-desc">Wskaźnik wzmiankowania marki w sieci (1–10). Opiera się na external link profile i NAP consistency.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">content_authority_score</span></td>
+          <td><span class="col-type">tinyint</span></td>
+          <td></td>
+          <td class="col-desc">Autorytet treści (1–10). Głębokość, aktualność, źródła, eksperckość.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">structured_data_score</span></td>
+          <td><span class="col-type">tinyint</span></td>
+          <td></td>
+          <td class="col-desc">Jakość danych strukturalnych Schema.org (1–10). Ułatwia LLM parsowanie treści.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">page_speed_score</span></td>
+          <td><span class="col-type">tinyint</span></td>
+          <td></td>
+          <td class="col-desc">Prędkość ładowania strony (1–10). Opiera się na Core Web Vitals LCP/INP/CLS.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">mobile_score</span></td>
+          <td><span class="col-type">tinyint</span></td>
+          <td></td>
+          <td class="col-desc">Responsywność i użyteczność mobilna (1–10).</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">e_e_a_t_score</span></td>
+          <td><span class="col-type">tinyint</span></td>
+          <td></td>
+          <td class="col-desc">E-E-A-T score (Experience, Expertise, Authoritativeness, Trustworthiness) (1–10).</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">llm_readability_score</span></td>
+          <td><span class="col-type">tinyint</span></td>
+          <td></td>
+          <td class="col-desc">Czytelność treści dla modeli językowych (1–10). Klarowność, brak redundancji, logiczna struktura.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">citation_potential_score</span></td>
+          <td><span class="col-type">tinyint</span></td>
+          <td></td>
+          <td class="col-desc">Potencjał cytowania przez LLM jako źródło (1–10). Oryginalność danych, statystyki, autorytety.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">overall_score</span></td>
+          <td><span class="col-type">decimal(4,2)</span></td>
+          <td></td>
+          <td class="col-desc">Ważona średnia wszystkich 8 czynników. Zakres 1.00–10.00. Główna metryka widoczności AI.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">ai_reasoning</span></td>
+          <td><span class="col-type">text</span></td>
+          <td><div class="col-flags"><span class="flag flag-nullable">NULL</span></div></td>
+          <td class="col-desc">Uzasadnienie i rekomendacje poprawy wygenerowane przez AI.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">scored_at</span></td>
+          <td><span class="col-type">timestamp</span></td>
+          <td></td>
+          <td class="col-desc">Data i czas przeprowadzenia scoringu.</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="rel-section">
+      <div class="rel-section-title">Relacje</div>
+      <div class="rel-list">
+        <span class="rel-chip">belongsTo → <code>projects</code></span>
+        <span class="rel-chip">belongsTo → <code>clients</code></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ────────────────────────────────────────────────────
+       TABLE: seo_workshop_steps
+  ──────────────────────────────────────────────────── -->
+  <div class="table-card">
+    <div class="table-card-header">
+      <div class="table-card-header-left">
+        <h3>seo_workshop_steps</h3>
+        <p class="table-desc">
+          Kroki 4-etapowego SEO Workshop per projekt. Każdy etap produkuje output
+          (dane wejściowe → dane wyjściowe w JSON). Krok 4 (deploy) automatycznie
+          wysyła treść na WordPress przez WP REST API. Każdy projekt może mieć
+          wiele przejść przez workshop (nowe cykle treści).
+        </p>
+      </div>
+      <div class="table-badge-group">
+        <span class="badge badge-layer3">Warstwa 3</span>
+      </div>
+    </div>
+    <table class="cols-table">
+      <thead>
+        <tr>
+          <th>Kolumna</th><th>Typ</th><th>Flagi</th><th>Opis</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="col-name pk">id</span></td>
+          <td><span class="col-type">bigint</span></td>
+          <td><div class="col-flags"><span class="flag flag-pk">PK</span></div></td>
+          <td class="col-desc">Unikalny identyfikator kroku.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name fk">project_id</span></td>
+          <td><span class="col-type">bigint</span></td>
+          <td><div class="col-flags"><span class="flag flag-fk">FK</span></div></td>
+          <td class="col-desc">Projekt do którego należy krok SEO Workshop → <code>projects.id</code>.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">step_number</span></td>
+          <td><span class="col-type">tinyint</span></td>
+          <td></td>
+          <td class="col-desc">Numer kroku (1–4): 1=analiza, 2=strategia, 3=treść, 4=deploy.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">step_type</span></td>
+          <td><span class="col-type">enum</span></td>
+          <td><div class="col-flags"><span class="flag flag-enum">ENUM</span></div></td>
+          <td class="col-desc"><code>analysis</code> — analiza słów kluczowych i konkurencji, <code>strategy</code> — plan contentowy, <code>content</code> — generowanie treści AI, <code>deploy</code> — publikacja na WordPress przez WP REST API.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">status</span></td>
+          <td><span class="col-type">enum</span></td>
+          <td><div class="col-flags"><span class="flag flag-enum">ENUM</span></div></td>
+          <td class="col-desc"><code>pending</code>, <code>in_progress</code>, <code>completed</code>, <code>failed</code>.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">input_data</span></td>
+          <td><span class="col-type">json</span></td>
+          <td><div class="col-flags"><span class="flag flag-json">JSON</span><span class="flag flag-nullable">NULL</span></div></td>
+          <td class="col-desc">Dane wejściowe kroku. Dla kroku 2: wyniki analizy z kroku 1. Dla kroku 3: strategia z kroku 2. Dla deploy: treść z kroku 3.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">output_data</span></td>
+          <td><span class="col-type">json</span></td>
+          <td><div class="col-flags"><span class="flag flag-json">JSON</span><span class="flag flag-nullable">NULL</span></div></td>
+          <td class="col-desc">Dane wyjściowe kroku. Dla deploy: zawiera <code>wp_post_id</code>, URL i timestamp publikacji.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">wp_post_id</span></td>
+          <td><span class="col-type">int</span></td>
+          <td><div class="col-flags"><span class="flag flag-nullable">NULL</span></div></td>
+          <td class="col-desc">ID posta WordPress po pomyślnym deployu przez WP REST API (<code>POST /wp-json/wp/v2/posts</code>). <code>null</code> = niezdeployowane lub nie krok deploy.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">wp_deployed_at</span></td>
+          <td><span class="col-type">timestamp</span></td>
+          <td><div class="col-flags"><span class="flag flag-nullable">NULL</span></div></td>
+          <td class="col-desc">Data i czas publikacji na WordPress.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">completed_at</span></td>
+          <td><span class="col-type">timestamp</span></td>
+          <td><div class="col-flags"><span class="flag flag-nullable">NULL</span></div></td>
+          <td class="col-desc">Data i czas zakończenia kroku.</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="rel-section">
+      <div class="rel-section-title">Relacje</div>
+      <div class="rel-list">
+        <span class="rel-chip">belongsTo → <code>projects</code></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ────────────────────────────────────────────────────
+       TABLE: work_logs
+  ──────────────────────────────────────────────────── -->
+  <div class="table-card">
+    <div class="table-card-header">
+      <div class="table-card-header-left">
+        <h3>work_logs</h3>
+        <p class="table-desc">
+          Dziennik pracy per projekt — rejestracja czasu pracy pracowników z podziałem
+          na kategorie. Umożliwia raportowanie czasu per klient, per kategoria i per pracownik.
+          Podstawa do fakturowania i analizy rentowności projektu.
+        </p>
+      </div>
+      <div class="table-badge-group">
+        <span class="badge badge-layer3">Warstwa 3</span>
+      </div>
+    </div>
+    <table class="cols-table">
+      <thead>
+        <tr>
+          <th>Kolumna</th><th>Typ</th><th>Flagi</th><th>Opis</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="col-name pk">id</span></td>
+          <td><span class="col-type">bigint</span></td>
+          <td><div class="col-flags"><span class="flag flag-pk">PK</span></div></td>
+          <td class="col-desc">Unikalny identyfikator wpisu dziennika.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name fk">project_id</span></td>
+          <td><span class="col-type">bigint</span></td>
+          <td><div class="col-flags"><span class="flag flag-fk">FK</span></div></td>
+          <td class="col-desc">Projekt do którego należy wpis → <code>projects.id</code>.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name fk">user_id</span></td>
+          <td><span class="col-type">bigint</span></td>
+          <td><div class="col-flags"><span class="flag flag-fk">FK</span></div></td>
+          <td class="col-desc">Pracownik który wykonał pracę → <code>users.id</code>.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">category</span></td>
+          <td><span class="col-type">enum</span></td>
+          <td><div class="col-flags"><span class="flag flag-enum">ENUM</span></div></td>
+          <td class="col-desc">Kategoria pracy: <code>development</code>, <code>design</code>, <code>seo</code>, <code>copywriting</code>, <code>meetings</code>, <code>admin</code>, <code>other</code>.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">description</span></td>
+          <td><span class="col-type">text</span></td>
+          <td></td>
+          <td class="col-desc">Opis wykonanej pracy — co konkretnie zostało zrobione.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">duration_minutes</span></td>
+          <td><span class="col-type">int</span></td>
+          <td></td>
+          <td class="col-desc">Czas pracy w minutach. Wyświetlany w UI jako godziny:minuty.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">logged_at</span></td>
+          <td><span class="col-type">date</span></td>
+          <td></td>
+          <td class="col-desc">Data wykonania pracy (nie data wpisu — pozwala na retrospektywne logowanie).</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">created_at</span></td>
+          <td><span class="col-type">timestamp</span></td>
+          <td></td>
+          <td class="col-desc">Data i czas dodania wpisu do systemu.</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="rel-section">
+      <div class="rel-section-title">Relacje</div>
+      <div class="rel-list">
+        <span class="rel-chip">belongsTo → <code>projects</code></span>
+        <span class="rel-chip">belongsTo → <code>users</code></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ────────────────────────────────────────────────────
+       TABLE: work_plans
+  ──────────────────────────────────────────────────── -->
+  <div class="table-card">
+    <div class="table-card-header">
+      <div class="table-card-header-left">
+        <h3>work_plans</h3>
+        <p class="table-desc">
+          Plany pracy per projekt — tygodniowe lub miesięczne harmonogramy.
+          Plan może być przypisany do konkretnego pracownika lub być planem całego zespołu.
+          Każdy plan zawiera listę elementów (<code>work_plan_items</code>) do wykonania w danym okresie.
+        </p>
+      </div>
+      <div class="table-badge-group">
+        <span class="badge badge-layer3">Warstwa 3</span>
+      </div>
+    </div>
+    <table class="cols-table">
+      <thead>
+        <tr>
+          <th>Kolumna</th><th>Typ</th><th>Flagi</th><th>Opis</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="col-name pk">id</span></td>
+          <td><span class="col-type">bigint</span></td>
+          <td><div class="col-flags"><span class="flag flag-pk">PK</span></div></td>
+          <td class="col-desc">Unikalny identyfikator planu.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name fk">project_id</span></td>
+          <td><span class="col-type">bigint</span></td>
+          <td><div class="col-flags"><span class="flag flag-fk">FK</span></div></td>
+          <td class="col-desc">Projekt do którego należy plan → <code>projects.id</code>.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name fk">user_id</span></td>
+          <td><span class="col-type">bigint</span></td>
+          <td><div class="col-flags"><span class="flag flag-fk">FK</span><span class="flag flag-nullable">NULL</span></div></td>
+          <td class="col-desc">Pracownik do którego przypisany jest plan. <code>null</code> = plan całego zespołu.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">period_type</span></td>
+          <td><span class="col-type">enum</span></td>
+          <td><div class="col-flags"><span class="flag flag-enum">ENUM</span></div></td>
+          <td class="col-desc"><code>weekly</code> — tygodniowy (pon-nd), <code>monthly</code> — miesięczny.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">period_start</span></td>
+          <td><span class="col-type">date</span></td>
+          <td></td>
+          <td class="col-desc">Data początkowa okresu planu.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">period_end</span></td>
+          <td><span class="col-type">date</span></td>
+          <td></td>
+          <td class="col-desc">Data końcowa okresu planu.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">status</span></td>
+          <td><span class="col-type">enum</span></td>
+          <td><div class="col-flags"><span class="flag flag-enum">ENUM</span></div></td>
+          <td class="col-desc"><code>draft</code> — w przygotowaniu, <code>active</code> — bieżący aktywny plan, <code>completed</code> — zakończony okres.</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="rel-section">
+      <div class="rel-section-title">Relacje</div>
+      <div class="rel-list">
+        <span class="rel-chip">belongsTo → <code>projects</code></span>
+        <span class="rel-chip">belongsTo → <code>users</code> (opcjonalnie)</span>
+        <span class="rel-chip">hasMany → <code>work_plan_items</code></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ────────────────────────────────────────────────────
+       TABLE: work_plan_items
+  ──────────────────────────────────────────────────── -->
+  <div class="table-card">
+    <div class="table-card-header">
+      <div class="table-card-header-left">
+        <h3>work_plan_items</h3>
+        <p class="table-desc">
+          Pojedyncze zadanie w planie pracy. Zawiera szacowany i rzeczywisty czas,
+          kategorię, przypisanego wykonawcę i termin. Statusy pozwalają śledzić
+          postęp realizacji planu w trakcie okresu.
+        </p>
+      </div>
+      <div class="table-badge-group">
+        <span class="badge badge-layer3">Warstwa 3</span>
+      </div>
+    </div>
+    <table class="cols-table">
+      <thead>
+        <tr>
+          <th>Kolumna</th><th>Typ</th><th>Flagi</th><th>Opis</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="col-name pk">id</span></td>
+          <td><span class="col-type">bigint</span></td>
+          <td><div class="col-flags"><span class="flag flag-pk">PK</span></div></td>
+          <td class="col-desc">Unikalny identyfikator elementu planu.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name fk">plan_id</span></td>
+          <td><span class="col-type">bigint</span></td>
+          <td><div class="col-flags"><span class="flag flag-fk">FK</span></div></td>
+          <td class="col-desc">Plan do którego należy element → <code>work_plans.id</code>.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">title</span></td>
+          <td><span class="col-type">varchar</span></td>
+          <td></td>
+          <td class="col-desc">Nazwa zadania do wykonania.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">description</span></td>
+          <td><span class="col-type">text</span></td>
+          <td><div class="col-flags"><span class="flag flag-nullable">NULL</span></div></td>
+          <td class="col-desc">Opcjonalny szczegółowy opis zadania.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">category</span></td>
+          <td><span class="col-type">enum</span></td>
+          <td><div class="col-flags"><span class="flag flag-enum">ENUM</span></div></td>
+          <td class="col-desc">Kategoria taka sama jak w <code>work_logs</code>: <code>development</code>, <code>design</code>, <code>seo</code>, <code>copywriting</code>, <code>meetings</code>, <code>admin</code>, <code>other</code>.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">estimated_hours</span></td>
+          <td><span class="col-type">decimal(5,2)</span></td>
+          <td></td>
+          <td class="col-desc">Szacowany czas realizacji w godzinach.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">actual_hours</span></td>
+          <td><span class="col-type">decimal(5,2)</span></td>
+          <td><div class="col-flags"><span class="flag flag-nullable">NULL</span></div></td>
+          <td class="col-desc">Rzeczywisty czas realizacji w godzinach (uzupełniany po zakończeniu). <code>null</code> = niezakończone.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">priority</span></td>
+          <td><span class="col-type">int</span></td>
+          <td></td>
+          <td class="col-desc">Kolejność wyświetlania i ważność zadania (niższy = ważniejszy). Umożliwia drag & drop sortowanie.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">status</span></td>
+          <td><span class="col-type">enum</span></td>
+          <td><div class="col-flags"><span class="flag flag-enum">ENUM</span></div></td>
+          <td class="col-desc"><code>todo</code> — do zrobienia, <code>in_progress</code> — w trakcie, <code>done</code> — ukończone, <code>cancelled</code> — anulowane.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name fk">assigned_to</span></td>
+          <td><span class="col-type">bigint</span></td>
+          <td><div class="col-flags"><span class="flag flag-fk">FK</span><span class="flag flag-nullable">NULL</span></div></td>
+          <td class="col-desc">Pracownik przypisany do zadania → <code>users.id</code>. <code>null</code> = nieprzypisane.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">due_at</span></td>
+          <td><span class="col-type">date</span></td>
+          <td><div class="col-flags"><span class="flag flag-nullable">NULL</span></div></td>
+          <td class="col-desc">Opcjonalny termin realizacji zadania w ramach okresu planu.</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="rel-section">
+      <div class="rel-section-title">Relacje</div>
+      <div class="rel-list">
+        <span class="rel-chip">belongsTo → <code>work_plans</code></span>
+        <span class="rel-chip">belongsTo → <code>users</code> (assigned_to)</span>
       </div>
     </div>
   </div>

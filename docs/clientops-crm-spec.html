@@ -955,6 +955,49 @@
             polymorphic relations, drag &amp; drop (dnd-kit).
           </div>
         </div>
+        <div class="card">
+          <div class="card-title">
+            <div class="card-icon" style="background: #fdf4ff">🔬</div>
+            Audyty rozszerzone
+          </div>
+          <div class="card-body">
+            Audyty UX (axe-core/WAVE, WCAG), Security (nagłówki HTTP, SSL), SEO techniczny.
+            Raport PDF z publicznym tokenem do udostępnienia klientowi. Komentarz stratega.
+          </div>
+        </div>
+      </div>
+
+      <div class="card-grid">
+        <div class="card" style="border-left: 3px solid #a855f7;">
+          <div class="card-title">
+            <div class="card-icon" style="background: #fdf4ff">🧠</div>
+            Baza Wiedzy (Knowledge System)
+          </div>
+          <div class="card-body">
+            Fakty, encje i relacje z embeddingami pgvector 1536-dim. Semantic search po wiedzy o kliencie.
+            Drzewo wiedzy z cyklem życia (proposed → confirmed). Globalna pamięć agentów AI.
+          </div>
+        </div>
+        <div class="card" style="border-left: 3px solid #0ea5e9;">
+          <div class="card-title">
+            <div class="card-icon" style="background: #f0f9ff">🤖</div>
+            AI Visibility Score
+          </div>
+          <div class="card-body">
+            8-czynnikowy scoring widoczności treści w modelach językowych (LLM-readability, E-E-A-T,
+            structured data, brand mentions, citation potential). Historia pomiarów per projekt.
+          </div>
+        </div>
+        <div class="card" style="border-left: 3px solid #10b981;">
+          <div class="card-title">
+            <div class="card-icon" style="background: #ecfdf5">🚀</div>
+            SEO Workshop + Work Log
+          </div>
+          <div class="card-body">
+            4-etapowy przepływ SEO: analiza → strategia → treść AI → auto-deploy WordPress (WP REST API).
+            Work Log i Planer pracy per projekt: kategoryzowany czas, tygodniowe/miesięczne harmonogramy.
+          </div>
+        </div>
       </div>
 
       <div class="card-grid">
@@ -1153,6 +1196,54 @@
             <td>
               Rozszerzenie PostgreSQL optymalizujące przechowywanie i zapytania dla danych time-series (szeregi czasowe). Automatycznie partycjonuje tabele po czasie (hypertables), co przyspiesza zapytania z filtrem po dacie nawet 100x. Idealne dla rankingów słów kluczowych SEO, gdzie zbieramy dziesiątki tysięcy punktów danych dziennie per klient.
               <div class="why">Tabela rankingów bez TimescaleDB przy 100 klientach × 500 słów kluczowych × 365 dni = 18 mln wierszy rocznie — standardowe zapytania stają się wolne. TimescaleDB rozwiązuje to bez zmiany stacku, bo to rozszerzenie PostgreSQL.</div>
+            </td>
+          </tr>
+          <tr>
+            <td><strong>pgvector</strong></td>
+            <td>—</td>
+            <td>
+              Rozszerzenie PostgreSQL dodające typ danych <code>vector(n)</code> i operatory podobieństwa kosinusowego, L2 i IP. Obsługuje IVFFlat i HNSW indexy dla efficient nearest-neighbor search. Umożliwia przechowywanie embeddingów tekstowych (1536-dim dla OpenAI / Claude) bezpośrednio w PostgreSQL bez zewnętrznej bazy wektorowej. Kluczowe dla Bazy Wiedzy, semantic search i AI agentów.
+              <div class="why">Baza Wiedzy wymaga semantic search po faktach, encjach i elementach drzewa wiedzy. Dedykowane wektorowe bazy (Pinecone, Qdrant) to dodatkowy serwis do zarządzania. pgvector daje wyszukiwanie wektorowe w tej samej bazie co dane — zero dodatkowej infrastruktury, query join z relacyjnymi danymi.</div>
+            </td>
+          </tr>
+          <tr>
+            <td><strong>Claude API (Anthropic)</strong></td>
+            <td>—</td>
+            <td>
+              API modeli językowych Anthropic (Claude Sonnet 4.5 / Claude Sonnet 4.6). Używane przez: (1) agenta Discovery Workshop "Kasia" — 9-krokowy wywiad z klientem przez SSE streaming, (2) kwalifikacja leadów AI — 8-wymiarowy scoring, (3) analiza semantyczna treści SEO, (4) generowanie rekomendacji optymalizacji, (5) scoring szablonów bloków.
+              <div class="why">Claude Sonnet to model z najlepszym stosunkiem możliwości do ceny dla zadań konwersacyjnych i analizy długich dokumentów. SSE streaming z Claude API umożliwia real-time output agenta bez długiego oczekiwania.</div>
+            </td>
+          </tr>
+          <tr>
+            <td><strong>Ahrefs API / Semrush API</strong></td>
+            <td>—</td>
+            <td>
+              Zewnętrzne API dostarczające dane SEO: profil backlinków, ruch organiczny per domena, rankingi słów kluczowych konkurentów, Domain Rating / Authority Score. Ahrefs API v3 obsługuje batch requests. Dane zapisywane do tabel <code>seo_backlinks</code>, <code>seo_competitors</code>, <code>seo_keyword_opportunities</code>. Oba API używane naprzemiennie — jedno jako backup drugiego.
+              <div class="why">Własny crawler nie jest w stanie odtworzyć danych backlink index Ahrefs (miliard+ domen). Dane zewnętrzne są kluczowe dla audytów off-page SEO i analizy konkurencji — bez nich moduł SEO byłby niekompletny.</div>
+            </td>
+          </tr>
+          <tr>
+            <td><strong>axe-core / WAVE API</strong></td>
+            <td>—</td>
+            <td>
+              Biblioteka automatycznych testów dostępności WCAG (<code>axe-core</code>) i opcjonalnie WAVE API (WebAIM). axe-core uruchamiana w headless Chromium (Puppeteer) per URL, zwraca strukturalny raport naruszeń WCAG 2.1 z ID reguły, opisem, impactem i selektorami CSS elementów naruszających. Wyniki zapisywane do <code>ux_audit_results</code>.
+              <div class="why">Audyty UX/dostępności to rosnący wymóg klientów i regulatorów (WCAG, Europejski Akt Dostępności 2025). Automatyczne testy axe-core zastępują ręczne audyty, pokrywając ~57% naruszeń WCAG automatycznie.</div>
+            </td>
+          </tr>
+          <tr>
+            <td><strong>securityheaders.com API</strong></td>
+            <td>—</td>
+            <td>
+              API skanujące nagłówki HTTP bezpieczeństwa domeny: CSP, HSTS, X-Frame-Options, X-Content-Type-Options, Referrer-Policy, Permissions-Policy. Zwraca ocenę literową (A+ / A / B / F) i listę brakujących nagłówków. Wyniki zapisywane do <code>security_audit_results</code>.
+              <div class="why">Klienci często mają strony z niebezpieczną konfiguracją nagłówków HTTP. Automatyczne skanowanie w ramach audytu Security pozwala agencji pokazać konkretne problemy i rekomendacje — wartość dodana bez manualnej pracy.</div>
+            </td>
+          </tr>
+          <tr>
+            <td><strong>WP REST API</strong></td>
+            <td>—</td>
+            <td>
+              Natywne REST API WordPress (<code>/wp-json/wp/v2/</code>) do programatycznego tworzenia i aktualizacji postów. Używane w kroku 4 (deploy) SEO Workshop — treść wygenerowana przez AI jest automatycznie publikowana na stronie WordPress klienta przez <code>POST /wp-json/wp/v2/posts</code> z JWT auth. ID posta WordPress zapisywany w <code>seo_workshop_steps.wp_post_id</code>.
+              <div class="why">Wiele klientów agencji SEO używa WordPress. Auto-deploy eliminuje ręczne kopiowanie treści, skracając czas od generowania do publikacji z godzin do sekund. Klient może zatwierdzić deploy jednym kliknięciem w panelu.</div>
             </td>
           </tr>
         </tbody>
@@ -1569,37 +1660,49 @@ Notification::send($user, <span class="keyword">new</span> TwoFactorCodeNotifica
         <div class="card">
           <div class="card-title">Google Search Console</div>
           <div class="card-body">
-            Pozycje, kliknięcia, impressions, CTR per zapytanie i strona. OAuth 2.0.
+            Pozycje, kliknięcia, impressions, CTR per zapytanie i strona. OAuth 2.0. → <code>seo_keyword_ranks</code>, <code>seo_monthly_snapshots</code>
           </div>
         </div>
         <div class="card">
           <div class="card-title">Google Analytics 4</div>
           <div class="card-body">
-            Ruch organiczny, konwersje, bounce rate, engagement. GA4 Data API.
+            Ruch organiczny, konwersje, bounce rate, engagement. GA4 Data API. → <code>seo_monthly_snapshots</code>
           </div>
         </div>
         <div class="card">
           <div class="card-title">Własny Crawler</div>
           <div class="card-body">
-            Błędy techniczne: broken links, meta tags, H1, duplicate content, page speed.
+            Błędy techniczne: broken links, meta tags, H1, duplicate content. → <code>seo_audit_pages</code>, <code>seo_issues</code>, <code>audit_issues</code>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">PageSpeed Insights API</div>
+          <div class="card-body">
+            LCP, CLS, INP, FCP, TTFB per URL — dane polowe i lab. → <code>seo_cwv_snapshots</code>, <code>audit_scores</code>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">Backlinks API</div>
+          <div class="card-body">
+            Referring domains, DR/DA, anchor texty, toxic links. Ahrefs API lub Semrush. → <code>seo_backlinks</code>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">Crawler konkurencji</div>
+          <div class="card-body">
+            Rankingi konkurentów na wspólnych frazach, content gap analysis. → <code>seo_competitor_ranks</code>, <code>seo_keyword_opportunities</code>
           </div>
         </div>
         <div class="card">
           <div class="card-title">AI (Claude / GPT)</div>
           <div class="card-body">
-            Analiza semantyczna treści, sugestie optymalizacji, generowanie rekomendacji.
+            Analiza semantyczna treści, content gap, sugestie optymalizacji. → <code>seo_recommendations</code>, <code>seo_keyword_opportunities</code>
           </div>
         </div>
         <div class="card">
-          <div class="card-title">Baza słów kluczowych</div>
+          <div class="card-title">Security &amp; UX Checks</div>
           <div class="card-body">
-            Historia rankingów, trendy sezonowe, analiza konkurencji, wolumen wyszukiwań.
-          </div>
-        </div>
-        <div class="card">
-          <div class="card-title">PageSpeed Insights</div>
-          <div class="card-body">
-            Core Web Vitals, LCP, CLS, INP — dane bezpośrednio z Google API.
+            HTTPS, security headers, WCAG kontrast, alt tagi, mobile UX. → <code>audit_issues</code>, <code>audit_scores</code>
           </div>
         </div>
       </div>
@@ -1608,35 +1711,50 @@ Notification::send($user, <span class="keyword">new</span> TwoFactorCodeNotifica
 
       <pre>AuditRequestedEvent
     ↓
-<span class="tag">CrawlWebsiteJob</span>       <span class="comment">queue: crawlers (dedykowany worker)</span>
+<span class="tag">CrawlWebsiteJob</span>           <span class="comment">queue: crawlers → seo_audit_pages, seo_issues, audit_issues</span>
     ↓
-<span class="tag">FetchGSCDataJob</span>       <span class="comment">queue: google-apis</span>
-<span class="tag">FetchGA4DataJob</span>       <span class="comment">queue: google-apis (równolegle)</span>
-<span class="tag">FetchPageSpeedJob</span>     <span class="comment">queue: google-apis (równolegle)</span>
+<span class="tag">FetchGSCDataJob</span>           <span class="comment">queue: google-apis → seo_keyword_ranks (hypertable)</span>
+<span class="tag">FetchGA4DataJob</span>           <span class="comment">queue: google-apis (równolegle) → seo_monthly_snapshots</span>
+<span class="tag">FetchPageSpeedJob</span>         <span class="comment">queue: google-apis (równolegle) → seo_cwv_snapshots (hypertable)</span>
+<span class="tag">FetchBacklinksJob</span>         <span class="comment">queue: external-apis → seo_backlinks, seo_monthly_snapshots</span>
+<span class="tag">FetchCompetitorRanksJob</span>   <span class="comment">queue: crawlers → seo_competitor_ranks (hypertable)</span>
     ↓
-<span class="tag">AnalyzeKeywordsJob</span>    <span class="comment">queue: ai-processing</span>
-<span class="tag">AnalyzeSemanticsJob</span>   <span class="comment">queue: ai-processing (równolegle)</span>
+<span class="tag">RunSecurityChecksJob</span>      <span class="comment">queue: crawlers (tylko type: security|full) → audit_issues, audit_scores</span>
+<span class="tag">RunUXChecksJob</span>            <span class="comment">queue: crawlers (tylko type: ux|full) → audit_issues, audit_scores</span>
     ↓
-<span class="tag">GenerateAuditReportJob</span> <span class="comment">zbiera wyniki, generuje raport</span>
+<span class="tag">AnalyzeKeywordsJob</span>        <span class="comment">queue: ai-processing → seo_keywords, seo_keyword_opportunities</span>
+<span class="tag">AnalyzeSemanticsJob</span>       <span class="comment">queue: ai-processing (równolegle) → seo_recommendations</span>
     ↓
-<span class="tag">NotifyAuditCompleteJob</span> <span class="comment">email + in-app notification</span></pre>
+<span class="tag">GenerateAuditReportJob</span>    <span class="comment">audit_scores → audits.overall_score = avg(scores), PDF</span>
+    ↓
+<span class="tag">NotifyAuditCompleteJob</span>    <span class="comment">email + in-app notification (type: audit_complete)</span></pre>
 
       <h3>Schemat bazy danych</h3>
 
-      <pre><span class="comment">-- Główne tabele modułu SEO</span>
-seo_audits           <span class="comment">-- meta audytu: status, scores (0-100), created_at</span>
-seo_audit_pages      <span class="comment">-- wyniki per strona URL (może być tysiące)</span>
-seo_issues           <span class="comment">-- błędy: type, severity (critical/warning/info), fixed_at</span>
-seo_keywords         <span class="comment">-- słowa kluczowe per klient z target_url</span>
-seo_keyword_ranks    <span class="comment">-- TIME-SERIES: pozycja, volume, date (TimescaleDB)</span>
-seo_recommendations  <span class="comment">-- sugestie AI z priorytetem i statusem wdrożenia</span></pre>
+      <pre><span class="comment">-- Rdzeń audytu SEO (istniejące)</span>
+seo_audits                <span class="comment">-- meta audytu: status, overall_score, created_at</span>
+seo_audit_pages           <span class="comment">-- wyniki per URL (title, H1, meta, linki, treść)</span>
+seo_issues                <span class="comment">-- błędy SEO: type, severity, url, assigned_to, due_date</span>
+seo_keywords              <span class="comment">-- słowa kluczowe per projekt z target_url</span>
+seo_keyword_ranks         <span class="comment">-- TIME-SERIES ①: pozycje, clicks, ctr (TimescaleDB)</span>
+seo_recommendations       <span class="comment">-- sugestie AI: priorytet, status wdrożenia</span>
+
+<span class="comment">-- Nowe tabele — audyt kliencki i ogólny (v2.0)</span>
+seo_monthly_snapshots     <span class="comment">-- KPI m/m: sessions, conversions, top10_count, backlinks delta</span>
+seo_cwv_snapshots         <span class="comment">-- TIME-SERIES ②: LCP/CLS/INP/FCP/TTFB per URL (TimescaleDB)</span>
+seo_backlinks             <span class="comment">-- referring_domain, DR, anchor, first/lost_at</span>
+seo_competitors           <span class="comment">-- domeny konkurentów monitorowane per projekt</span>
+seo_competitor_ranks      <span class="comment">-- TIME-SERIES ③: pozycje konkurentów per fraza (TimescaleDB)</span>
+seo_keyword_opportunities <span class="comment">-- content gap: frazy bez strony, z pozycjami konkurentów</span>
+audit_issues              <span class="comment">-- generyczny issue dla ux|security|performance|content</span>
+audit_scores              <span class="comment">-- wyniki 0-100 per kategoria → audits.overall_score = avg()</span></pre>
 
       <div class="info-box orange">
-        <strong>TimescaleDB dla rankingów</strong>
-        Tabela <code>seo_keyword_ranks</code> będzie rosnąć szybko (dziesiątki tysięcy wierszy
-        miesięcznie per klient). TimescaleDB to rozszerzenie PostgreSQL — nie zmieniasz stacku,
-        zyskujesz automatyczne partycjonowanie po czasie i do 100x szybsze zapytania time-series
-        (<code>WHERE date BETWEEN ...</code>).
+        <strong>3 hypertable TimescaleDB</strong>
+        <code>seo_keyword_ranks</code>, <code>seo_cwv_snapshots</code> i <code>seo_competitor_ranks</code>
+        to hypertable TimescaleDB partycjonowane po czasie. Umożliwiają trend pozycji, CWV history
+        per URL i porównanie rankingów konkurentów m/m — wszystko jako zapytania time-series.
+        TimescaleDB = rozszerzenie PostgreSQL, nie zmienia stacku.
       </div>
     </div>
 
@@ -2390,19 +2508,6 @@ activity_log
           </div>
         </li>
         <li class="priority-item">
-          <div class="priority-num" style="background: var(--purple-light); border-color: var(--purple); color: var(--purple);">4.5</div>
-          <div class="priority-content">
-            <div class="priority-title">Discovery &amp; Brief AI</div>
-            <div class="priority-desc">
-              Pipeline kolejkowy: transkrypcja Whisper API, ekstrakcja briefa (Claude), analiza stron
-              referencyjnych (Puppeteer + Vision AI), generowanie wireframe (JSON → renderer React).
-              Kwestionariusz: pytania stałe + AI-generowane per branża klienta. Eksport PDF briefa
-              i makiety przez Browsershot. Wymaga działającego Dokumenty (faza 4) — korzysta z PDF
-              exportu. Pełna integracja z SEO możliwa w fazie 6.
-            </div>
-          </div>
-        </li>
-        <li class="priority-item">
           <div class="priority-num">5</div>
           <div class="priority-content">
             <div class="priority-title">Powiadomienia</div>
@@ -2418,9 +2523,59 @@ activity_log
           <div class="priority-content">
             <div class="priority-title">SEO z AI — moduł zaawansowany</div>
             <div class="priority-desc">
-              TimescaleDB setup, Google Search Console OAuth, Google Analytics 4 API, własny crawler
-              (lub integracja z zewnętrznym API), pipeline kolejkowy (Horizon), integracja AI
-              (Claude API / OpenAI), dashboardy z Recharts, eksport raportów.
+              TimescaleDB setup, Google Search Console OAuth + GA4 API, Ahrefs/Semrush API (backlinki,
+              konkurencja), PageSpeed Insights API (Core Web Vitals), pipeline kolejkowy (Horizon),
+              integracja Claude API (analiza semantyczna, rekomendacje), <code>seo_workshop_steps</code>
+              (4-etapowy przepływ), auto-deploy na WordPress przez WP REST API.
+            </div>
+          </div>
+        </li>
+        <li class="priority-item">
+          <div class="priority-num">7</div>
+          <div class="priority-content">
+            <div class="priority-title">Discovery Workshop — AI agent "Kasia"</div>
+            <div class="priority-desc">
+              Agent Claude Sonnet prowadzący 9-krokowy wywiad przez SSE streaming. Tabele:
+              <code>discovery_workshops</code>, <code>workshop_steps</code>, <code>workshop_step_outputs</code>.
+              Po zakończeniu warsztatu — automatyczna klasyfikacja leadu AI (<code>lead_classifications</code>)
+              z 8-wymiarowym scoringiem (budżet, timeline, decyzyjność, problem, fit, konkurencja, urgency, LTV).
+            </div>
+          </div>
+        </li>
+        <li class="priority-item">
+          <div class="priority-num">8</div>
+          <div class="priority-content">
+            <div class="priority-title">Baza Wiedzy + AI Visibility Score</div>
+            <div class="priority-desc">
+              pgvector extension setup, IVFFlat indexes. Tabele: <code>knowledge_facts</code>,
+              <code>knowledge_entities</code>, <code>knowledge_entity_relations</code>,
+              <code>knowledge_items</code>, <code>agent_knowledge</code>.
+              Semantic search przez cosine similarity. AI Visibility Score (8 czynników):
+              <code>ai_visibility_scores</code> per projekt — historia pomiarów w czasie.
+            </div>
+          </div>
+        </li>
+        <li class="priority-item">
+          <div class="priority-num">9</div>
+          <div class="priority-content">
+            <div class="priority-title">Audyty rozszerzone — UX, Security, Raporty PDF</div>
+            <div class="priority-desc">
+              Integracja axe-core/WAVE (skanowanie WCAG) → <code>ux_audit_results</code>.
+              Integracja securityheaders.com API (nagłówki HTTP) → <code>security_audit_results</code>.
+              Generator raportów PDF (<code>audit_reports</code>) z publicznym tokenem
+              (<code>public_token</code>) i komentarzem stratega. Wysyłka do klienta z panelu admina.
+            </div>
+          </div>
+        </li>
+        <li class="priority-item">
+          <div class="priority-num">10</div>
+          <div class="priority-content">
+            <div class="priority-title">Work Log + Planer pracy</div>
+            <div class="priority-desc">
+              Dziennik pracy per projekt z kategoriami (<code>work_logs</code>) — podstawa raportowania
+              czasu i analizy rentowności. Tygodniowy/miesięczny planer (<code>work_plans</code> +
+              <code>work_plan_items</code>) z szacowanymi i rzeczywistymi godzinami, priorytetami i
+              statusami zadań.
             </div>
           </div>
         </li>
@@ -2490,6 +2645,31 @@ activity_log
             <td><strong>Spatie Activity Log</strong></td>
             <td>Standard de facto w Laravel, zero kodu dla CRUD, polymorphic causer</td>
           </tr>
+          <tr>
+            <td>Vector search</td>
+            <td><strong>pgvector (PostgreSQL ext.)</strong></td>
+            <td>Baza Wiedzy w tej samej DB co dane relacyjne — zero dodatkowej infrastruktury</td>
+          </tr>
+          <tr>
+            <td>AI agenci</td>
+            <td><strong>Claude API (Anthropic)</strong></td>
+            <td>Discovery Workshop "Kasia", kwalifikacja leadów, analiza SEO, scoring bloków</td>
+          </tr>
+          <tr>
+            <td>SEO zewnętrzne dane</td>
+            <td><strong>Ahrefs API / Semrush API</strong></td>
+            <td>Backlinki i rankingi konkurencji — niemożliwe do zastąpienia własnym crawlerem</td>
+          </tr>
+          <tr>
+            <td>UX audyt</td>
+            <td><strong>axe-core (headless)</strong></td>
+            <td>WCAG automatycznie — pokrywa ~57% naruszeń bez manualnej pracy</td>
+          </tr>
+          <tr>
+            <td>CMS deploy</td>
+            <td><strong>WP REST API</strong></td>
+            <td>Auto-deploy treści SEO na WordPress — skraca publikację z godzin do sekund</td>
+          </tr>
         </tbody>
       </table>
 
@@ -2503,13 +2683,16 @@ activity_log
           font-size: 11px;
         "
       >
-        ClientOps CRM — Specyfikacja Techniczna v1.6 &nbsp;·&nbsp; Marzec 2026 &nbsp;·&nbsp; Laravel
-        12 + React 19 + TypeScript
+        ClientOps CRM — Specyfikacja Techniczna v2.0 &nbsp;·&nbsp; Marzec 2026 &nbsp;·&nbsp; Laravel
+        12 + React 19 + TypeScript + pgvector
       </div>
 
       <!-- CROSS-DOCUMENT NAV — updated version -->
       <div style="margin-top:12px; padding:10px 14px; background:#f5f3ff; border:1px solid #ddd6fe; border-radius:8px; font-size:11px; color:#4c1d95;">
-        <strong>v1.6.0</strong> — dodano moduł Discovery &amp; Brief AI (sekcja 11), faza 4.5 w roadmapie, aktualizacja flow sprzedaży.
+        <strong>v2.0.0</strong> — dodano pgvector, Ahrefs/Semrush API, axe-core, WP REST API, Claude API do stacku;
+        nowe moduły: Discovery Workshop (AI agent "Kasia"), Baza Wiedzy, AI Visibility Score, SEO Workshop (WP deploy),
+        Audyty rozszerzone (UX/Security/Raporty PDF), Work Log + Planer; rozszerzono roadmapę do 10 faz.
+        Poprzednia: v1.6.0 — Discovery &amp; Brief AI (sekcja 11), faza 4.5.
       </div>
 
       <!-- CROSS-DOCUMENT NAV -->

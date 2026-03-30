@@ -282,7 +282,7 @@
   <div class="cover-meta">
     <div class="cover-meta-item"><div class="cover-meta-label">Wersja</div><div class="cover-meta-value">2.0.0</div></div>
     <div class="cover-meta-item"><div class="cover-meta-label">Data</div><div class="cover-meta-value">Marzec 2026</div></div>
-    <div class="cover-meta-item"><div class="cover-meta-label">Tabele</div><div class="cover-meta-value">27</div></div>
+    <div class="cover-meta-item"><div class="cover-meta-label">Tabele</div><div class="cover-meta-value">35</div></div>
     <div class="cover-meta-item"><div class="cover-meta-label">Sekcje</div><div class="cover-meta-value">13</div></div>
   </div>
 </div>
@@ -292,7 +292,7 @@
   <div class="toc-title">Spis treści</div>
   <div class="toc-subtitle">Dokument zawiera 13 sekcji — od warstw danych po schematy tabel i przepływy biznesowe</div>
   <ul class="toc-list">
-    <li><div class="toc-item"><div class="toc-num">1</div><span class="toc-text">Podział systemu na warstwy — 27 tabel</span><div class="toc-dots"></div></div></li>
+    <li><div class="toc-item"><div class="toc-num">1</div><span class="toc-text">Podział systemu na warstwy — 35 tabel</span><div class="toc-dots"></div></div></li>
     <li><div class="toc-item"><div class="toc-num">2</div><span class="toc-text">ERD — diagram relacji (Mermaid)</span><div class="toc-dots"></div></div></li>
     <li><div class="toc-item"><div class="toc-num">3</div><span class="toc-text">Schematy tabel — Warstwa 1: Tożsamość</span><div class="toc-dots"></div></div></li>
     <li><div class="toc-item"><div class="toc-num">4</div><span class="toc-text">Schematy tabel — Warstwa 2: Sprzedaż</span><div class="toc-dots"></div></div></li>
@@ -314,7 +314,7 @@
     <div class="section-num">1</div>
     <div class="section-title-wrap">
       <div class="section-label">Architecture</div>
-      <div class="section-title">Podział systemu na warstwy — 27 tabel</div>
+      <div class="section-title">Podział systemu na warstwy — 55 tabel</div>
     </div>
   </div>
 
@@ -330,19 +330,28 @@
       </div>
     </div>
     <div class="layer layer-2">
-      <div class="layer-title">Warstwa 2 — Sprzedaż (3 tabele)</div>
+      <div class="layer-title">Warstwa 2 — Sprzedaż (7 tabel)</div>
       <div class="layer-tables">
         <div class="layer-table">leads</div>
         <div class="layer-table">lead_activities</div>
         <div class="layer-table">offers</div>
+        <div class="layer-table">lead_classifications</div>
+        <div class="layer-table">discovery_workshops</div>
+        <div class="layer-table">workshop_steps</div>
+        <div class="layer-table">workshop_step_outputs</div>
       </div>
     </div>
     <div class="layer layer-3">
-      <div class="layer-title">Warstwa 3 — Realizacja (21 tabel)</div>
+      <div class="layer-title">Warstwa 3 — Realizacja (45 tabel)</div>
       <div class="layer-tables">
         <div class="layer-table">projects</div>
         <div class="layer-table">documents</div>
         <div class="layer-table">document_versions</div>
+        <div class="layer-table">block_templates</div>
+        <div class="layer-table">block_template_scores</div>
+        <div class="layer-table">work_logs</div>
+        <div class="layer-table">work_plans</div>
+        <div class="layer-table">work_plan_items</div>
         <div class="layer-table">kanban_boards</div>
         <div class="layer-table">kanban_columns</div>
         <div class="layer-table">kanban_cards</div>
@@ -357,10 +366,29 @@
         <div class="layer-table">messages</div>
         <div class="layer-table">mentions</div>
         <div class="layer-table">activity_log</div>
+        <div class="layer-table">slug_redirects</div>
         <div class="layer-table">audits</div>
+        <div class="layer-table">audit_issues</div>
+        <div class="layer-table">audit_scores</div>
+        <div class="layer-table">audit_reports</div>
+        <div class="layer-table">ux_audit_results</div>
+        <div class="layer-table">security_audit_results</div>
         <div class="layer-table">seo_analyses</div>
         <div class="layer-table">seo_issues</div>
         <div class="layer-table">seo_keyword_ranks</div>
+        <div class="layer-table">seo_monthly_snapshots</div>
+        <div class="layer-table">seo_cwv_snapshots</div>
+        <div class="layer-table">seo_backlinks</div>
+        <div class="layer-table">seo_competitors</div>
+        <div class="layer-table">seo_competitor_ranks</div>
+        <div class="layer-table">seo_keyword_opportunities</div>
+        <div class="layer-table">seo_workshop_steps</div>
+        <div class="layer-table">ai_visibility_scores</div>
+        <div class="layer-table">knowledge_facts</div>
+        <div class="layer-table">knowledge_entities</div>
+        <div class="layer-table">knowledge_entity_relations</div>
+        <div class="layer-table">knowledge_items</div>
+        <div class="layer-table">agent_knowledge</div>
       </div>
     </div>
   </div>
@@ -669,11 +697,81 @@ erDiagram
   <span class="f">accepted_at</span>             timestamp nullable
   <span class="f">rejected_at</span>             timestamp nullable
   <span class="f">converted_to_client_at</span>  timestamp nullable
+  <span class="f">public_token</span>            uuid nullable          <span class="c">-- publiczny podgląd bez logowania</span>
+  <span class="f">public_expires_at</span>       timestamp nullable
   <span class="fk">created_by</span>              bigint FK → users.id
   <span class="f">created_at</span>              timestamp
   <span class="f">updated_at</span>              timestamp
 
 <span class="c">  -- UNIQUE: (slug, client_id)</span></pre>
+
+  <h3>lead_classifications</h3>
+  <pre><span class="t">lead_classifications</span>
+  <span class="pk">id</span>                 bigint PK auto_increment
+  <span class="fk">lead_id</span>            bigint UNIQUE FK → leads.id    <span class="c">-- 1:1 per lead</span>
+  <span class="f">budget_score</span>       tinyint                        <span class="c">-- 1-10</span>
+  <span class="f">timeline_score</span>     tinyint
+  <span class="f">decision_score</span>     tinyint
+  <span class="f">problem_score</span>      tinyint
+  <span class="f">fit_score</span>          tinyint
+  <span class="f">competition_score</span>  tinyint
+  <span class="f">urgency_score</span>      tinyint
+  <span class="f">ltv_score</span>          tinyint
+  <span class="f">overall_score</span>      decimal(4,2)                   <span class="c">-- ważona średnia</span>
+  <span class="f">ai_reasoning</span>       text nullable                  <span class="c">-- uzasadnienie Claude</span>
+  <span class="f">classified_at</span>      timestamp</pre>
+
+  <h3>discovery_workshops / workshop_steps / workshop_step_outputs</h3>
+  <div class="schema-grid">
+    <div>
+      <pre><span class="t">discovery_workshops</span>
+  <span class="pk">id</span>            bigint PK
+  <span class="fk">lead_id</span>       bigint FK → leads.id
+  <span class="fk">conducted_by</span>  bigint FK → users.id
+  <span class="f">status</span>        enum('in_progress',
+                'completed',
+                'abandoned')
+  <span class="f">started_at</span>    timestamp
+  <span class="f">completed_at</span>  timestamp nullable
+
+<span class="t">workshop_steps</span>
+  <span class="pk">id</span>            bigint PK
+  <span class="fk">workshop_id</span>   bigint FK
+  <span class="f">step_number</span>   tinyint         <span class="c">-- 1-9</span>
+  <span class="f">title</span>         varchar(255)
+  <span class="f">status</span>        enum('pending',
+                'active',
+                'completed',
+                'skipped')
+  <span class="f">agent_prompt</span>  text
+  <span class="f">completed_at</span>  timestamp nullable</pre>
+    </div>
+    <div>
+      <pre><span class="t">workshop_step_outputs</span>
+  <span class="pk">id</span>           bigint PK
+  <span class="fk">step_id</span>      bigint FK
+  <span class="f">output_type</span>  enum(
+    'agent_response',
+    'user_input',
+    'summary')
+  <span class="f">content</span>      text
+  <span class="f">created_at</span>   timestamp
+
+<span class="c">-- Agent "Kasia" (Claude Sonnet)
+-- prowadzi 9-krokowy wywiad
+-- przez SSE streaming.
+-- 9 kroków:
+--  1. Cel projektu
+--  2. Obecna sytuacja
+--  3. Problemy / bóle
+--  4. Budżet
+--  5. Timeline
+--  6. Decyzyjność
+--  7. Konkurencja
+--  8. Oczekiwania
+--  9. Podsumowanie</span></pre>
+    </div>
+  </div>
 </div>
 
 <!-- SECTION 5: SCHEMAS LAYER 3a -->
@@ -992,11 +1090,17 @@ erDiagram
 <span class="t">seo_issues</span>
   <span class="pk">id</span>              bigint PK
   <span class="fk">seo_analysis_id</span> bigint FK
+  <span class="fk">previous_issue_id</span> bigint nullable FK
+  <span class="c">  -- self-ref: ten sam błąd z poprzedniego audytu</span>
   <span class="f">type</span>            varchar(100)
   <span class="f">severity</span>        enum('critical',
                   'warning','info')
   <span class="f">url</span>             varchar(500)
   <span class="f">description</span>     text
+  <span class="f">recommendation</span> text nullable
+  <span class="fk">assigned_to</span>     bigint nullable FK → users
+  <span class="f">due_date</span>        date nullable
+  <span class="f">notes</span>           text nullable
   <span class="f">fixed_at</span>        timestamp nullable</pre>
     </div>
     <div>
@@ -1033,6 +1137,206 @@ erDiagram
   <span class="f">completed_at</span>  timestamp nullable
   <span class="fk">created_by</span>    bigint FK</pre>
     </div>
+  </div>
+
+  <h3>seo_monthly_snapshots / seo_cwv_snapshots</h3>
+  <div class="schema-grid">
+    <div>
+      <pre><span class="t">seo_monthly_snapshots</span>
+  <span class="c">  -- KPI per okres: używane do tabeli</span>
+  <span class="c">  -- "okres do okresu" w raporcie klienckim</span>
+  <span class="pk">id</span>              bigint PK
+  <span class="fk">seo_analysis_id</span> bigint FK
+  <span class="f">period_start</span>    date
+  <span class="f">period_end</span>      date
+  <span class="f">organic_sessions</span> int default 0
+  <span class="f">organic_conversions</span> int default 0
+  <span class="f">avg_ctr</span>         decimal(5,4) default 0
+  <span class="f">avg_position</span>    decimal(5,2) default 0
+  <span class="f">top3_count</span>      int default 0
+  <span class="f">top10_count</span>     int default 0
+  <span class="f">top50_count</span>     int default 0
+  <span class="f">impressions</span>     int default 0
+  <span class="f">clicks</span>          int default 0
+  <span class="f">new_backlinks</span>   int default 0
+  <span class="f">lost_backlinks</span>  int default 0
+  <span class="f">referring_domains</span> int default 0
+  <span class="f">created_at</span>      timestamp</pre>
+    </div>
+    <div>
+      <pre><span class="t">seo_cwv_snapshots</span>
+  <span class="c">  -- TimescaleDB hypertable</span>
+  <span class="c">  -- CWV trend per URL per czas</span>
+  <span class="c">  -- dane z PageSpeed Insights API</span>
+  <span class="pk">id</span>              bigint PK
+  <span class="fk">seo_analysis_id</span> bigint FK
+  <span class="f">url</span>             varchar(500)
+  <span class="f">lcp_ms</span>          int nullable
+  <span class="c">  -- Largest Contentful Paint</span>
+  <span class="f">cls_score</span>       decimal(5,3) nullable
+  <span class="c">  -- Cumulative Layout Shift</span>
+  <span class="f">inp_ms</span>          int nullable
+  <span class="c">  -- Interaction to Next Paint</span>
+  <span class="f">fcp_ms</span>          int nullable
+  <span class="c">  -- First Contentful Paint</span>
+  <span class="f">ttfb_ms</span>         int nullable
+  <span class="c">  -- Time to First Byte</span>
+  <span class="f">performance_score</span> int nullable
+  <span class="c">  -- 0-100 z PageSpeed</span>
+  <span class="f">device</span>          enum('mobile',
+                  'desktop')
+  <span class="f">source</span>          enum('pagespeed',
+                  'gsc_field')
+  <span class="c">  -- API vs dane polowe GSC</span>
+  <span class="f">measured_at</span>     timestamp
+  <span class="c">  -- PRIMARY TIME COLUMN</span></pre>
+    </div>
+  </div>
+
+  <h3>seo_backlinks / seo_competitors / seo_competitor_ranks</h3>
+  <div class="schema-grid">
+    <div>
+      <pre><span class="t">seo_backlinks</span>
+  <span class="pk">id</span>               bigint PK
+  <span class="fk">seo_analysis_id</span>  bigint FK
+  <span class="f">referring_domain</span> varchar(255)
+  <span class="f">target_url</span>       varchar(500)
+  <span class="f">anchor_text</span>      varchar(500) nullable
+  <span class="f">domain_rating</span>    int nullable
+  <span class="c">  -- 0-100 (Ahrefs DR / Moz DA)</span>
+  <span class="f">is_toxic</span>         boolean default false
+  <span class="f">first_seen_at</span>    date nullable
+  <span class="f">last_seen_at</span>     date nullable
+  <span class="f">lost_at</span>          date nullable
+  <span class="c">  -- null = link aktywny</span>
+  <span class="f">created_at</span>       timestamp
+
+<span class="t">seo_competitors</span>
+  <span class="pk">id</span>               bigint PK
+  <span class="fk">project_id</span>       bigint FK
+  <span class="f">domain</span>           varchar(255)
+  <span class="f">label</span>            varchar(100) nullable
+  <span class="c">  -- np. "główny rywal"</span>
+  <span class="f">is_active</span>        boolean default true
+  <span class="f">added_at</span>         timestamp</pre>
+    </div>
+    <div>
+      <pre><span class="t">seo_competitor_ranks</span>
+  <span class="c">  -- TimescaleDB hypertable</span>
+  <span class="c">  -- rankingi konkurentów w czasie</span>
+  <span class="pk">id</span>              bigint PK
+  <span class="fk">competitor_id</span>   bigint FK → seo_competitors
+  <span class="fk">seo_analysis_id</span> bigint FK
+  <span class="f">keyword</span>         varchar(255)
+  <span class="f">position</span>        int nullable
+  <span class="c">  -- null = poza top 100</span>
+  <span class="f">url</span>             varchar(500) nullable
+  <span class="f">time</span>            timestamp
+  <span class="c">  -- PRIMARY TIME COLUMN
+
+-- Umożliwia zapytanie:
+-- "Na jakich wspólnych frazach
+--  konkurent A wyprzedza nas?
+--  I jak zmienił się gap m/m?"</span>
+
+<span class="t">seo_keyword_opportunities</span>
+  <span class="pk">id</span>               bigint PK
+  <span class="fk">seo_analysis_id</span>  bigint FK
+  <span class="f">keyword</span>          varchar(255)
+  <span class="f">search_volume</span>    int default 0
+  <span class="f">difficulty</span>       int nullable
+  <span class="c">  -- 0-100 (KD score)</span>
+  <span class="f">competitor_positions</span> json nullable
+  <span class="c">  -- {"ahrefs.com": 3, "semrush.com": 7}</span>
+  <span class="f">has_dedicated_page</span> boolean default false
+  <span class="f">recommendation</span>  text nullable
+  <span class="c">  -- "Stwórz landing page dla X"</span>
+  <span class="f">created_at</span>       timestamp</pre>
+    </div>
+  </div>
+
+  <h3>audit_issues / audit_scores</h3>
+  <div class="schema-grid">
+    <div>
+      <pre><span class="t">audit_issues</span>
+  <span class="c">  -- Generyczny odpowiednik seo_issues</span>
+  <span class="c">  -- dla audytów: ux | security</span>
+  <span class="c">  --              technical | full</span>
+  <span class="pk">id</span>              bigint PK
+  <span class="fk">audit_id</span>        bigint FK → audits
+  <span class="f">category</span>        enum('ux',
+                  'security',
+                  'performance',
+                  'technical',
+                  'content',
+                  'seo')
+  <span class="f">type</span>            varchar(100)
+  <span class="c">  -- np. "missing_alt", "low_contrast"</span>
+  <span class="c">  -- "no_https", "weak_csp"</span>
+  <span class="c">  -- "lcp_fail", "cls_fail"</span>
+  <span class="f">severity</span>        enum('critical',
+                  'warning','info')
+  <span class="f">url</span>             varchar(500) nullable
+  <span class="f">description</span>     text
+  <span class="f">recommendation</span> text nullable
+  <span class="fk">assigned_to</span>     bigint nullable FK → users
+  <span class="f">due_date</span>        date nullable
+  <span class="f">fixed_at</span>        timestamp nullable
+  <span class="f">created_at</span>      timestamp</pre>
+    </div>
+    <div>
+      <pre><span class="t">audit_scores</span>
+  <span class="c">  -- Wyniki punktowe per kategoria</span>
+  <span class="c">  -- per audyt — podstawa raportu</span>
+  <span class="pk">id</span>              bigint PK
+  <span class="fk">audit_id</span>        bigint FK → audits
+  <span class="f">category</span>        enum('seo',
+                  'performance',
+                  'ux',
+                  'security',
+                  'content')
+  <span class="f">score</span>           int
+  <span class="c">  -- 0-100</span>
+  <span class="f">details</span>         json nullable
+  <span class="c">  -- { "lcp": 42, "cls": 95,</span>
+  <span class="c">  --   "inp": 78, "mobile_ok": true,</span>
+  <span class="c">  --   "https": true, "wcag_pass": false,</span>
+  <span class="c">  --   "issues_count": 14 }</span>
+  <span class="f">measured_at</span>     timestamp
+
+<span class="c">-- audits.overall_score =
+--   avg(audit_scores.score)
+--   per audit_id</span>
+
+<span class="c">-- Widok raportu:
+-- SEO       ████████░░  82/100
+-- Wydajność ████░░░░░░  43/100
+-- UX        ██████░░░░  61/100
+-- Bezp.     █████████░  90/100</span></pre>
+    </div>
+  </div>
+
+  <div class="info-box blue">
+    <strong>8 nowych tabel dla pełnego audytu (v2.0)</strong>
+    Oryginalne 27 tabel obsługiwało audyt SEO w wersji prospektowej (jednorazowy snapshot).
+    Nowe tabele umożliwiają: (1) raporty klienckie z porównaniem m/m (<code>seo_monthly_snapshots</code>),
+    (2) trend Core Web Vitals per URL (<code>seo_cwv_snapshots</code>),
+    (3) monitoring backlinków (<code>seo_backlinks</code>),
+    (4) monitoring konkurencji w czasie (<code>seo_competitors</code> + <code>seo_competitor_ranks</code>),
+    (5) content gap analysis (<code>seo_keyword_opportunities</code>),
+    (6) ogólny audyt strony — UX/Security/Performance (<code>audit_issues</code> + <code>audit_scores</code>).
+  </div>
+
+  <div class="info-box" style="background:#fdf4ff; border-left:4px solid #a855f7;">
+    <strong>20 nowych tabel — Discovery, Knowledge System, AI, SEO Workshop, Work Log (v3.0)</strong>
+    Warstwa 2: <code>lead_classifications</code>, <code>discovery_workshops</code>, <code>workshop_steps</code>, <code>workshop_step_outputs</code>.
+    Warstwa 3: <code>audit_reports</code>, <code>ux_audit_results</code>, <code>security_audit_results</code>,
+    <code>block_templates</code>, <code>block_template_scores</code>,
+    <code>knowledge_facts</code>, <code>knowledge_entities</code>, <code>knowledge_entity_relations</code>, <code>knowledge_items</code>, <code>agent_knowledge</code>,
+    <code>ai_visibility_scores</code>, <code>seo_workshop_steps</code>,
+    <code>work_logs</code>, <code>work_plans</code>, <code>work_plan_items</code>.
+    PostgreSQL rozszerzony o <strong>pgvector</strong> (1536-dim embeddingi, IVFFlat index) dla semantic search w Bazie Wiedzy.
+    Łącznie: <strong>55 tabel</strong>.
   </div>
 </div>
 
@@ -1370,38 +1674,63 @@ $conv->participants
     </div>
   </div>
 
-  <h3>Pipeline kolejkowy (Horizon)</h3>
+  <h3>Pipeline kolejkowy (Horizon) — pełny</h3>
   <pre>AuditRequestedEvent
   │
-  ├── CrawlWebsiteJob        (queue: crawlers)
-  │     → seo_audit_pages, seo_issues (broken links, missing meta...)
+  ├── CrawlWebsiteJob           (queue: crawlers)
+  │     → seo_audit_pages       — wyniki per URL (title, H1, meta, treść, linki)
+  │     → seo_issues            — broken links, missing meta, duplicate content
+  │     → audit_issues          — kategoria: technical, content
   │
-  ├── FetchGSCDataJob        (queue: google-apis)
-  │     → seo_keyword_ranks (pozycje, kliknięcia, impressions, CTR)
+  ├── FetchGSCDataJob           (queue: google-apis)
+  │     → seo_keyword_ranks     — pozycje, kliknięcia, impressions, CTR (hypertable)
   │
-  ├── FetchGA4DataJob        (queue: google-apis) ← równolegle z GSC
-  │     → organic traffic, conversions per page
+  ├── FetchGA4DataJob           (queue: google-apis) ← równolegle z GSC
+  │     → seo_monthly_snapshots — organic_sessions, conversions, avg_ctr, avg_position
   │
-  ├── AnalyzeKeywordsJob     (queue: ai-processing)
-  │     → seo_keywords (klasyfikacja, grupy tematyczne)
+  ├── FetchPageSpeedJob         (queue: google-apis) ← równolegle
+  │     → seo_cwv_snapshots     — LCP, CLS, INP, FCP, TTFB per URL (hypertable)
+  │     → audit_scores          — kategoria: performance (score 0-100)
+  │     → audit_issues          — kategoria: performance (lcp_fail, cls_fail...)
   │
-  ├── AnalyzeSemanticsJob    (queue: ai-processing) ← równolegle
-  │     → seo_recommendations (AI: Claude API / OpenAI)
+  ├── FetchBacklinksJob         (queue: external-apis)
+  │     → seo_backlinks         — referring_domain, DR, anchor, first/last_seen
+  │     → seo_monthly_snapshots — new_backlinks, lost_backlinks, referring_domains
+  │
+  ├── FetchCompetitorRanksJob   (queue: crawlers) ← per competitor w seo_competitors
+  │     → seo_competitor_ranks  — keyword, position per competitor (hypertable)
+  │
+  ├── RunSecurityChecksJob      (queue: crawlers) ← tylko dla audyt.type = security|full
+  │     → audit_issues          — kategoria: security (no_https, missing_headers...)
+  │     → audit_scores          — kategoria: security
+  │
+  ├── RunUXChecksJob            (queue: crawlers) ← tylko dla audyt.type = ux|full
+  │     → audit_issues          — kategoria: ux (low_contrast, no_alt, small_targets...)
+  │     → audit_scores          — kategoria: ux (WCAG pass rate)
+  │
+  ├── AnalyzeKeywordsJob        (queue: ai-processing)
+  │     → seo_keywords          — klasyfikacja, grupy tematyczne
+  │     → seo_keyword_opportunities — content gap vs competitors
+  │
+  ├── AnalyzeSemanticsJob       (queue: ai-processing) ← równolegle
+  │     → seo_recommendations   — AI: Claude API / OpenAI
   │
   ├── GenerateAuditReportJob
-  │     → audits.overall_score = avg(component scores)
-  │     → seo_analyses.status → 'completed'
+  │     → audit_scores          — SEO score z seo_analyses.score
+  │     → audits.overall_score  — avg(audit_scores.score) per kategoria
+  │     → seo_analyses.status   → 'completed'
   │
   └── NotifyAuditCompleteJob
         → notifications (type: audit_complete)
         → broadcast → bell w UI</pre>
 
   <div class="info-box blue">
-    <strong>TimescaleDB — seo_keyword_ranks</strong>
-    Tabela <code>seo_keyword_ranks</code> to hypertable TimescaleDB partycjonowany po kolumnie <code>time</code>.
-    Umożliwia zapytania time-series: trend pozycji w czasie, rolling average, continuous aggregates.
-    Dane z Google Search Console mogą mieć miliony wierszy — standardowy PostgreSQL nie skaluje się
-    dla takich zapytań. TimescaleDB to rozszerzenie PostgreSQL — nie zmienia stacku.
+    <strong>3 hypertable TimescaleDB — seo_keyword_ranks, seo_cwv_snapshots, seo_competitor_ranks</strong>
+    Każda z tych tabel to hypertable TimescaleDB partycjonowany po kolumnie <code>time</code> (lub <code>measured_at</code>).
+    Umożliwiają zapytania time-series: trend pozycji w czasie, rolling average, continuous aggregates,
+    porównanie CWV m/m per URL. Dane z GSC + PageSpeed + competitors mogą mieć miliony wierszy
+    miesięcznie — standardowy PostgreSQL nie skaluje się dla takich zapytań.
+    TimescaleDB to rozszerzenie PostgreSQL — nie zmienia stacku, nie wymaga migracji danych.
   </div>
 </div>
 
@@ -1465,7 +1794,7 @@ $conv->participants
 
   <div class="doc-footer-block">
     ClientOps CRM — Architektura i Model Danych v2.0.0 &nbsp;·&nbsp; Marzec 2026 &nbsp;·&nbsp;
-    27 tabel · 13 sekcji · Laravel 12 + React 19 + PostgreSQL + TimescaleDB
+    55 tabel · 13 sekcji · Laravel 12 + React 19 + PostgreSQL + TimescaleDB + pgvector
   </div>
 
   <!-- CROSS-DOCUMENT NAV -->
@@ -1480,7 +1809,7 @@ $conv->participants
       <div style="background:#f0fdfa; border:1px solid #99f6e4; border-radius:6px; padding:8px 14px;">
         <div style="font-weight:700; color:#0d9488; margin-bottom:2px;">🏗️ Ten dokument</div>
         <div style="color:#475569;">Architektura i Model Danych v2.0.0</div>
-        <div style="color:#94a3b8; font-size:10px; margin-top:2px;">ERD, schematy tabel, przepływy, 27 tabel</div>
+        <div style="color:#94a3b8; font-size:10px; margin-top:2px;">ERD, schematy tabel, przepływy, 55 tabel</div>
       </div>
       <div style="background:#f5f3ff; border:1px solid #ddd6fe; border-radius:6px; padding:8px 14px;">
         <div style="font-weight:700; color:#7c3aed; margin-bottom:2px;">🎨 Design System — Biblioteki v1.0</div>
