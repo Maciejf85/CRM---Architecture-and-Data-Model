@@ -1,0 +1,1458 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ClientOps CRM — Przewodnik Audytów: Zawartość i Struktura v1.0.0</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+  :root {
+    --primary: #0d9488;
+    --primary-light: #f0fdfa;
+    --accent: #14b8a6;
+    --dark: #0f172a;
+    --gray-800: #1e293b;
+    --gray-700: #334155;
+    --gray-600: #475569;
+    --gray-400: #94a3b8;
+    --gray-200: #e2e8f0;
+    --gray-100: #f1f5f9;
+    --gray-50: #f8fafc;
+    --red: #dc2626;
+    --red-light: #fef2f2;
+    --orange: #d97706;
+    --orange-light: #fffbeb;
+    --blue: #1e40af;
+    --blue-light: #eff6ff;
+    --green: #059669;
+    --green-light: #ecfdf5;
+    --purple: #7c3aed;
+    --purple-light: #f5f3ff;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', -apple-system, sans-serif;
+    color: var(--dark);
+    background: white;
+    font-size: 13px;
+    line-height: 1.6;
+  }
+
+  @page { margin: 14mm 0 10mm; size: A4; }
+  @page :first { margin: 0; }
+
+  /* COVER */
+  .cover {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #0f172a 0%, #042f2e 50%, #0f172a 100%);
+    display: flex; flex-direction: column;
+    justify-content: center; align-items: center;
+    text-align: center; padding: 60px 40px;
+    page-break-after: always;
+    position: relative; overflow: hidden;
+  }
+  .cover::before {
+    content: ''; position: absolute;
+    width: 500px; height: 500px;
+    background: radial-gradient(circle, rgba(13,148,136,0.2) 0%, transparent 70%);
+    top: -80px; right: -80px; border-radius: 50%;
+  }
+  .cover::after {
+    content: ''; position: absolute;
+    width: 400px; height: 400px;
+    background: radial-gradient(circle, rgba(20,184,166,0.12) 0%, transparent 70%);
+    bottom: -60px; left: -60px; border-radius: 50%;
+  }
+  .cover-badge {
+    background: rgba(13,148,136,0.2); border: 1px solid rgba(13,148,136,0.45);
+    color: #5eead4; padding: 6px 18px; border-radius: 20px;
+    font-size: 11px; font-weight: 500; letter-spacing: 1.5px;
+    text-transform: uppercase; margin-bottom: 24px; position: relative; z-index: 1;
+  }
+  .cover-logo {
+    font-size: 48px; font-weight: 700; color: white;
+    letter-spacing: -2px; margin-bottom: 6px; position: relative; z-index: 1;
+  }
+  .cover-logo span { color: #2dd4bf; }
+  .cover-subtitle { font-size: 16px; color: #64748b; font-weight: 300; margin-bottom: 40px; position: relative; z-index: 1; }
+  .cover-divider { width: 60px; height: 2px; background: linear-gradient(90deg, #0d9488, #7c3aed); margin: 0 auto 40px; position: relative; z-index: 1; }
+  .cover-title { font-size: 30px; font-weight: 700; color: white; margin-bottom: 14px; line-height: 1.2; position: relative; z-index: 1; }
+  .cover-desc { font-size: 14px; color: #475569; max-width: 540px; margin-bottom: 56px; position: relative; z-index: 1; line-height: 1.7; }
+  .cover-meta { display: flex; gap: 48px; justify-content: center; position: relative; z-index: 1; }
+  .cover-meta-item { text-align: center; }
+  .cover-meta-label { font-size: 10px; text-transform: uppercase; letter-spacing: 1px; color: #334155; margin-bottom: 4px; }
+  .cover-meta-value { font-size: 13px; color: #cbd5e1; font-weight: 500; }
+
+  /* TOC */
+  .toc-page {
+    padding: 56px 60px;
+    page-break-after: always;
+  }
+  .toc-header {
+    font-size: 10px; text-transform: uppercase; letter-spacing: 1.5px;
+    color: var(--gray-400); margin-bottom: 32px; font-weight: 600;
+  }
+  .toc-title {
+    font-size: 26px; font-weight: 700; color: var(--dark); margin-bottom: 40px;
+  }
+  .toc-section {
+    margin-bottom: 28px;
+  }
+  .toc-section-label {
+    font-size: 10px; text-transform: uppercase; letter-spacing: 1px;
+    color: var(--primary); font-weight: 700; margin-bottom: 10px;
+    padding-bottom: 4px; border-bottom: 1px solid var(--gray-200);
+  }
+  .toc-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 7px 0; border-bottom: 1px dashed var(--gray-200);
+  }
+  .toc-num {
+    width: 22px; height: 22px; background: var(--gray-100); border-radius: 5px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px; font-weight: 700; color: var(--gray-600); flex-shrink: 0;
+  }
+  .toc-text { font-size: 12px; color: var(--gray-800); font-weight: 500; flex: 1; }
+  .toc-sub { font-size: 11px; color: var(--gray-400); }
+  .toc-badge {
+    font-size: 10px; padding: 2px 8px; border-radius: 10px; font-weight: 600;
+  }
+  .badge-prospect { background: var(--orange-light); color: var(--orange); }
+  .badge-client { background: var(--blue-light); color: var(--blue); }
+  .badge-general { background: var(--purple-light); color: var(--purple); }
+
+  /* CONTENT PAGES */
+  .content-page {
+    padding: 0 60px 48px;
+  }
+  .chapter-header {
+    padding: 36px 60px 28px;
+    margin: 0 -60px 32px;
+    border-bottom: 1px solid var(--gray-200);
+    page-break-before: always;
+  }
+  .chapter-header:first-child {
+    page-break-before: auto;
+  }
+  .chapter-label {
+    font-size: 10px; text-transform: uppercase; letter-spacing: 1.5px;
+    font-weight: 700; margin-bottom: 8px;
+  }
+  .label-prospect { color: var(--orange); }
+  .label-client { color: var(--blue); }
+  .label-general { color: var(--purple); }
+  .chapter-title {
+    font-size: 24px; font-weight: 700; color: var(--dark); margin-bottom: 8px;
+  }
+  .chapter-desc {
+    font-size: 13px; color: var(--gray-600); max-width: 600px; line-height: 1.7;
+  }
+  .chapter-meta {
+    display: flex; gap: 24px; margin-top: 16px; flex-wrap: wrap;
+  }
+  .chapter-meta-item {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 11px; color: var(--gray-600);
+  }
+  .chapter-meta-dot {
+    width: 6px; height: 6px; border-radius: 50%;
+  }
+
+  /* SECTION */
+  .section {
+    margin-bottom: 32px;
+  }
+  .section-title {
+    font-size: 15px; font-weight: 700; color: var(--dark); margin-bottom: 14px;
+    padding-bottom: 8px; border-bottom: 2px solid var(--gray-100);
+    display: flex; align-items: center; gap: 8px;
+  }
+  .section-num {
+    width: 24px; height: 24px; background: var(--primary);
+    border-radius: 6px; color: white; font-size: 11px; font-weight: 700;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .section-num-orange { background: var(--orange); }
+  .section-num-blue { background: var(--blue); }
+  .section-num-purple { background: var(--purple); }
+
+  /* CHECKLIST */
+  .checklist {
+    list-style: none; margin-bottom: 12px;
+  }
+  .checklist li {
+    padding: 5px 0 5px 24px;
+    border-bottom: 1px solid var(--gray-100);
+    color: var(--gray-700);
+    font-size: 12.5px;
+    position: relative;
+  }
+  .checklist li::before {
+    content: '›';
+    position: absolute; left: 6px;
+    color: var(--primary); font-weight: 700; font-size: 14px;
+  }
+  .checklist li strong {
+    color: var(--dark); font-weight: 600;
+  }
+  .checklist li em {
+    color: var(--gray-400); font-style: normal; font-size: 11px;
+  }
+
+  /* SUBSECTION */
+  .subsection {
+    margin-bottom: 20px;
+  }
+  .subsection-title {
+    font-size: 12px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.8px; color: var(--gray-600);
+    margin-bottom: 8px; margin-top: 16px;
+  }
+
+  /* NOTE */
+  .note {
+    background: var(--primary-light);
+    border-left: 3px solid var(--primary);
+    padding: 10px 14px;
+    border-radius: 0 6px 6px 0;
+    font-size: 12px;
+    color: var(--gray-700);
+    margin: 12px 0;
+    line-height: 1.6;
+  }
+  .note-orange {
+    background: var(--orange-light);
+    border-left-color: var(--orange);
+  }
+  .note-blue {
+    background: var(--blue-light);
+    border-left-color: var(--blue);
+  }
+  .note-purple {
+    background: var(--purple-light);
+    border-left-color: var(--purple);
+  }
+
+  /* TABLE */
+  table {
+    width: 100%; border-collapse: collapse;
+    margin: 12px 0 20px; font-size: 12px;
+  }
+  thead tr {
+    background: var(--gray-100);
+  }
+  th {
+    padding: 8px 12px; text-align: left;
+    font-size: 11px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.5px;
+    color: var(--gray-600); border-bottom: 1px solid var(--gray-200);
+  }
+  td {
+    padding: 8px 12px; border-bottom: 1px solid var(--gray-100);
+    color: var(--gray-700); vertical-align: top;
+  }
+  tr:hover td { background: var(--gray-50); }
+  .td-crit { color: var(--red); font-weight: 600; }
+  .td-warn { color: var(--orange); font-weight: 600; }
+  .td-ok { color: var(--green); font-weight: 600; }
+  .td-bold { font-weight: 600; color: var(--dark); }
+
+  /* STATUS BADGE */
+  .status {
+    display: inline-block; padding: 2px 8px; border-radius: 10px;
+    font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;
+  }
+  .s-crit { background: var(--red-light); color: var(--red); }
+  .s-warn { background: var(--orange-light); color: var(--orange); }
+  .s-ok { background: var(--green-light); color: var(--green); }
+  .s-info { background: var(--blue-light); color: var(--blue); }
+
+  /* GRID CARDS */
+  .cards-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 16px 0;
+  }
+  .cards-grid-3 {
+    display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin: 16px 0;
+  }
+  .card {
+    padding: 14px 16px;
+    border: 1px solid var(--gray-200);
+    border-radius: 10px; background: var(--gray-50);
+  }
+  .card-label {
+    font-size: 10px; text-transform: uppercase; letter-spacing: 0.8px;
+    color: var(--gray-400); font-weight: 600; margin-bottom: 4px;
+  }
+  .card-title {
+    font-size: 13px; font-weight: 700; color: var(--dark); margin-bottom: 4px;
+  }
+  .card-body {
+    font-size: 11.5px; color: var(--gray-600); line-height: 1.5;
+  }
+  .card-teal { border-left: 3px solid var(--primary); }
+  .card-orange { border-left: 3px solid var(--orange); }
+  .card-blue { border-left: 3px solid var(--blue); }
+  .card-purple { border-left: 3px solid var(--purple); }
+
+  /* COMPARISON TABLE (footer) */
+  .comparison-page {
+    padding: 0 60px 48px;
+    page-break-before: always;
+  }
+
+  /* DIVIDER */
+  .divider {
+    border: none; border-top: 1px solid var(--gray-200); margin: 32px 0;
+  }
+
+  /* PAGE FOOTER */
+  .page-footer {
+    margin-top: 48px;
+    padding-top: 14px;
+    border-top: 1px solid var(--gray-200);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 10px;
+    color: var(--gray-400);
+  }
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════
+     COVER PAGE
+══════════════════════════════════════════ -->
+<div class="cover">
+  <div class="cover-badge">Przewodnik Audytów — v1.0</div>
+  <div class="cover-logo">Client<span>Ops</span></div>
+  <div class="cover-subtitle">Platforma CRM nowej generacji</div>
+  <div class="cover-divider"></div>
+  <div class="cover-title">Struktura i Zawartość Audytów</div>
+  <div class="cover-desc">
+    Kompleksowy przewodnik po zawartości audytów: SEO na pozyskanie klienta,
+    SEO dla aktywnego klienta oraz ogólny audyt strony na pozyskanie klienta.
+    Specyfikacja sekcji, danych i formatu raportów.
+  </div>
+  <div class="cover-meta">
+    <div class="cover-meta-item">
+      <div class="cover-meta-label">Wersja</div>
+      <div class="cover-meta-value">1.0.0</div>
+    </div>
+    <div class="cover-meta-item">
+      <div class="cover-meta-label">Data</div>
+      <div class="cover-meta-value">Marzec 2026</div>
+    </div>
+    <div class="cover-meta-item">
+      <div class="cover-meta-label">Typy audytów</div>
+      <div class="cover-meta-value">3</div>
+    </div>
+    <div class="cover-meta-item">
+      <div class="cover-meta-label">Autor</div>
+      <div class="cover-meta-value">Maciej Fiałkowski</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     TABLE OF CONTENTS
+══════════════════════════════════════════ -->
+<div class="toc-page">
+  <div class="toc-header">Spis treści</div>
+  <div class="toc-title">Zawartość dokumentu</div>
+
+  <div class="toc-section">
+    <div class="toc-section-label">Audyt 1 — SEO na pozyskanie klienta</div>
+    <div class="toc-item">
+      <div class="toc-num">1</div>
+      <div class="toc-text">Cel i format dokumentu</div>
+      <span class="toc-badge badge-prospect">Prospekt</span>
+    </div>
+    <div class="toc-item">
+      <div class="toc-num">2</div>
+      <div class="toc-text">Strona tytułowa + Executive Summary</div>
+      <span class="toc-sub">ogólna ocena, krytyczne problemy, potencjał wzrostu</span>
+    </div>
+    <div class="toc-item">
+      <div class="toc-num">3</div>
+      <div class="toc-text">Widoczność w Google — stan obecny</div>
+      <span class="toc-sub">rankingi, trend 12 mies., porównanie z konkurentami</span>
+    </div>
+    <div class="toc-item">
+      <div class="toc-num">4</div>
+      <div class="toc-text">Techniczne SEO — kluczowe błędy</div>
+      <span class="toc-sub">indeksacja, Core Web Vitals, HTTPS, mobile, 404, canonical</span>
+    </div>
+    <div class="toc-item">
+      <div class="toc-num">5</div>
+      <div class="toc-text">On-page SEO — próbka (top 5–10 stron)</div>
+      <span class="toc-sub">title, meta, H1, treść, obrazy, linki wewnętrzne</span>
+    </div>
+    <div class="toc-item">
+      <div class="toc-num">6</div>
+      <div class="toc-text">Słowa kluczowe — luki i szanse</div>
+      <span class="toc-sub">frazy konkurencji, branded, lokalne</span>
+    </div>
+    <div class="toc-item">
+      <div class="toc-num">7</div>
+      <div class="toc-text">Profil linków + Priorytety + CTA</div>
+      <span class="toc-sub">backlinks, quick wins, następne kroki</span>
+    </div>
+  </div>
+
+  <div class="toc-section">
+    <div class="toc-section-label">Audyt 2 — SEO dla aktywnego klienta (miesięczny/kwartalny)</div>
+    <div class="toc-item">
+      <div class="toc-num">1</div>
+      <div class="toc-text">Dashboard KPI — okres do okresu</div>
+      <span class="toc-badge badge-client">Klient</span>
+    </div>
+    <div class="toc-item">
+      <div class="toc-num">2</div>
+      <div class="toc-text">Widoczność i rankingi — pełna analiza</div>
+      <span class="toc-sub">trend 12 mies., top 20 fraz, nisko wiszące owoce</span>
+    </div>
+    <div class="toc-item">
+      <div class="toc-num">3</div>
+      <div class="toc-text">Ruch organiczny GA4 + GSC szczegółowo</div>
+      <span class="toc-sub">konwersje, ścieżki, coverage, structured data</span>
+    </div>
+    <div class="toc-item">
+      <div class="toc-num">4</div>
+      <div class="toc-text">Techniczne SEO — przegląd bieżący</div>
+      <span class="toc-sub">pełne crawlowanie, nowe błędy, Core Web Vitals trend</span>
+    </div>
+    <div class="toc-item">
+      <div class="toc-num">5</div>
+      <div class="toc-text">On-page postępy + link building + konkurencja</div>
+      <span class="toc-sub">status zadań, nowe linki, monitoring rywali</span>
+    </div>
+    <div class="toc-item">
+      <div class="toc-num">6</div>
+      <div class="toc-text">Zrealizowane prace + Plan na następny miesiąc</div>
+      <span class="toc-sub">checkpoint, priorytety, komentarz stratega</span>
+    </div>
+  </div>
+
+  <div class="toc-section">
+    <div class="toc-section-label">Audyt 3 — Ogólny audyt strony na pozyskanie klienta</div>
+    <div class="toc-item">
+      <div class="toc-num">1</div>
+      <div class="toc-text">Executive Summary — 4 kategorie z ocenami</div>
+      <span class="toc-badge badge-general">Prospekt</span>
+    </div>
+    <div class="toc-item">
+      <div class="toc-num">2</div>
+      <div class="toc-text">Wydajność techniczna (PageSpeed, CWV, zasoby)</div>
+      <span class="toc-sub">LCP, CLS, INP, TTFB, CDN, lazy loading</span>
+    </div>
+    <div class="toc-item">
+      <div class="toc-num">3</div>
+      <div class="toc-text">SEO — stan podstawowy</div>
+      <span class="toc-sub">widoczność, indeksacja, on-page próbka</span>
+    </div>
+    <div class="toc-item">
+      <div class="toc-num">4</div>
+      <div class="toc-text">UX i dostępność (WCAG 2.1)</div>
+      <span class="toc-sub">mobile, formularze, kontrast, keyboard nav</span>
+    </div>
+    <div class="toc-item">
+      <div class="toc-num">5</div>
+      <div class="toc-text">Bezpieczeństwo, analityka, treści</div>
+      <span class="toc-sub">HTTPS, RODO, GA4, blog, wizerunek</span>
+    </div>
+    <div class="toc-item">
+      <div class="toc-num">6</div>
+      <div class="toc-text">Tabela priorytetów + Metodologia + CTA</div>
+      <span class="toc-sub">wszystkie kategorie, narzędzia, następne kroki</span>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     AUDYT 1: SEO NA POZYSKANIE KLIENTA
+══════════════════════════════════════════ -->
+<div class="content-page">
+
+  <div class="chapter-header">
+    <div class="chapter-label label-prospect">Audyt 1 z 3 — Pozyskanie klienta</div>
+    <div class="chapter-title">Audyt SEO — Wersja Prospektowa</div>
+    <div class="chapter-desc">
+      Cel: zaimponować, pokazać że wiemy więcej niż konkurencja, wzbudzić ból i potrzebę działania.
+      Dokument dla właściciela firmy — nie dla technika. Czytelny, z konkretami, z CTA.
+    </div>
+    <div class="chapter-meta">
+      <div class="chapter-meta-item">
+        <div class="chapter-meta-dot" style="background: var(--orange)"></div>
+        Objętość: 8–15 stron
+      </div>
+      <div class="chapter-meta-item">
+        <div class="chapter-meta-dot" style="background: var(--orange)"></div>
+        Odbiorca: właściciel firmy / dyrektor marketingu
+      </div>
+      <div class="chapter-meta-item">
+        <div class="chapter-meta-dot" style="background: var(--orange)"></div>
+        Dane: publiczne + GSC (jeśli dali dostęp)
+      </div>
+      <div class="chapter-meta-item">
+        <div class="chapter-meta-dot" style="background: var(--orange)"></div>
+        Ton: diagnostyczny — "mamy diagnozę, możemy pomóc"
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">
+      <div class="section-num section-num-orange">1</div>
+      Strona tytułowa
+    </div>
+    <ul class="checklist">
+      <li><strong>Logo klienta</strong> + logo agencji — personalizacja buduje zaufanie</li>
+      <li><strong>Nazwa domeny / firmy</strong> — wyraźnie widoczna</li>
+      <li><strong>Data audytu</strong> — aktualność ma znaczenie</li>
+      <li><strong>Osoba przygotowująca</strong> — imię, stanowisko (buduje relację)</li>
+      <li><strong>Klauzula poufności</strong> — "Dokument przygotowany wyłącznie dla..."</li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <div class="section-title">
+      <div class="section-num section-num-orange">2</div>
+      Executive Summary <em style="font-size:11px; font-weight:400; color:var(--gray-400)">— 1 strona</em>
+    </div>
+    <div class="note note-orange">
+      To najważniejsza strona dokumentu. Właściciel firmy często czyta tylko stronę tytułową i executive summary.
+      Musi być czytelna bez kontekstu technicznego.
+    </div>
+    <ul class="checklist">
+      <li><strong>Ogólna ocena strony</strong> — wynik punktowy np. 42/100 + krótki werdykt słowny</li>
+      <li><strong>3–5 krytycznych problemów</strong> — każdy w jednym zdaniu, bez techżargonu</li>
+      <li><strong>Szacowany potencjał wzrostu</strong> — np. "strona traci ~60% potencjalnego ruchu organicznego"</li>
+      <li><strong>Jedno zdanie dlaczego warto działać teraz</strong> — sezonowość, konkurencja, aktualizacja Google</li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <div class="section-title">
+      <div class="section-num section-num-orange">3</div>
+      Widoczność w Google — stan obecny
+    </div>
+    <ul class="checklist">
+      <li><strong>Liczba fraz w top 3 / top 10 / top 50</strong> — z GSC lub Ahrefs/Semrush</li>
+      <li><strong>Trend widoczności</strong> — wykres ostatnie 12 miesięcy (rośnie / spada / stagnacja)</li>
+      <li><strong>Szacowany ruch organiczny</strong> miesięcznie — liczba sesji</li>
+      <li><strong>Porównanie z 2–3 konkurentami</strong> — tabela: domena vs konkurent A vs konkurent B (frazy w top 10, ruch est.)</li>
+      <li><strong>Top 5 fraz</strong> na które strona już rankuje — pokazuje że mamy realne dane, nie mówi ogólnie</li>
+    </ul>
+    <div class="note note-orange">
+      Dane konkurencji są kluczowym "wow efektem". "Twój konkurent X ma 3x więcej fraz w top 10 niż Ty" działa lepiej niż jakiekolwiek liczby bezwzględne.
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">
+      <div class="section-num section-num-orange">4</div>
+      Techniczne SEO — kluczowe błędy
+    </div>
+    <div class="note note-orange">Skupiamy się na najpoważniejszych problemach, nie wymieniamy 200 drobnych. Każdy punkt: status (✅ OK / ⚠️ Wymaga uwagi / ❌ Krytyczny) + 1–2 zdania wyjaśnienia po ludzku.</div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Obszar</th>
+          <th>Co sprawdzamy</th>
+          <th>Narzędzie / źródło</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="td-bold">Indeksacja</td>
+          <td>Czy strona jest poprawnie indeksowana — coverage errors w GSC, blokady robots.txt, strony z noindex</td>
+          <td>Google Search Console</td>
+        </tr>
+        <tr>
+          <td class="td-bold">Core Web Vitals</td>
+          <td>LCP, CLS, INP — wyniki z PageSpeed Insights, osobno mobile i desktop, ocena Pass / Fail</td>
+          <td>PageSpeed Insights</td>
+        </tr>
+        <tr>
+          <td class="td-bold">HTTPS i bezpieczeństwo</td>
+          <td>Ważność certyfikatu SSL, mixed content (HTTP zasoby na HTTPS stronie)</td>
+          <td>Browser / SSL checker</td>
+        </tr>
+        <tr>
+          <td class="td-bold">Mobile-first</td>
+          <td>Czy strona działa poprawnie na urządzeniach mobilnych — test Google Mobile-Friendly</td>
+          <td>Google Mobile Test</td>
+        </tr>
+        <tr>
+          <td class="td-bold">Szybkość ładowania</td>
+          <td>TTFB, rozmiar strony, nieoptymalne zasoby (duże obrazy, blokujące JS/CSS)</td>
+          <td>PageSpeed / GTmetrix</td>
+        </tr>
+        <tr>
+          <td class="td-bold">Błędy 404 i przekierowania</td>
+          <td>Liczba broken links, redirect chains (łańcuchy przekierowań 301→301→301)</td>
+          <td>Screaming Frog / crawler</td>
+        </tr>
+        <tr>
+          <td class="td-bold">Canonical i duplikaty</td>
+          <td>Czy strona ma zduplikowane URL (www vs non-www, parametry URL, trailing slash)</td>
+          <td>Screaming Frog</td>
+        </tr>
+        <tr>
+          <td class="td-bold">Sitemap XML</td>
+          <td>Czy istnieje, czy jest aktualna, czy zindeksowana w GSC, czy zawiera wszystkie ważne URL</td>
+          <td>GSC + manualne</td>
+        </tr>
+        <tr>
+          <td class="td-bold">Structured data</td>
+          <td>Czy schema.org jest wdrożona, jakiego typu, czy bez błędów (Rich Results Test)</td>
+          <td>Google Rich Results Test</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="section">
+    <div class="section-title">
+      <div class="section-num section-num-orange">5</div>
+      On-page SEO — próbka (top 5–10 stron)
+    </div>
+    <div class="note note-orange">Nie audytujemy całej strony — wybieramy najważniejsze podstrony: home, oferta/usługi, 3–5 kategorii lub stron docelowych. Format: tabela z URL-ami i checklistą kolumn.</div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Element</th>
+          <th>Co sprawdzamy</th>
+          <th>Benchmark</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="td-bold">Title tag</td>
+          <td>Długość (50–60 znaków), unikalność, czy zawiera frazę główną, czy nie jest wygenerowany z szablonu</td>
+          <td>50–60 znaków</td>
+        </tr>
+        <tr>
+          <td class="td-bold">Meta description</td>
+          <td>Długość (150–160 znaków), call-to-action, brak duplikatów między stronami</td>
+          <td>150–160 znaków</td>
+        </tr>
+        <tr>
+          <td class="td-bold">H1</td>
+          <td>Jeden na stronie, zawiera frazę główną, nie jest kopią title tagu</td>
+          <td>Dokładnie 1 per strona</td>
+        </tr>
+        <tr>
+          <td class="td-bold">Struktura H2/H3</td>
+          <td>Logiczna hierarchia, H2 nie przed H1, frazy w nagłówkach</td>
+          <td>Hierarchiczna</td>
+        </tr>
+        <tr>
+          <td class="td-bold">Treść</td>
+          <td>Długość (zbyt krótka = thin content), nasycenie słowami kluczowymi, unikalność</td>
+          <td>&gt; 300 słów per strona</td>
+        </tr>
+        <tr>
+          <td class="td-bold">Obrazy</td>
+          <td>Wypełnione alt tagi, rozmiary (za duże?), format (WebP zamiast JPEG/PNG)</td>
+          <td>Alt na każdym obrazie</td>
+        </tr>
+        <tr>
+          <td class="td-bold">Linki wewnętrzne</td>
+          <td>Liczba, anchor texty (czy opisowe, nie "kliknij tutaj"), czy ważne strony są linkowane</td>
+          <td>Min. 3–5 per strona</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="section">
+    <div class="section-title">
+      <div class="section-num section-num-orange">6</div>
+      Słowa kluczowe — luki i szanse
+    </div>
+    <ul class="checklist">
+      <li><strong>5–10 fraz o wysokim potencjale</strong> — na które konkurenci rankują, a klient nie (content gap analysis)</li>
+      <li><strong>Frazy branded</strong> — czy klient dominuje własną markę w wynikach? Czy pojawia się Wikipedia / katalogi / negatywne artykuły?</li>
+      <li><strong>Frazy lokalne</strong> — "usługa + miasto", mapy Google, Google Business Profile (jeśli dotyczy branży)</li>
+      <li><strong>Frazy long-tail</strong> — niższy wolumen, ale wyższe intencje zakupowe, łatwiejsze do zdobycia</li>
+      <li><strong>Komentarz sprzedażowy</strong> — np. "Twoja konkurencja widoczna jest na frazę X, która generuje ~Y wyszukiwań/mies. i Ty jej nie masz"</li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <div class="section-title">
+      <div class="section-num section-num-orange">7</div>
+      Profil linków (backlinks)
+    </div>
+    <ul class="checklist">
+      <li><strong>Liczba domen linkujących</strong> (referring domains) — jakość ważniejsza niż ilość</li>
+      <li><strong>Jakość profilu</strong> — czy są spamowe linki (toxic score), czy wymagany disavow</li>
+      <li><strong>Porównanie z konkurentami</strong> — kto ma więcej i silniejsze linki</li>
+      <li><strong>Trend</strong> — czy strona w ogóle zdobywa nowe linki w ostatnich 6 miesiącach</li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <div class="section-title">
+      <div class="section-num section-num-orange">8</div>
+      Podsumowanie priorytetów — quick wins
+    </div>
+    <div class="note note-orange">Maksymalnie 10 pozycji w tabeli. Kluczowe: podkreślenie 2–3 "quick wins" — rzeczy do naprawy w tydzień, które od razu dadzą mierzalny efekt. To buduje zaufanie na start współpracy.</div>
+    <table>
+      <thead>
+        <tr>
+          <th>Problem</th>
+          <th>Trudność naprawy</th>
+          <th>Potencjalny wpływ</th>
+          <th>Priorytet</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Brak sitemap w GSC</td>
+          <td>Łatwa (1h)</td>
+          <td>Lepsza indeksacja</td>
+          <td><span class="status s-crit">🔴 Quick win</span></td>
+        </tr>
+        <tr>
+          <td>LCP &gt; 4s na mobile</td>
+          <td>Średnia</td>
+          <td>Rankingi + konwersja</td>
+          <td><span class="status s-crit">🔴 Wysoki</span></td>
+        </tr>
+        <tr>
+          <td>Brak title tagów na 12 stronach</td>
+          <td>Łatwa (2h)</td>
+          <td>CTR w wynikach</td>
+          <td><span class="status s-crit">🔴 Quick win</span></td>
+        </tr>
+        <tr>
+          <td>Thin content na stronach usług</td>
+          <td>Wysoka (copywriting)</td>
+          <td>Rankingi fraz głównych</td>
+          <td><span class="status s-warn">🟡 Średni</span></td>
+        </tr>
+        <tr>
+          <td>0 linków zewnętrznych w ciągu roku</td>
+          <td>Wysoka (link building)</td>
+          <td>Autorytet domeny</td>
+          <td><span class="status s-warn">🟡 Średni</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="section">
+    <div class="section-title">
+      <div class="section-num section-num-orange">9</div>
+      Następne kroki — CTA
+    </div>
+    <ul class="checklist">
+      <li><strong>Co oferujemy</strong> — zakres współpracy, co jest wliczone w opiekę SEO</li>
+      <li><strong>Co nie jest objęte tym audytem</strong> — "Pełny audyt to X, ten dokument to próbka"</li>
+      <li><strong>Propozycja spotkania / rozmowy</strong> — konkretny termin lub link do kalendarza</li>
+      <li><strong>Termin ważności oferty</strong> — tworzy poczucie pilności</li>
+      <li><strong>Kontakt do opiekuna</strong> — imię, telefon, email</li>
+    </ul>
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════════════════
+     AUDYT 2: SEO DLA AKTYWNEGO KLIENTA
+══════════════════════════════════════════ -->
+<div class="content-page">
+
+  <div class="chapter-header">
+    <div class="chapter-label label-client">Audyt 2 z 3 — Aktywny klient</div>
+    <div class="chapter-title">Audyt SEO — Wersja dla Aktywnego Klienta</div>
+    <div class="chapter-desc">
+      Cel: raportowanie postępów, uzasadnienie kosztów, budowanie długoterminowego zaufania.
+      Pełny dostęp do danych. Może być techniczny — klient płaci za wiedzę i transparentność.
+    </div>
+    <div class="chapter-meta">
+      <div class="chapter-meta-item">
+        <div class="chapter-meta-dot" style="background: var(--blue)"></div>
+        Objętość: 20–40 stron
+      </div>
+      <div class="chapter-meta-item">
+        <div class="chapter-meta-dot" style="background: var(--blue)"></div>
+        Częstotliwość: miesięczny (skrócony) / kwartalny (pełny)
+      </div>
+      <div class="chapter-meta-item">
+        <div class="chapter-meta-dot" style="background: var(--blue)"></div>
+        Dane: pełny GSC, GA4, CMS
+      </div>
+      <div class="chapter-meta-item">
+        <div class="chapter-meta-dot" style="background: var(--blue)"></div>
+        Ton: partnerski — "oto co zrobiliśmy i co dalej"
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">
+      <div class="section-num section-num-blue">1</div>
+      Dashboard KPI — okres do okresu
+    </div>
+    <div class="note note-blue">Tabela porównawcza: ten miesiąc vs poprzedni miesiąc vs ten sam miesiąc rok temu (YoY). To kluczowy widok — klient widzi od razu czy idzie w górę.</div>
+    <table>
+      <thead>
+        <tr>
+          <th>Metryka</th>
+          <th>Poprzedni okres</th>
+          <th>Bieżący okres</th>
+          <th>Zmiana</th>
+          <th>Rok temu (YoY)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td class="td-bold">Ruch organiczny (sesje)</td><td>—</td><td>—</td><td>—</td><td>—</td></tr>
+        <tr><td class="td-bold">Kliknięcia GSC</td><td>—</td><td>—</td><td>—</td><td>—</td></tr>
+        <tr><td class="td-bold">Impressions GSC</td><td>—</td><td>—</td><td>—</td><td>—</td></tr>
+        <tr><td class="td-bold">Śr. CTR GSC</td><td>—</td><td>—</td><td>—</td><td>—</td></tr>
+        <tr><td class="td-bold">Śr. pozycja GSC</td><td>—</td><td>—</td><td>—</td><td>—</td></tr>
+        <tr><td class="td-bold">Konwersje z organica</td><td>—</td><td>—</td><td>—</td><td>—</td></tr>
+        <tr><td class="td-bold">Frazy w top 3</td><td>—</td><td>—</td><td>—</td><td>—</td></tr>
+        <tr><td class="td-bold">Frazy w top 10</td><td>—</td><td>—</td><td>—</td><td>—</td></tr>
+        <tr><td class="td-bold">Nowe backlinki</td><td>—</td><td>—</td><td>—</td><td>—</td></tr>
+        <tr><td class="td-bold">Core Web Vitals LCP mobile</td><td>—</td><td>—</td><td>—</td><td>—</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="section">
+    <div class="section-title">
+      <div class="section-num section-num-blue">2</div>
+      Widoczność i rankingi — pełna analiza
+    </div>
+    <ul class="checklist">
+      <li><strong>Wykres trendu widoczności</strong> — 12 miesięcy wstecz, oś czasu z zaznaczonymi ważnymi eventami (aktualizacje Google, nasze działania)</li>
+      <li><strong>Top 20 fraz</strong> — zmiana pozycji (strzałki góra/dół, +/- X pozycji względem poprzedniego miesiąca)</li>
+      <li><strong>Frazy, które weszły do top 10</strong> w tym okresie — nowe wejścia, sukcesy</li>
+      <li><strong>Frazy, które wypadły z top 10</strong> — i dlaczego (aktualizacja Google, nowa konkurencja, problemy techniczne)</li>
+      <li><strong>Frazy w pozycji 11–20</strong> — "nisko wiszące owoce", plan na następny miesiąc</li>
+      <li><strong>Nowe frazy</strong> — które zaczęły rankować po nowych treściach lub optymalizacjach</li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <div class="section-title">
+      <div class="section-num section-num-blue">3</div>
+      Ruch organiczny — analiza GA4
+    </div>
+    <ul class="checklist">
+      <li><strong>Wykres ruchu organicznego</strong> — dzień po dniu lub tygodniowo, z adnotacjami przy anomaliach</li>
+      <li><strong>Top 10 stron wg ruchu organicznego</strong> — porównanie z poprzednim miesiącem</li>
+      <li><strong>Engagement rate z organica</strong> — czas na stronie, głębokość sesji, bounce rate</li>
+      <li><strong>Ścieżki konwersji z organica</strong> — jakie frazy → jakie strony → jakie konwersje (GA4 funnel)</li>
+      <li><strong>Segmentacja mobile vs desktop</strong> — czy mobile traci więcej (CWV issue?)</li>
+      <li><strong>Ruch lokalny</strong> — Google Business Profile kliknięcia/wyświetlenia (jeśli dotyczy)</li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <div class="section-title">
+      <div class="section-num section-num-blue">4</div>
+      Google Search Console — pełna analiza
+    </div>
+    <ul class="checklist">
+      <li><strong>Coverage report</strong> — błędy indeksacji, strony wykluczone — czy liczba maleje w stosunku do poprzedniego miesiąca?</li>
+      <li><strong>Core Web Vitals z GSC</strong> — nie tylko PageSpeed, ale raport polowy (real users data), trend</li>
+      <li><strong>Enhancements</strong> — błędy structured data, breadcrumbs, sitelinks</li>
+      <li><strong>Linki wewnętrzne według GSC</strong> — które strony mają najmniej linków wewnętrznych (szanse)</li>
+      <li><strong>Manual actions</strong> — czy brak penalizacji, czy poprzednie penalty wycofane</li>
+      <li><strong>Nowe strony dodane do indeksu</strong> — lista URL zaindeksowanych po raz pierwszy w tym miesiącu</li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <div class="section-title">
+      <div class="section-num section-num-blue">5</div>
+      Techniczne SEO — przegląd bieżący
+    </div>
+    <div class="note note-blue">Pełne crawlowanie strony co miesiąc (Screaming Frog lub własny crawler). Porównanie delta — co zmieniło się od poprzedniego audytu.</div>
+    <ul class="checklist">
+      <li><strong>Nowe błędy 404 / broken links</strong> wykryte w tym miesiącu (URL, skąd linkowane)</li>
+      <li><strong>Core Web Vitals trend</strong> — LCP/CLS/INP dla top 10 URL w tabeli, zmiana m/m</li>
+      <li><strong>Szybkość ładowania</strong> — porównanie do poprzedniego audytu, efekty optymalizacji</li>
+      <li><strong>Nowe strony bez title / meta description</strong> — np. z nowo opublikowanych treści</li>
+      <li><strong>Duplicate content</strong> — nowe przypadki (np. z nowych stron kategorii, filtrów)</li>
+      <li><strong>Status robots.txt / sitemap</strong> — czy nie zmieniło się przypadkowo (deploy!)</li>
+      <li><strong>JavaScript rendering issues</strong> — czy treść widoczna dla crawlera (ważne dla React SPA)</li>
+      <li><strong>Nowe przekierowania</strong> — czy wdrożone po naszych rekomendacjach i czy działają prawidłowo</li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <div class="section-title">
+      <div class="section-num section-num-blue">6</div>
+      On-page SEO — postępy i nowe zadania
+    </div>
+    <ul class="checklist">
+      <li><strong>Lista zadań z poprzedniego audytu → status</strong> — zrobione ✅ / w toku 🔄 / nie zaczęte ❌</li>
+      <li><strong>Nowe rekomendacje on-page</strong> — konkretne URL + co zmienić (nie ogólne "popraw title")</li>
+      <li><strong>Optymalizacje treści</strong> — czy wdrożone teksty już rankują? Wyniki po X tygodniach</li>
+      <li><strong>Nowe treści opublikowane w tym miesiącu</strong> — ocena SEO (fraza, tytuł, długość, interlinking)</li>
+      <li><strong>Content gap</strong> — nowe szanse contentowe wykryte w tym miesiącu (frazy bez dedykowanej strony)</li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <div class="section-title">
+      <div class="section-num section-num-blue">7</div>
+      Profil linków — szczegółowo
+    </div>
+    <ul class="checklist">
+      <li><strong>Nowe linki zdobyte w tym miesiącu</strong> — tabela: domena, DR/DA, anchor text, URL docelowy</li>
+      <li><strong>Utracone linki</strong> — które i dlaczego (strona usunięta, link usunięty, redirect broken)</li>
+      <li><strong>Trend DR domeny</strong> — Domain Rating (Ahrefs) lub DA (Moz), wykres 6 miesięcy</li>
+      <li><strong>Toksyczne linki</strong> — czy nowe spamowe linki, czy są w pliku disavow</li>
+      <li><strong>Działania link buildingowe</strong> w tym miesiącu — co fizycznie robiliśmy (outreach, guest post, wpis do katalogów)</li>
+      <li><strong>Plan link buildingowy</strong> na następny miesiąc — konkretne domeny lub typy akcji</li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <div class="section-title">
+      <div class="section-num section-num-blue">8</div>
+      Konkurencja — monitoring
+    </div>
+    <ul class="checklist">
+      <li><strong>Zmiany pozycji konkurentów</strong> na wspólnych frazach — kto urosnął, kto spadł</li>
+      <li><strong>Nowe treści konkurentów</strong> — artykuły/strony, które mogą zagrożić naszym pozycjom w przyszłości</li>
+      <li><strong>Nowe linki zdobyte przez konkurentów</strong> — skąd, jakiej jakości (czy warto nam też zdobyć)</li>
+      <li><strong>Alert o znaczących zmianach</strong> — czy konkurent stracił 30% widoczności (aktualizacja Google?) lub urosnął gwałtownie (new content campaign?)</li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <div class="section-title">
+      <div class="section-num section-num-blue">9</div>
+      Zrealizowane prace w tym miesiącu
+    </div>
+    <div class="note note-blue">Kluczowa sekcja do uzasadnienia kosztów. Klient musi widzieć co konkretnie zrobiliśmy — nie ogólnie "pracowaliśmy nad SEO".</div>
+    <ul class="checklist">
+      <li><strong>Opublikowane teksty</strong> — tytuł, URL, liczba słów, fraza główna, data publikacji</li>
+      <li><strong>Wdrożone optymalizacje techniczne</strong> — lista URL + opis zmiany</li>
+      <li><strong>Pozyskane linki</strong> — domena, DR, anchor text</li>
+      <li><strong>Zmiany w strukturze strony</strong> — nowe kategorii, redirecty, zmiany menu</li>
+      <li><strong>Konfiguracje</strong> — GSC, GA4, schema.org, robots.txt, sitemap</li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <div class="section-title">
+      <div class="section-num section-num-blue">10</div>
+      Plan na następny miesiąc
+    </div>
+    <ul class="checklist">
+      <li><strong>Priorytety</strong> — max 5 punktów, każdy z właścicielem i terminem</li>
+      <li><strong>Planowane treści do publikacji</strong> — tytuł, fraza, planowana data</li>
+      <li><strong>Działania techniczne do wdrożenia</strong> — URL + opis</li>
+      <li><strong>Działania link buildingowe</strong> — target domeny lub typy akcji</li>
+      <li><strong>Monitoring specjalny</strong> — co śledzimy szczególnie w tym miesiącu (np. efekty nowego landing page)</li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <div class="section-title">
+      <div class="section-num section-num-blue">11</div>
+      Komentarz stratega
+    </div>
+    <div class="note note-blue">Jedyny paragraf pisany wyłącznie przez człowieka — bez AI, bez szablonu. To element, który odróżnia wartościową agencję od taniej. Klient płaci między innymi za tę interpretację.</div>
+    <ul class="checklist">
+      <li><strong>Interpretacja anomalii</strong> — dlaczego coś wzrosło lub spadło, co za tym stoi</li>
+      <li><strong>Rekomendacja strategiczna</strong> na następny kwartał — gdzie skupić energię</li>
+      <li><strong>Ewentualne ryzyka</strong> — nadchodzący update Google, ruch konkurenta, sezonowość</li>
+      <li><strong>Szansa do wykorzystania</strong> — content gap, słabe ogniwo u konkurenta, zbliżający się event branżowy</li>
+    </ul>
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════════════════
+     AUDYT 3: OGÓLNY AUDYT STRONY (PROSPEKT)
+══════════════════════════════════════════ -->
+<div class="content-page">
+
+  <div class="chapter-header">
+    <div class="chapter-label label-general">Audyt 3 z 3 — Pozyskanie klienta</div>
+    <div class="chapter-title">Ogólny Audyt Strony — Wersja Prospektowa</div>
+    <div class="chapter-desc">
+      Cel: pokazać stan zdrowia strony holistycznie w 4 kategoriach (SEO, Wydajność, UX, Bezpieczeństwo),
+      wzbudzić potrzebę rebuildingu lub kompleksowej obsługi. Mocniejszy niż audyt samego SEO.
+    </div>
+    <div class="chapter-meta">
+      <div class="chapter-meta-item">
+        <div class="chapter-meta-dot" style="background: var(--purple)"></div>
+        Objętość: 10–18 stron
+      </div>
+      <div class="chapter-meta-item">
+        <div class="chapter-meta-dot" style="background: var(--purple)"></div>
+        Odbiorca: właściciel firmy / CEO / dyrektor
+      </div>
+      <div class="chapter-meta-item">
+        <div class="chapter-meta-dot" style="background: var(--purple)"></div>
+        Dane: publiczne + testy techniczne (bez dostępu do systemów)
+      </div>
+      <div class="chapter-meta-item">
+        <div class="chapter-meta-dot" style="background: var(--purple)"></div>
+        Ton: "widzimy ryzyko w 4 obszarach"
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">
+      <div class="section-num section-num-purple">1</div>
+      Executive Summary — wynik w 4 kategoriach
+    </div>
+    <div class="note note-purple">Kluczowy widok — ogólny wynik + 4 kategorie z ocenami punktowymi. Właściciel widzi od razu gdzie są największe dziury.</div>
+    <div class="cards-grid">
+      <div class="card card-teal">
+        <div class="card-label">Kategoria 1</div>
+        <div class="card-title">SEO</div>
+        <div class="card-body">Widoczność w Google, indeksacja, on-page, linki</div>
+      </div>
+      <div class="card card-orange">
+        <div class="card-label">Kategoria 2</div>
+        <div class="card-title">Wydajność techniczna</div>
+        <div class="card-body">Core Web Vitals, szybkość, zasoby, CDN</div>
+      </div>
+      <div class="card card-blue">
+        <div class="card-label">Kategoria 3</div>
+        <div class="card-title">UX i dostępność</div>
+        <div class="card-body">Mobile, formularze, WCAG, nawigacja</div>
+      </div>
+      <div class="card card-purple">
+        <div class="card-label">Kategoria 4</div>
+        <div class="card-title">Bezpieczeństwo</div>
+        <div class="card-body">HTTPS, headers, RODO, malware</div>
+      </div>
+    </div>
+    <ul class="checklist">
+      <li><strong>Ogólny wynik strony</strong> — np. 38/100 + komentarz jednozdaniowy</li>
+      <li><strong>3 najpoważniejsze problemy</strong> — po jednym zdaniu, bez techżargonu</li>
+      <li><strong>Szacowany wpływ biznesowy</strong> — utrata klientów, utrata ruchu, ryzyko prawne (RODO)</li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <div class="section-title">
+      <div class="section-num section-num-purple">2</div>
+      Wydajność techniczna
+    </div>
+
+    <div class="subsection-title">Core Web Vitals (PageSpeed)</div>
+    <table>
+      <thead>
+        <tr>
+          <th>Metryka</th>
+          <th>Co mierzy</th>
+          <th>Dobry wynik</th>
+          <th>Sprawdzamy</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="td-bold">LCP</td>
+          <td>Largest Contentful Paint — czas do wyrenderowania największego elementu</td>
+          <td class="td-ok">&lt; 2.5s</td>
+          <td>Mobile + Desktop</td>
+        </tr>
+        <tr>
+          <td class="td-bold">CLS</td>
+          <td>Cumulative Layout Shift — czy strona "skacze" podczas ładowania</td>
+          <td class="td-ok">&lt; 0.1</td>
+          <td>Mobile + Desktop</td>
+        </tr>
+        <tr>
+          <td class="td-bold">INP</td>
+          <td>Interaction to Next Paint — czas reakcji na interakcję użytkownika</td>
+          <td class="td-ok">&lt; 200ms</td>
+          <td>Mobile + Desktop</td>
+        </tr>
+        <tr>
+          <td class="td-bold">FCP</td>
+          <td>First Contentful Paint — czas do pierwszego wyrenderowania treści</td>
+          <td class="td-ok">&lt; 1.8s</td>
+          <td>Mobile + Desktop</td>
+        </tr>
+        <tr>
+          <td class="td-bold">TTFB</td>
+          <td>Time to First Byte — czas odpowiedzi serwera</td>
+          <td class="td-ok">&lt; 800ms</td>
+          <td>Problem z serwerem / hostingiem</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="subsection-title">Zasoby i optymalizacja</div>
+    <ul class="checklist">
+      <li><strong>Łączny rozmiar strony</strong> — ile MB pobiera przeglądarka (benchmark: &lt; 3 MB)</li>
+      <li><strong>Liczba requestów HTTP</strong> — im mniej tym lepiej (benchmark: &lt; 50)</li>
+      <li><strong>Największe pliki</strong> — konkretne przykłady obrazów/JS/CSS do optymalizacji</li>
+      <li><strong>CDN</strong> — czy używa (Cloudflare, Fastly, CloudFront)?</li>
+      <li><strong>Kompresja Gzip/Brotli</strong> — czy włączona? Często quick win</li>
+      <li><strong>Cache headers</strong> — czy statyczne zasoby cachowane?</li>
+      <li><strong>Lazy loading obrazów</strong> — czy wdrożone (atrybut loading="lazy")?</li>
+      <li><strong>Render-blocking resources</strong> — JS/CSS blokujące renderowanie strony</li>
+      <li><strong>Format obrazów</strong> — JPEG/PNG zamiast WebP/AVIF (zmarnowany potencjał)</li>
+    </ul>
+    <div class="note note-purple">Porównanie z konkurentem — ich wyniki PageSpeed obok naszych. Wizualizuje problem bez słów.</div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">
+      <div class="section-num section-num-purple">3</div>
+      SEO — stan podstawowy
+    </div>
+    <div class="note note-purple">Skrócona wersja z audytu SEO prospektowego. Jeśli nie mamy dostępu do GSC — zaznaczamy to wprost: "Pełna analiza możliwa po udzieleniu dostępu do Google Search Console".</div>
+    <ul class="checklist">
+      <li><strong>Widoczność</strong> — szacunkowa liczba fraz w top 10, szacowany ruch miesięczny</li>
+      <li><strong>Indeksacja</strong> — symulowane dane lub GSC coverage (jeśli mamy dostęp)</li>
+      <li><strong>Title / meta description</strong> — próbka 5 stron (obecność, długość, duplikaty)</li>
+      <li><strong>H1</strong> — czy każda strona ma dokładnie jeden</li>
+      <li><strong>Sitemap i robots.txt</strong> — czy istnieje, czy poprawna</li>
+      <li><strong>Core Web Vitals</strong> — powtórzone jako element rankingowy Google</li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <div class="section-title">
+      <div class="section-num section-num-purple">4</div>
+      UX i dostępność (WCAG 2.1)
+    </div>
+
+    <div class="subsection-title">Nawigacja i struktura</div>
+    <ul class="checklist">
+      <li><strong>Czy menu jest czytelne i logiczne</strong> — maks. 2 poziomy, nazwy opisowe</li>
+      <li><strong>Czas dotarcia do kluczowej informacji</strong> — ile kliknięć do oferty / kontaktu / cennika (max 2–3)</li>
+      <li><strong>Breadcrumbs</strong> — są / brak (ważne dla SEO i UX jednocześnie)</li>
+      <li><strong>Wyszukiwarka na stronie</strong> — jest / brak / działa poprawnie</li>
+    </ul>
+
+    <div class="subsection-title">Mobile UX</div>
+    <ul class="checklist">
+      <li><strong>Responsive design</strong> — czy strona poprawna na telefonach (test Google)</li>
+      <li><strong>Tap targets</strong> — czy przyciski/linki wystarczająco duże na mobile (min 44×44px)</li>
+      <li><strong>Horizontal scroll</strong> na mobile — jest / brak (błąd podstawowy)</li>
+      <li><strong>Font size</strong> — czytelny na mobile (min 16px treść)</li>
+      <li><strong>Popupy na mobile</strong> — czy zasłaniają treść (Google penalizuje w mobile rankings)</li>
+    </ul>
+
+    <div class="subsection-title">Formularze i konwersja</div>
+    <ul class="checklist">
+      <li><strong>Liczba pól w formularzach</strong> — im mniej tym więcej konwersji (maks. 5–6 pól na start)</li>
+      <li><strong>Walidacja inline</strong> — błędy pokazywane na żywo, nie po submicie</li>
+      <li><strong>Potwierdzenie po wysłaniu</strong> — strona thank you lub popup (brak = chaos w analityce)</li>
+      <li><strong>CTA (Call to Action)</strong> — czy są, czy widoczne above the fold, czy spójne w całym serwisie</li>
+    </ul>
+
+    <div class="subsection-title">Dostępność WCAG 2.1</div>
+    <ul class="checklist">
+      <li><strong>Kontrast kolorów</strong> — narzędzie: axe lub WAVE — Pass / Fail z przykładami</li>
+      <li><strong>Alt tagi obrazów</strong> — % uzupełnionych (narzędzie: Screaming Frog)</li>
+      <li><strong>Keyboard navigation</strong> — czy możliwa nawigacja klawiszem Tab</li>
+      <li><strong>ARIA labels</strong> — czy elementy interaktywne mają etykiety dla czytników ekranu</li>
+      <li><strong>Focus visible</strong> — czy widoczny focus ring przy nawigacji klawiaturą</li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <div class="section-title">
+      <div class="section-num section-num-purple">5</div>
+      Bezpieczeństwo i zaufanie
+    </div>
+
+    <div class="subsection-title">Techniczne</div>
+    <ul class="checklist">
+      <li><strong>HTTPS</strong> — czy całość serwisu, ważność certyfikatu (ile dni do wygaśnięcia)</li>
+      <li><strong>Mixed content</strong> — HTTP zasoby na HTTPS stronie (wykrywane przez browser console)</li>
+      <li><strong>Security headers</strong> — Content-Security-Policy, X-Frame-Options, HSTS, X-Content-Type-Options (narzędzie: securityheaders.com)</li>
+      <li><strong>Wersje CMS/wtyczek</strong> — czy aktualne; WordPress z podatnymi wersjami wtyczek to krytyczne ryzyko</li>
+      <li><strong>Exposed admin panel</strong> — /wp-admin bez blokady IP lub 2FA (łatwy cel ataków)</li>
+      <li><strong>Spam/malware scan</strong> — Google Safe Browsing + Sucuri SiteCheck</li>
+    </ul>
+
+    <div class="subsection-title">Zaufanie użytkownika</div>
+    <ul class="checklist">
+      <li><strong>Polityka prywatności</strong> — jest / brak / aktualna (RODO — brak = ryzyko kary UODO)</li>
+      <li><strong>Cookie consent</strong> — jest / brak / zgodny z RODO (opt-in, nie opt-out)</li>
+      <li><strong>Regulamin</strong> — jest / brak (wymagany dla e-commerce i formularzy kontaktowych)</li>
+      <li><strong>Dane kontaktowe widoczne</strong> — NIP, adres, telefon (wymóg prawny dla firm)</li>
+      <li><strong>Social proof</strong> — certyfikaty, liczba klientów, logo partnerów, case studies: są / brak</li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <div class="section-title">
+      <div class="section-num section-num-purple">6</div>
+      Analityka i śledzenie
+    </div>
+    <ul class="checklist">
+      <li><strong>Google Analytics 4</strong> — skonfigurowane / brak / błędy w implementacji</li>
+      <li><strong>Google Search Console</strong> — zweryfikowane / brak</li>
+      <li><strong>Google Tag Manager</strong> — używane / brak (brak GTM = trudne zarządzanie tagami)</li>
+      <li><strong>Śledzenie konwersji</strong> — czy cele/konwersje skonfigurowane w GA4</li>
+      <li><strong>Heatmapy</strong> — Hotjar lub Microsoft Clarity: używane / brak</li>
+    </ul>
+    <div class="note note-purple"><strong>Kluczowy argument:</strong> "Bez analityki nie wiecie co działa — wszystkie decyzje podejmujecie na ślepo. To jak prowadzić firmę bez rachunkowości."</div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">
+      <div class="section-num section-num-purple">7</div>
+      Treści i wizerunek
+    </div>
+    <ul class="checklist">
+      <li><strong>Aktualność treści</strong> — kiedy ostatnio aktualizowane (meta, oferta, blog)</li>
+      <li><strong>Blog / content marketing</strong> — jest / brak; ostatni wpis kiedy (nieaktywny blog to sygnał dla Google)</li>
+      <li><strong>Spójność wizualna</strong> — kolory, fonty, styl zdjęć (brak = brak profesjonalizmu)</li>
+      <li><strong>Jakość zdjęć</strong> — stockowe / własne, rozdzielczość, aktualność</li>
+      <li><strong>Błędy językowe</strong> — tak/nie (w próbce 5 stron)</li>
+      <li><strong>Strona 404</strong> — customowa z nawigacją / domyślna błędna strona serwera</li>
+      <li><strong>Favicon</strong> — jest / brak (brak = niedbałość, -0.5 zaufania)</li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <div class="section-title">
+      <div class="section-num section-num-purple">8</div>
+      Tabela priorytetów — wszystkie kategorie
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th>Problem</th>
+          <th>Kategoria</th>
+          <th>Trudność naprawy</th>
+          <th>Wpływ biznesowy</th>
+          <th>Priorytet</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Brak HTTPS</td>
+          <td>Bezpieczeństwo</td>
+          <td>Łatwa (1 dzień)</td>
+          <td>Krytyczny — Google penalizuje, użytkownicy odchodzą</td>
+          <td><span class="status s-crit">🔴 Krytyczny</span></td>
+        </tr>
+        <tr>
+          <td>LCP &gt; 5s na mobile</td>
+          <td>Wydajność</td>
+          <td>Średnia</td>
+          <td>Wysokie bounce rate, straty konwersji, niższe rankingi</td>
+          <td><span class="status s-crit">🔴 Wysoki</span></td>
+        </tr>
+        <tr>
+          <td>Brak GA4</td>
+          <td>Analityka</td>
+          <td>Łatwa (2h)</td>
+          <td>Brak danych do decyzji — quick win</td>
+          <td><span class="status s-crit">🔴 Quick win</span></td>
+        </tr>
+        <tr>
+          <td>Brak polityki prywatności</td>
+          <td>Bezpieczeństwo</td>
+          <td>Łatwa</td>
+          <td>Ryzyko kary UODO, utrata zaufania</td>
+          <td><span class="status s-crit">🔴 Prawny</span></td>
+        </tr>
+        <tr>
+          <td>Brak mobile-friendly</td>
+          <td>UX</td>
+          <td>Wysoka (redesign)</td>
+          <td>~60% ruchu z mobile — ogromna utrata</td>
+          <td><span class="status s-warn">🟡 Wysoki</span></td>
+        </tr>
+        <tr>
+          <td>Brak alt tagów na obrazach</td>
+          <td>SEO + UX</td>
+          <td>Łatwa</td>
+          <td>SEO images, dostępność WCAG</td>
+          <td><span class="status s-warn">🟡 Quick win</span></td>
+        </tr>
+        <tr>
+          <td>Nieaktywny blog (ostatni wpis &gt; 1 rok)</td>
+          <td>SEO + Treści</td>
+          <td>Wysoka (zasoby)</td>
+          <td>Sygnał nieaktywności dla Google</td>
+          <td><span class="status s-warn">🟡 Średni</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="section">
+    <div class="section-title">
+      <div class="section-num section-num-purple">9</div>
+      Metodologia
+    </div>
+    <div class="cards-grid-3">
+      <div class="card">
+        <div class="card-label">Wydajność</div>
+        <div class="card-title">PageSpeed Insights</div>
+        <div class="card-body">Core Web Vitals, LCP/CLS/INP, zasoby</div>
+      </div>
+      <div class="card">
+        <div class="card-label">Techniczne</div>
+        <div class="card-title">Screaming Frog</div>
+        <div class="card-body">Crawlowanie, 404, redirecty, title/meta</div>
+      </div>
+      <div class="card">
+        <div class="card-label">Dostępność</div>
+        <div class="card-title">axe / WAVE</div>
+        <div class="card-body">Kontrast, ARIA, keyboard nav, WCAG 2.1</div>
+      </div>
+      <div class="card">
+        <div class="card-label">Bezpieczeństwo</div>
+        <div class="card-title">SecurityHeaders.com</div>
+        <div class="card-body">HTTP security headers, CSP, HSTS</div>
+      </div>
+      <div class="card">
+        <div class="card-label">Bezpieczeństwo</div>
+        <div class="card-title">Sucuri SiteCheck</div>
+        <div class="card-body">Malware scan, Google Safe Browsing</div>
+      </div>
+      <div class="card">
+        <div class="card-label">SEO (opcjonalnie)</div>
+        <div class="card-title">Ahrefs / Semrush</div>
+        <div class="card-body">Widoczność, backlinks, content gap</div>
+      </div>
+    </div>
+    <div class="note note-purple">Audyt wykonany bez dostępu do systemów analitycznych klienta. Pełna analiza (ruch organiczny, ścieżki konwersji, dane historyczne) możliwa po udzieleniu dostępu do Google Analytics 4 i Google Search Console.</div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">
+      <div class="section-num section-num-purple">10</div>
+      Następne kroki — CTA
+    </div>
+    <ul class="checklist">
+      <li><strong>Opcja A</strong> — jednorazowy full audit z planem działań (raport + lista zadań z priorytetami)</li>
+      <li><strong>Opcja B</strong> — stała opieka (miesięczny retainer: SEO + techniczne + monitoring)</li>
+      <li><strong>Opcja C</strong> — projekt przebudowy strony z SEO-first podejściem</li>
+      <li><strong>Termin ważności oferty</strong> — tworzy poczucie pilności, eliminuje "zastanowię się"</li>
+      <li><strong>Kontakt do opiekuna</strong> — imię, telefon, email, link do kalendarza (Calendly)</li>
+    </ul>
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════════════════
+     TABELA PORÓWNAWCZA (ostatnia strona)
+══════════════════════════════════════════ -->
+<div class="comparison-page">
+
+  <div style="margin-bottom: 32px;">
+    <div style="font-size: 10px; text-transform: uppercase; letter-spacing: 1.5px; color: var(--gray-400); font-weight: 600; margin-bottom: 8px;">Podsumowanie</div>
+    <div style="font-size: 22px; font-weight: 700; color: var(--dark); margin-bottom: 8px;">Porównanie trzech typów audytów</div>
+    <div style="font-size: 13px; color: var(--gray-600);">Kluczowe różnice między wersjami — cel, odbiorcy, głębokość, dostęp do danych.</div>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Wymiar</th>
+        <th>Audyt SEO — Prospekt</th>
+        <th>Audyt SEO — Aktywny klient</th>
+        <th>Ogólny audyt — Prospekt</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="td-bold">Cel</td>
+        <td>Wzbudzić ból, pokazać szanse, zamknąć sprzedaż</td>
+        <td>Raportować postęp, uzasadnić koszty, budować zaufanie</td>
+        <td>Pokazać kompleksową słabość w 4 obszarach, zaproponować projekt</td>
+      </tr>
+      <tr>
+        <td class="td-bold">Odbiorca</td>
+        <td>Właściciel / dyrektor marketingu — niezna nas</td>
+        <td>Klient płacący — zna nas, oczekuje wyników</td>
+        <td>Właściciel / CEO — nie zna nas, decyduje o inwestycji</td>
+      </tr>
+      <tr>
+        <td class="td-bold">Dostęp do danych</td>
+        <td>Publiczne + GSC (jeśli udostępnili)</td>
+        <td>Pełny: GSC, GA4, CMS, hosting</td>
+        <td>Publiczne + testy techniczne bez logowania</td>
+      </tr>
+      <tr>
+        <td class="td-bold">Głębokość</td>
+        <td>Wybrane problemy, próbki 5–10 stron</td>
+        <td>Pełna analiza każdej warstwy, delta m/m</td>
+        <td>Każda kategoria po wierzchu — szerokość &gt; głębokość</td>
+      </tr>
+      <tr>
+        <td class="td-bold">Dane konkurencji</td>
+        <td>Tak, mocno — kluczowy "wow efekt"</td>
+        <td>Tak, monitoring ciągły</td>
+        <td>Tak, PageSpeed konkurenta jako benchmark</td>
+      </tr>
+      <tr>
+        <td class="td-bold">Ton dokumentu</td>
+        <td>"Mamy diagnozę, możemy pomóc"</td>
+        <td>"Oto co zrobiliśmy i co dalej — razem"</td>
+        <td>"Widzimy ryzyko w 4 obszarach, działajmy"</td>
+      </tr>
+      <tr>
+        <td class="td-bold">Objętość</td>
+        <td>8–15 stron</td>
+        <td>20–40 stron</td>
+        <td>10–18 stron</td>
+      </tr>
+      <tr>
+        <td class="td-bold">Częstotliwość</td>
+        <td>Jednorazowy (przed sprzedażą)</td>
+        <td>Miesięczny lub kwartalny</td>
+        <td>Jednorazowy (przed sprzedażą)</td>
+      </tr>
+      <tr>
+        <td class="td-bold">Kończy się</td>
+        <td>CTA — propozycja spotkania</td>
+        <td>Plan na następny miesiąc + komentarz stratega</td>
+        <td>3 opcje współpracy + termin ważności oferty</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="divider"></div>
+
+  <div style="background: var(--gray-50); border: 1px solid var(--gray-200); border-radius: 10px; padding: 20px 24px;">
+    <div style="font-size: 12px; font-weight: 700; color: var(--dark); margin-bottom: 12px;">Kiedy używać którego audytu</div>
+    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px;">
+      <div>
+        <div style="font-size: 10px; text-transform: uppercase; letter-spacing: 0.8px; color: var(--orange); font-weight: 700; margin-bottom: 6px;">Audyt SEO Prospektowy</div>
+        <div style="font-size: 12px; color: var(--gray-600); line-height: 1.5;">Klient pyta o SEO / pozycjonowanie. Chcemy pokazać że wiemy więcej niż inni.</div>
+      </div>
+      <div>
+        <div style="font-size: 10px; text-transform: uppercase; letter-spacing: 0.8px; color: var(--blue); font-weight: 700; margin-bottom: 6px;">Audyt SEO Kliencki</div>
+        <div style="font-size: 12px; color: var(--gray-600); line-height: 1.5;">Klient płaci za SEO. Raportujemy postęp i planujemy kolejny miesiąc.</div>
+      </div>
+      <div>
+        <div style="font-size: 10px; text-transform: uppercase; letter-spacing: 0.8px; color: var(--purple); font-weight: 700; margin-bottom: 6px;">Ogólny Audyt Prospektowy</div>
+        <div style="font-size: 12px; color: var(--gray-600); line-height: 1.5;">Klient pyta o stronę ogólnie, rozważa przebudowę lub kompleksową obsługę.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-footer">
+    <span>Maciej Fiałkowski</span>
+    <span>ClientOps CRM — Przewodnik Audytów v1.0.0</span>
+    <span>Marzec 2026</span>
+  </div>
+</div>
+
+</body>
+</html>

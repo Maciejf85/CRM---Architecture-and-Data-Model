@@ -42,6 +42,7 @@ const FILE_ORDER = {
   'clientops-infrastructure': '08',
   'clientops-business':       '09',
   'clientops-simulation':     '10',
+  'clientops-audit-guide':    '11',
 };
 
 // 'all' generuje wszystko oprócz indeksu (indeks generuj osobno)
@@ -66,17 +67,21 @@ if (!fs.existsSync(path.join(__dirname, 'pdf'))) {
 }
 
 async function generatePdf(fileName, ver) {
-  const inputPath = path.join(__dirname, `${fileName}.html`);
+  // Preferuj wersję print/ jeśli istnieje
+  const printPath  = path.join(__dirname, 'print', `${fileName}.print.html`);
+  const defaultPath = path.join(__dirname, `${fileName}.html`);
+  const inputPath  = fs.existsSync(printPath) ? printPath : defaultPath;
+  const isPrint    = inputPath === printPath;
 
   if (!fs.existsSync(inputPath)) {
-    console.error(`❌  Plik nie istnieje: ${inputPath}`);
+    console.error(`❌  Plik nie istnieje: ${defaultPath}`);
     return;
   }
 
   const num    = FILE_ORDER[fileName] || '00';
   const output = path.join(__dirname, 'pdf', `${num}-${fileName}-v${ver}.pdf`);
 
-  console.log(`\n📄 Generowanie: ${fileName} v${ver}`);
+  console.log(`\n📄 Generowanie: ${fileName} v${ver}${isPrint ? ' [print]' : ''}`);
   console.log(`   Źródło: ${inputPath}`);
   console.log(`   Wyjście: ${output}`);
 

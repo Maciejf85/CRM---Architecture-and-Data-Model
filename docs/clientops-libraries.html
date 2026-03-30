@@ -512,6 +512,37 @@
         </tbody>
       </table>
 
+      <!-- Grafy i diagramy -->
+      <h3>Grafy i diagramy przepływu</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Biblioteka ClientOps</th>
+            <th>Zastosowanie</th>
+            <th>React odpowiednik</th>
+            <th>Instalacja</th>
+            <th>Priorytet</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>—</strong> (nowa biblioteka)</td>
+            <td>Interaktywne grafy węzłów: flow diagramy, mapy zależności, pipeline'y (SEO audit flow, workflow procesów)</td>
+            <td><code>@xyflow/react</code> (React Flow v12)</td>
+            <td><code>npm i @xyflow/react</code></td>
+            <td><span class="prio-mid">🟡 Średni</span></td>
+          </tr>
+          <tr>
+            <td><strong>—</strong> (layout engine)</td>
+            <td>Automatyczne układanie węzłów DAG (top-down / left-right) — używany razem z React Flow</td>
+            <td><code>dagre</code> + <code>@dagrejs/dagre</code></td>
+            <td><code>npm i @dagrejs/dagre</code></td>
+            <td><span class="prio-mid">🟡 Średni</span></td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="note"><strong>React Flow + dagre</strong> to para: dagre oblicza pozycje węzłów (layout), React Flow je renderuje. Nie koliduje z echarts (wykresy statystyczne) ani z dnd-kit (kanban). Zastosowanie w ClientOps: wizualizacja pipeline'u SEO audit, mapy zależności między modułami, flow onboardingu.</div>
+
       <!-- Kalendarze -->
       <h3>Kalendarze i czas</h3>
       <table>
@@ -840,6 +871,13 @@
             <td><code>npm i react-syntax-highlighter</code></td>
             <td><span class="prio-low">🟢 Niski</span></td>
           </tr>
+          <tr>
+            <td><strong>—</strong> (nowa biblioteka)</td>
+            <td>Renderowanie markdown → HTML (read-only: komentarze, README, treści z API) — nie zastępuje TipTap (edytor), to renderer raw markdown</td>
+            <td><code>react-markdown</code> + <code>remark-gfm</code></td>
+            <td><code>npm i react-markdown remark-gfm</code></td>
+            <td><span class="prio-mid">🟡 Średni</span></td>
+          </tr>
         </tbody>
       </table>
 
@@ -917,6 +955,12 @@ npm i @fullcalendar/react @fullcalendar/daygrid @fullcalendar/timegrid @fullcale
 # Rich text (TipTap zamiast TinyMCE)
 npm i @tiptap/react @tiptap/starter-kit
 
+# Markdown renderer (read-only, nie zastępuje TipTap)
+npm i react-markdown remark-gfm
+
+# Grafy i flow diagramy (pipeline SEO, mapy procesów)
+npm i @xyflow/react @dagrejs/dagre
+
 # UI komponenty (tokeny już w design systemie)
 npm i class-variance-authority clsx tailwind-merge
 
@@ -954,6 +998,8 @@ npm i dayjs lodash-es</code></pre>
             <li>react-leaflet (mapy)</li>
             <li>dayjs</li>
             <li>simplebar-react</li>
+            <li>@xyflow/react + dagre (flow diagramy)</li>
+            <li>react-markdown + remark-gfm</li>
           </ul>
         </div>
         <div class="summary-card low">
