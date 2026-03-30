@@ -1,0 +1,3984 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ClientOps — Baza danych: tabele i kolumny</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    font-size: 13px;
+    line-height: 1.6;
+    color: #1a1a2e;
+    background: #fff;
+  }
+
+  /* ── Cover page ───────────────────────────────────────── */
+  .cover {
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 80px 72px;
+    background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+    page-break-after: always;
+  }
+
+  .cover-badge {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #a78bfa;
+    margin-bottom: 24px;
+  }
+
+  .cover h1 {
+    font-size: 48px;
+    font-weight: 800;
+    color: #fff;
+    line-height: 1.15;
+    margin-bottom: 16px;
+  }
+
+  .cover h1 span {
+    color: #a78bfa;
+  }
+
+  .cover-sub {
+    font-size: 18px;
+    color: #c4b5fd;
+    margin-bottom: 48px;
+    max-width: 560px;
+  }
+
+  .cover-meta {
+    display: flex;
+    gap: 32px;
+    flex-wrap: wrap;
+  }
+
+  .cover-meta-item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .cover-meta-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: #7c3aed;
+  }
+
+  .cover-meta-value {
+    font-size: 14px;
+    font-weight: 600;
+    color: #e9d5ff;
+  }
+
+  /* ── TOC ──────────────────────────────────────────────── */
+  .toc-page {
+    padding: 60px 72px;
+    page-break-after: always;
+  }
+
+  .toc-page h2 {
+    font-size: 28px;
+    font-weight: 800;
+    color: #1a1a2e;
+    margin-bottom: 32px;
+    padding-bottom: 12px;
+    border-bottom: 3px solid #7c3aed;
+  }
+
+  .toc-section {
+    margin-bottom: 28px;
+  }
+
+  .toc-section-title {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: #7c3aed;
+    margin-bottom: 10px;
+  }
+
+  .toc-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 4px 32px;
+  }
+
+  .toc-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 6px 0;
+    border-bottom: 1px dotted #e5e7eb;
+    min-width: 0;
+  }
+
+  .toc-item-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #7c3aed;
+    flex-shrink: 0;
+    margin-top: 4px;
+  }
+
+  .toc-item-text {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    min-width: 0;
+  }
+
+  .toc-item-name {
+    font-weight: 600;
+    font-family: 'Courier New', monospace;
+    font-size: 12px;
+    color: #1a1a2e;
+    white-space: nowrap;
+  }
+
+  .toc-item-desc {
+    color: #9ca3af;
+    font-size: 11px;
+  }
+
+  /* ── Content ──────────────────────────────────────────── */
+  .content {
+    padding: 48px 72px 60px;
+  }
+
+  /* ── Layer header ─────────────────────────────────────── */
+  .layer-header {
+    margin: 0 0 28px;
+    padding: 48px 32px 24px;
+    background: linear-gradient(135deg, #0f0c29 0%, #302b63 100%);
+    border-radius: 12px;
+    page-break-before: always;
+  }
+
+  .layer-header h2 {
+    font-size: 22px;
+    font-weight: 800;
+    color: #fff;
+    margin-bottom: 6px;
+  }
+
+  .layer-header p {
+    font-size: 13px;
+    color: #c4b5fd;
+  }
+
+  .layer-number {
+    display: inline-block;
+    background: #7c3aed;
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 3px 10px;
+    border-radius: 20px;
+    margin-bottom: 10px;
+  }
+
+  /* ── Table card ───────────────────────────────────────── */
+  .table-card {
+    margin-bottom: 48px;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  .table-card-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    padding: 20px 24px 18px;
+    background: #faf5ff;
+    border-bottom: 1px solid #e9d5ff;
+  }
+
+  .table-card-header-left h3 {
+    font-size: 17px;
+    font-weight: 800;
+    color: #1a1a2e;
+    font-family: 'Courier New', monospace;
+    margin-bottom: 4px;
+  }
+
+  .table-card-header-left .table-desc {
+    font-size: 12.5px;
+    color: #6b7280;
+    max-width: 580px;
+  }
+
+  .table-badge-group {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    flex-shrink: 0;
+    margin-left: 16px;
+  }
+
+  .badge {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    padding: 3px 9px;
+    border-radius: 20px;
+    white-space: nowrap;
+  }
+
+  .badge-layer1 { background: #dbeafe; color: #1d4ed8; }
+  .badge-layer2 { background: #dcfce7; color: #15803d; }
+  .badge-layer3 { background: #f3e8ff; color: #7e22ce; }
+  .badge-timescale { background: #fef3c7; color: #92400e; }
+  .badge-spatie { background: #fee2e2; color: #991b1b; }
+  .badge-pivot { background: #f0fdf4; color: #166534; border: 1px solid #86efac; }
+
+  /* ── Columns table ────────────────────────────────────── */
+  .cols-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .cols-table thead tr {
+    background: #f9fafb;
+  }
+
+  .cols-table thead th {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: #6b7280;
+    padding: 10px 16px;
+    text-align: left;
+    border-bottom: 1px solid #e5e7eb;
+  }
+
+  .cols-table thead th:first-child { width: 22%; }
+  .cols-table thead th:nth-child(2) { width: 14%; }
+  .cols-table thead th:nth-child(3) { width: 10%; }
+  .cols-table thead th:last-child { width: 54%; }
+
+  .cols-table tbody tr {
+    border-bottom: 1px solid #f3f4f6;
+    transition: background 0.1s;
+  }
+
+  .cols-table tbody tr:last-child {
+    border-bottom: none;
+  }
+
+  .cols-table tbody tr:hover {
+    background: #faf5ff;
+  }
+
+  .cols-table tbody td {
+    padding: 9px 16px;
+    vertical-align: top;
+  }
+
+  .col-name {
+    font-family: 'Courier New', monospace;
+    font-size: 12.5px;
+    font-weight: 700;
+    color: #1a1a2e;
+  }
+
+  .col-name.pk { color: #7c3aed; }
+  .col-name.fk { color: #2563eb; }
+
+  .col-type {
+    font-family: 'Courier New', monospace;
+    font-size: 11px;
+    color: #6b7280;
+  }
+
+  .col-flags {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+
+  .flag {
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    padding: 1px 6px;
+    border-radius: 10px;
+    text-transform: uppercase;
+    white-space: nowrap;
+    display: inline-block;
+    width: fit-content;
+  }
+
+  .flag-pk { background: #ede9fe; color: #6d28d9; }
+  .flag-fk { background: #dbeafe; color: #1d4ed8; }
+  .flag-unique { background: #d1fae5; color: #065f46; }
+  .flag-nullable { background: #f3f4f6; color: #6b7280; }
+  .flag-enum { background: #fef3c7; color: #92400e; }
+  .flag-json { background: #fce7f3; color: #9d174d; }
+  .flag-ts { background: #ecfdf5; color: #047857; }
+  .flag-poly { background: #eff6ff; color: #1e40af; }
+  .flag-bool { background: #f0fdf4; color: #166534; }
+
+  .col-desc {
+    font-size: 12px;
+    color: #374151;
+    line-height: 1.5;
+  }
+
+  .col-desc .rel {
+    font-style: italic;
+    color: #7c3aed;
+    font-size: 11px;
+  }
+
+  /* ── Relationships section ────────────────────────────── */
+  .rel-section {
+    padding: 14px 24px;
+    background: #f9fafb;
+    border-top: 1px solid #e5e7eb;
+  }
+
+  .rel-section-title {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: #9ca3af;
+    margin-bottom: 8px;
+  }
+
+  .rel-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .rel-chip {
+    font-size: 11px;
+    padding: 3px 10px;
+    background: #fff;
+    border: 1px solid #e9d5ff;
+    border-radius: 20px;
+    color: #374151;
+  }
+
+  .rel-chip code {
+    font-family: 'Courier New', monospace;
+    font-weight: 700;
+    color: #7c3aed;
+  }
+
+  /* ── Print / PDF ──────────────────────────────────────── */
+  @media print {
+    body { font-size: 12px; }
+    .cover { min-height: 100vh; }
+    .table-card-header { page-break-after: avoid; }
+    .cols-table thead { page-break-after: avoid; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════════════
+     COVER
+══════════════════════════════════════════════════════ -->
+<div class="cover">
+  <div class="cover-badge">ClientOps CRM — dokumentacja techniczna</div>
+  <h1>Baza danych<br><span>Tabele & kolumny</span></h1>
+  <p class="cover-sub">
+    Kompletny opis wszystkich tabel, kolumn, typów danych, flag i relacji
+    w systemie ClientOps CRM. Dokument przeznaczony dla deweloperów
+    pracujących nad backendem i migracjami.
+  </p>
+  <div class="cover-meta">
+    <div class="cover-meta-item">
+      <span class="cover-meta-label">Wersja</span>
+      <span class="cover-meta-value">1.0.0</span>
+    </div>
+    <div class="cover-meta-item">
+      <span class="cover-meta-label">Data</span>
+      <span class="cover-meta-value">Marzec 2026</span>
+    </div>
+    <div class="cover-meta-item">
+      <span class="cover-meta-label">Baza danych</span>
+      <span class="cover-meta-value">PostgreSQL 16 + TimescaleDB</span>
+    </div>
+    <div class="cover-meta-item">
+      <span class="cover-meta-label">Liczba tabel</span>
+      <span class="cover-meta-value">36</span>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     TOC
+══════════════════════════════════════════════════════ -->
+<div class="toc-page">
+  <h2>Spis treści</h2>
+
+  <div class="toc-section">
+    <div class="toc-section-title">Warstwa 1 — Tożsamość (3 tabele)</div>
+    <div class="toc-grid">
+      <div class="toc-item"><div class="toc-item-dot"></div><div class="toc-item-text"><span class="toc-item-name">users</span><span class="toc-item-desc">Użytkownicy systemu</span></div></div>
+      <div class="toc-item"><div class="toc-item-dot"></div><div class="toc-item-text"><span class="toc-item-name">clients</span><span class="toc-item-desc">Firmy / klienci</span></div></div>
+      <div class="toc-item"><div class="toc-item-dot"></div><div class="toc-item-text"><span class="toc-item-name">contacts</span><span class="toc-item-desc">Osoby kontaktowe</span></div></div>
+    </div>
+  </div>
+
+  <div class="toc-section">
+    <div class="toc-section-title">Warstwa 2 — Sprzedaż (3 tabele)</div>
+    <div class="toc-grid">
+      <div class="toc-item"><div class="toc-item-dot"></div><div class="toc-item-text"><span class="toc-item-name">leads</span><span class="toc-item-desc">Leady sprzedażowe</span></div></div>
+      <div class="toc-item"><div class="toc-item-dot"></div><div class="toc-item-text"><span class="toc-item-name">lead_activities</span><span class="toc-item-desc">Historia kontaktów</span></div></div>
+      <div class="toc-item"><div class="toc-item-dot"></div><div class="toc-item-text"><span class="toc-item-name">offers</span><span class="toc-item-desc">Oferty handlowe</span></div></div>
+    </div>
+  </div>
+
+  <div class="toc-section">
+    <div class="toc-section-title">Warstwa 3 — Realizacja (30 tabel)</div>
+    <div class="toc-grid">
+      <div class="toc-item"><div class="toc-item-dot"></div><div class="toc-item-text"><span class="toc-item-name">projects</span><span class="toc-item-desc">Projekty klientów</span></div></div>
+      <div class="toc-item"><div class="toc-item-dot"></div><div class="toc-item-text"><span class="toc-item-name">documents</span><span class="toc-item-desc">Dokumenty TipTap</span></div></div>
+      <div class="toc-item"><div class="toc-item-dot"></div><div class="toc-item-text"><span class="toc-item-name">document_versions</span><span class="toc-item-desc">Historia wersji</span></div></div>
+      <div class="toc-item"><div class="toc-item-dot"></div><div class="toc-item-text"><span class="toc-item-name">sla_policies</span><span class="toc-item-desc">Polityki SLA</span></div></div>
+      <div class="toc-item"><div class="toc-item-dot"></div><div class="toc-item-text"><span class="toc-item-name">tickets</span><span class="toc-item-desc">Zgłoszenia klientów</span></div></div>
+      <div class="toc-item"><div class="toc-item-dot"></div><div class="toc-item-text"><span class="toc-item-name">ticket_comments</span><span class="toc-item-desc">Komentarze do zgłoszeń</span></div></div>
+      <div class="toc-item"><div class="toc-item-dot"></div><div class="toc-item-text"><span class="toc-item-name">sla_incidents</span><span class="toc-item-desc">Naruszenia SLA</span></div></div>
+      <div class="toc-item"><div class="toc-item-dot"></div><div class="toc-item-text"><span class="toc-item-name">kanban_boards</span><span class="toc-item-desc">Tablice Kanban</span></div></div>
+      <div class="toc-item"><div class="toc-item-dot"></div><div class="toc-item-text"><span class="toc-item-name">kanban_columns</span><span class="toc-item-desc">Kolumny tablic</span></div></div>
+      <div class="toc-item"><div class="toc-item-dot"></div><div class="toc-item-text"><span class="toc-item-name">kanban_cards</span><span class="toc-item-desc">Karty Kanban</span></div></div>
+      <div class="toc-item"><div class="toc-item-dot"></div><div class="toc-item-text"><span class="toc-item-name">notifications</span><span class="toc-item-desc">Powiadomienia</span></div></div>
+      <div class="toc-item"><div class="toc-item-dot"></div><div class="toc-item-text"><span class="toc-item-name">notification_preferences</span><span class="toc-item-desc">Preferencje powiadomień</span></div></div>
+      <div class="toc-item"><div class="toc-item-dot"></div><div class="toc-item-text"><span class="toc-item-name">conversations</span><span class="toc-item-desc">Wątki wiadomości</span></div></div>
+      <div class="toc-item"><div class="toc-item-dot"></div><div class="toc-item-text"><span class="toc-item-name">conversation_participants</span><span class="toc-item-desc">Uczestnicy rozmów</span></div></div>
+      <div class="toc-item"><div class="toc-item-dot"></div><div class="toc-item-text"><span class="toc-item-name">messages</span><span class="toc-item-desc">Wiadomości wewnętrzne</span></div></div>
+      <div class="toc-item"><div class="toc-item-dot"></div><div class="toc-item-text"><span class="toc-item-name">mentions</span><span class="toc-item-desc">Oznaczenia @</span></div></div>
+      <div class="toc-item"><div class="toc-item-dot"></div><div class="toc-item-text"><span class="toc-item-name">activity_log</span><span class="toc-item-desc">Audit trail (Spatie)</span></div></div>
+      <div class="toc-item"><div class="toc-item-dot"></div><div class="toc-item-text"><span class="toc-item-name">slug_redirects</span><span class="toc-item-desc">Przekierowania slugów</span></div></div>
+      <div class="toc-item"><div class="toc-item-dot"></div><div class="toc-item-text"><span class="toc-item-name">seo_analyses</span><span class="toc-item-desc">Analizy SEO</span></div></div>
+      <div class="toc-item"><div class="toc-item-dot"></div><div class="toc-item-text"><span class="toc-item-name">seo_issues</span><span class="toc-item-desc">Problemy SEO</span></div></div>
+      <div class="toc-item"><div class="toc-item-dot"></div><div class="toc-item-text"><span class="toc-item-name">seo_keyword_ranks</span><span class="toc-item-desc">Rankingi słów kluczowych</span></div></div>
+      <div class="toc-item"><div class="toc-item-dot"></div><div class="toc-item-text"><span class="toc-item-name">seo_monthly_snapshots</span><span class="toc-item-desc">Miesięczne snapshoty</span></div></div>
+      <div class="toc-item"><div class="toc-item-dot"></div><div class="toc-item-text"><span class="toc-item-name">seo_cwv_snapshots</span><span class="toc-item-desc">Core Web Vitals</span></div></div>
+      <div class="toc-item"><div class="toc-item-dot"></div><div class="toc-item-text"><span class="toc-item-name">seo_backlinks</span><span class="toc-item-desc">Backlinki</span></div></div>
+      <div class="toc-item"><div class="toc-item-dot"></div><div class="toc-item-text"><span class="toc-item-name">seo_competitors</span><span class="toc-item-desc">Konkurenci</span></div></div>
+      <div class="toc-item"><div class="toc-item-dot"></div><div class="toc-item-text"><span class="toc-item-name">seo_competitor_ranks</span><span class="toc-item-desc">Rankingi konkurentów</span></div></div>
+      <div class="toc-item"><div class="toc-item-dot"></div><div class="toc-item-text"><span class="toc-item-name">seo_keyword_opportunities</span><span class="toc-item-desc">Szanse słów kluczowych</span></div></div>
+      <div class="toc-item"><div class="toc-item-dot"></div><div class="toc-item-text"><span class="toc-item-name">audits</span><span class="toc-item-desc">Audyty zbiorcze</span></div></div>
+      <div class="toc-item"><div class="toc-item-dot"></div><div class="toc-item-text"><span class="toc-item-name">audit_issues</span><span class="toc-item-desc">Problemy audytów</span></div></div>
+      <div class="toc-item"><div class="toc-item-dot"></div><div class="toc-item-text"><span class="toc-item-name">audit_scores</span><span class="toc-item-desc">Wyniki kategorii</span></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     CONTENT
+══════════════════════════════════════════════════════ -->
+<div class="content">
+
+  <!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+       WARSTWA 1 — TOŻSAMOŚĆ
+  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
+  <div class="layer-header">
+    <div class="layer-number">Warstwa 1</div>
+    <h2>Tożsamość</h2>
+    <p>Fundament systemu — kto istnieje w systemie. Użytkownicy (pracownicy agencji), klienci (firmy) i ich osoby kontaktowe.</p>
+  </div>
+
+  <!-- ────────────────────────────────────────────────────
+       TABLE: users
+  ──────────────────────────────────────────────────── -->
+  <div class="table-card">
+    <div class="table-card-header">
+      <div class="table-card-header-left">
+        <h3>users</h3>
+        <p class="table-desc">
+          Konta użytkowników systemu — pracownicy agencji zarządzający CRM-em. Obsługuje
+          standardowe logowanie email+hasło, logowanie Google (Socialite) oraz opcjonalne
+          2FA przez email. Role przypisywane przez Spatie Permission.
+        </p>
+      </div>
+      <div class="table-badge-group">
+        <span class="badge badge-layer1">Warstwa 1</span>
+      </div>
+    </div>
+    <table class="cols-table">
+      <thead>
+        <tr>
+          <th>Kolumna</th>
+          <th>Typ</th>
+          <th>Flagi</th>
+          <th>Opis</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="col-name pk">id</span></td>
+          <td><span class="col-type">bigint</span></td>
+          <td><div class="col-flags"><span class="flag flag-pk">PK</span></div></td>
+          <td class="col-desc">Unikalny identyfikator użytkownika.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">name</span></td>
+          <td><span class="col-type">varchar</span></td>
+          <td></td>
+          <td class="col-desc">Pełna nazwa wyświetlana (imię + nazwisko lub pseudonim). Używana w interfejsie i @wzmiankowaniach.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">email</span></td>
+          <td><span class="col-type">varchar</span></td>
+          <td><div class="col-flags"><span class="flag flag-unique">UNIQUE</span></div></td>
+          <td class="col-desc">Adres email — login do systemu. Musi być unikalny globalnie. Używany też do wysyłki kodów 2FA.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">email_verified_at</span></td>
+          <td><span class="col-type">timestamp</span></td>
+          <td><div class="col-flags"><span class="flag flag-nullable">NULL</span></div></td>
+          <td class="col-desc">Znacznik czasu weryfikacji adresu email. <code>null</code> = email niezweryfikowany.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">password</span></td>
+          <td><span class="col-type">varchar</span></td>
+          <td><div class="col-flags"><span class="flag flag-nullable">NULL</span></div></td>
+          <td class="col-desc">Hash hasła (bcrypt). <code>null</code> gdy użytkownik zarejestrował się wyłącznie przez Google OAuth — nie posiada hasła.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">remember_token</span></td>
+          <td><span class="col-type">varchar(100)</span></td>
+          <td><div class="col-flags"><span class="flag flag-nullable">NULL</span></div></td>
+          <td class="col-desc">Token sesji „zapamiętaj mnie" — generowany przez Laravel automatycznie.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">avatar_path</span></td>
+          <td><span class="col-type">varchar</span></td>
+          <td><div class="col-flags"><span class="flag flag-nullable">NULL</span></div></td>
+          <td class="col-desc">Ścieżka do avatara użytkownika (S3/MinIO przez Spatie Media Library). <code>null</code> = domyślny avatar.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">phone</span></td>
+          <td><span class="col-type">varchar</span></td>
+          <td><div class="col-flags"><span class="flag flag-nullable">NULL</span></div></td>
+          <td class="col-desc">Numer telefonu — opcjonalny. Może być używany do kontaktu wewnętrznego.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">is_active</span></td>
+          <td><span class="col-type">boolean</span></td>
+          <td><div class="col-flags"><span class="flag flag-bool">BOOL</span></div></td>
+          <td class="col-desc">Czy konto jest aktywne. Nieaktywni użytkownicy nie mogą się zalogować — soft-disable bez usuwania danych.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">two_factor_enabled</span></td>
+          <td><span class="col-type">boolean</span></td>
+          <td><div class="col-flags"><span class="flag flag-bool">BOOL</span></div></td>
+          <td class="col-desc">Czy 2FA przez email jest włączone dla tego użytkownika. Włączane per-user z ustawień profilu.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">two_factor_code</span></td>
+          <td><span class="col-type">varchar(6)</span></td>
+          <td><div class="col-flags"><span class="flag flag-nullable">NULL</span></div></td>
+          <td class="col-desc">6-cyfrowy kod 2FA aktualnie oczekujący na weryfikację. Czyszczony po użyciu lub wygaśnięciu.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">two_factor_expires_at</span></td>
+          <td><span class="col-type">timestamp</span></td>
+          <td><div class="col-flags"><span class="flag flag-nullable">NULL</span></div></td>
+          <td class="col-desc">Czas wygaśnięcia kodu 2FA. Kod ważny przez 10 minut od wygenerowania.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">last_login_at</span></td>
+          <td><span class="col-type">timestamp</span></td>
+          <td><div class="col-flags"><span class="flag flag-nullable">NULL</span></div></td>
+          <td class="col-desc">Data i czas ostatniego udanego logowania. Przydatne do audytu bezpieczeństwa.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">created_at</span></td>
+          <td><span class="col-type">timestamp</span></td>
+          <td></td>
+          <td class="col-desc">Data utworzenia konta.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">updated_at</span></td>
+          <td><span class="col-type">timestamp</span></td>
+          <td></td>
+          <td class="col-desc">Data ostatniej modyfikacji rekordu.</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="rel-section">
+      <div class="rel-section-title">Relacje</div>
+      <div class="rel-list">
+        <span class="rel-chip">hasMany → <code>leads</code> (assigned_to)</span>
+        <span class="rel-chip">hasMany → <code>lead_activities</code></span>
+        <span class="rel-chip">hasMany → <code>tickets</code> (created_by)</span>
+        <span class="rel-chip">hasMany → <code>ticket_comments</code></span>
+        <span class="rel-chip">hasMany → <code>documents</code> (created_by)</span>
+        <span class="rel-chip">hasMany → <code>notification_preferences</code></span>
+        <span class="rel-chip">morphMany → <code>activity_log</code> (causer)</span>
+        <span class="rel-chip">morphMany → <code>notifications</code></span>
+        <span class="rel-chip">morphMany → <code>conversation_participants</code></span>
+        <span class="rel-chip">morphMany → <code>messages</code> (sender)</span>
+        <span class="rel-chip">morphMany → <code>mentions</code> (mentioned)</span>
+        <span class="rel-chip">Spatie Permission: roles, permissions</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ────────────────────────────────────────────────────
+       TABLE: clients
+  ──────────────────────────────────────────────────── -->
+  <div class="table-card">
+    <div class="table-card-header">
+      <div class="table-card-header-left">
+        <h3>clients</h3>
+        <p class="table-desc">
+          Firmy obsługiwane przez agencję — tenanci systemu. Każdy klient ma własną
+          subdomenę (<code>{slug}.clientops.pl</code>) i izolowany widok danych przez
+          Global Scope. Może powstać ręcznie lub przez konwersję leadu (status <code>won</code>).
+        </p>
+      </div>
+      <div class="table-badge-group">
+        <span class="badge badge-layer1">Warstwa 1</span>
+      </div>
+    </div>
+    <table class="cols-table">
+      <thead>
+        <tr>
+          <th>Kolumna</th>
+          <th>Typ</th>
+          <th>Flagi</th>
+          <th>Opis</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="col-name pk">id</span></td>
+          <td><span class="col-type">bigint</span></td>
+          <td><div class="col-flags"><span class="flag flag-pk">PK</span></div></td>
+          <td class="col-desc">Unikalny identyfikator klienta. Używany jako <code>client_id</code> we wszystkich tabelach warstwy 2 i 3 (multi-tenancy).</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">name</span></td>
+          <td><span class="col-type">varchar</span></td>
+          <td></td>
+          <td class="col-desc">Pełna nazwa firmy np. „Acme Sp. z o.o.".</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">slug</span></td>
+          <td><span class="col-type">varchar</span></td>
+          <td><div class="col-flags"><span class="flag flag-unique">UNIQUE</span></div></td>
+          <td class="col-desc">Unikalny identyfikator URL — globalnie unikatowy. Stanowi subdomenę panelu klienta (<code>acme.clientops.pl</code>). Immutable — zmiana nazwy firmy nie zmienia slugu. Generowany przez Spatie Sluggable.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">nip</span></td>
+          <td><span class="col-type">varchar</span></td>
+          <td><div class="col-flags"><span class="flag flag-nullable">NULL</span></div></td>
+          <td class="col-desc">NIP firmy — opcjonalny, przydatny do fakturowania i integracji zewnętrznych.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">address</span></td>
+          <td><span class="col-type">varchar</span></td>
+          <td><div class="col-flags"><span class="flag flag-nullable">NULL</span></div></td>
+          <td class="col-desc">Ulica i numer — część adresu pocztowego.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">city</span></td>
+          <td><span class="col-type">varchar</span></td>
+          <td><div class="col-flags"><span class="flag flag-nullable">NULL</span></div></td>
+          <td class="col-desc">Miasto siedziby firmy.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">postal_code</span></td>
+          <td><span class="col-type">varchar</span></td>
+          <td><div class="col-flags"><span class="flag flag-nullable">NULL</span></div></td>
+          <td class="col-desc">Kod pocztowy.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">country</span></td>
+          <td><span class="col-type">varchar</span></td>
+          <td></td>
+          <td class="col-desc">Kraj siedziby (domyślnie „PL"). Istotny przy integracji z zewnętrznymi API i strefach czasowych.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">website</span></td>
+          <td><span class="col-type">varchar</span></td>
+          <td><div class="col-flags"><span class="flag flag-nullable">NULL</span></div></td>
+          <td class="col-desc">Adres strony www — używany jako punkt startowy analiz SEO (crawler).</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">status</span></td>
+          <td><span class="col-type">enum</span></td>
+          <td><div class="col-flags"><span class="flag flag-enum">ENUM</span></div></td>
+          <td class="col-desc">Stan relacji z klientem: <code>active</code> — aktywna współpraca, <code>inactive</code> — zawieszona, <code>archived</code> — zakończona (soft-archive).</td>
+        </tr>
+        <tr>
+          <td><span class="col-name fk">sla_policy_id</span></td>
+          <td><span class="col-type">bigint</span></td>
+          <td><div class="col-flags"><span class="flag flag-fk">FK</span><span class="flag flag-nullable">NULL</span></div></td>
+          <td class="col-desc">Domyślna polityka SLA dla tego klienta → <code>sla_policies.id</code>. Dziedziczona przez nowe projekty i tickety, o ile nie nadpisana.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name fk">converted_from_lead_id</span></td>
+          <td><span class="col-type">bigint</span></td>
+          <td><div class="col-flags"><span class="flag flag-fk">FK</span><span class="flag flag-nullable">NULL</span></div></td>
+          <td class="col-desc">ID leadu, z którego powstał klient → <code>leads.id</code>. <code>null</code> = klient dodany ręcznie (nie przez konwersję). Umożliwia prześledzenie źródła klienta.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">notes</span></td>
+          <td><span class="col-type">text</span></td>
+          <td><div class="col-flags"><span class="flag flag-nullable">NULL</span></div></td>
+          <td class="col-desc">Dowolne notatki wewnętrzne o kliencie — widoczne tylko dla pracowników agencji.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name fk">created_by</span></td>
+          <td><span class="col-type">bigint</span></td>
+          <td><div class="col-flags"><span class="flag flag-fk">FK</span></div></td>
+          <td class="col-desc">Użytkownik, który utworzył rekord → <code>users.id</code>. Przydatne do audytu.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">created_at</span></td>
+          <td><span class="col-type">timestamp</span></td>
+          <td></td>
+          <td class="col-desc">Data dodania klienta do systemu.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">updated_at</span></td>
+          <td><span class="col-type">timestamp</span></td>
+          <td></td>
+          <td class="col-desc">Data ostatniej modyfikacji rekordu.</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="rel-section">
+      <div class="rel-section-title">Relacje</div>
+      <div class="rel-list">
+        <span class="rel-chip">hasMany → <code>contacts</code></span>
+        <span class="rel-chip">hasMany → <code>leads</code></span>
+        <span class="rel-chip">hasMany → <code>projects</code></span>
+        <span class="rel-chip">hasMany → <code>offers</code></span>
+        <span class="rel-chip">hasMany → <code>tickets</code></span>
+        <span class="rel-chip">hasMany → <code>documents</code> (morph)</span>
+        <span class="rel-chip">belongsTo → <code>sla_policies</code></span>
+        <span class="rel-chip">belongsTo → <code>leads</code> (converted_from)</span>
+        <span class="rel-chip">Multi-tenancy: <code>client_id</code> = tenant key</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ────────────────────────────────────────────────────
+       TABLE: contacts
+  ──────────────────────────────────────────────────── -->
+  <div class="table-card">
+    <div class="table-card-header">
+      <div class="table-card-header-left">
+        <h3>contacts</h3>
+        <p class="table-desc">
+          Osoby kontaktowe powiązane z firmą-klientem. Jedna firma może mieć wiele osób kontaktowych;
+          jedna z nich może być oznaczona jako główna (<code>is_primary</code>). Kontakty mogą być
+          powiązane z leadami jako reprezentanci firmy po stronie klienta.
+        </p>
+      </div>
+      <div class="table-badge-group">
+        <span class="badge badge-layer1">Warstwa 1</span>
+      </div>
+    </div>
+    <table class="cols-table">
+      <thead>
+        <tr>
+          <th>Kolumna</th>
+          <th>Typ</th>
+          <th>Flagi</th>
+          <th>Opis</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="col-name pk">id</span></td>
+          <td><span class="col-type">bigint</span></td>
+          <td><div class="col-flags"><span class="flag flag-pk">PK</span></div></td>
+          <td class="col-desc">Unikalny identyfikator osoby kontaktowej.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name fk">client_id</span></td>
+          <td><span class="col-type">bigint</span></td>
+          <td><div class="col-flags"><span class="flag flag-fk">FK</span></div></td>
+          <td class="col-desc">Firma, do której należy kontakt → <code>clients.id</code>. Pełni rolę klucza multi-tenancy w tej tabeli.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">first_name</span></td>
+          <td><span class="col-type">varchar</span></td>
+          <td></td>
+          <td class="col-desc">Imię osoby kontaktowej.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">last_name</span></td>
+          <td><span class="col-type">varchar</span></td>
+          <td></td>
+          <td class="col-desc">Nazwisko osoby kontaktowej.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">email</span></td>
+          <td><span class="col-type">varchar</span></td>
+          <td><div class="col-flags"><span class="flag flag-nullable">NULL</span></div></td>
+          <td class="col-desc">Adres email kontaktu. Opcjonalny — nie każda osoba musi mieć email (np. tylko telefon).</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">phone</span></td>
+          <td><span class="col-type">varchar</span></td>
+          <td><div class="col-flags"><span class="flag flag-nullable">NULL</span></div></td>
+          <td class="col-desc">Numer telefonu kontaktu. Opcjonalny.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">position</span></td>
+          <td><span class="col-type">varchar</span></td>
+          <td><div class="col-flags"><span class="flag flag-nullable">NULL</span></div></td>
+          <td class="col-desc">Stanowisko w firmie np. „CEO", „Marketing Manager". Pomaga ustalić z kim rozmawiać w danym kontekście.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">is_primary</span></td>
+          <td><span class="col-type">boolean</span></td>
+          <td><div class="col-flags"><span class="flag flag-bool">BOOL</span></div></td>
+          <td class="col-desc">Czy to główna osoba kontaktowa w firmie. Używana jako domyślny adresat powiadomień i ofert. Każdy klient powinien mieć dokładnie jeden kontakt z <code>true</code>.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">notes</span></td>
+          <td><span class="col-type">text</span></td>
+          <td><div class="col-flags"><span class="flag flag-nullable">NULL</span></div></td>
+          <td class="col-desc">Notatki wewnętrzne o osobie — widoczne tylko dla pracowników agencji.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">created_at</span></td>
+          <td><span class="col-type">timestamp</span></td>
+          <td></td>
+          <td class="col-desc">Data dodania kontaktu.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">updated_at</span></td>
+          <td><span class="col-type">timestamp</span></td>
+          <td></td>
+          <td class="col-desc">Data ostatniej modyfikacji rekordu.</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="rel-section">
+      <div class="rel-section-title">Relacje</div>
+      <div class="rel-list">
+        <span class="rel-chip">belongsTo → <code>clients</code></span>
+        <span class="rel-chip">hasMany → <code>leads</code> (contact_id)</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+       WARSTWA 2 — SPRZEDAŻ
+  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
+  <div class="layer-header">
+    <div class="layer-number">Warstwa 2</div>
+    <h2>Sprzedaż</h2>
+    <p>Lejek sprzedażowy — od pierwszego kontaktu do podpisania umowy. Leady przechodzą przez 7 statusów Kanban; wygrany lead konwertuje do klienta.</p>
+  </div>
+
+  <!-- ────────────────────────────────────────────────────
+       TABLE: leads
+  ──────────────────────────────────────────────────── -->
+  <div class="table-card">
+    <div class="table-card-header">
+      <div class="table-card-header-left">
+        <h3>leads</h3>
+        <p class="table-desc">
+          Potencjalni klienci w procesie sprzedaży. Każdy lead przechodzi przez 7 statusów
+          Kanban (<code>new → contacted → no_response → in_discussion → offer_sent → won → lost</code>).
+          Status <code>won</code> automatycznie wyzwala konwersję do tabeli <code>clients</code>.
+          Lead jest odrębnym bytem od klienta — zachowuje własną historię nawet po konwersji.
+        </p>
+      </div>
+      <div class="table-badge-group">
+        <span class="badge badge-layer2">Warstwa 2</span>
+      </div>
+    </div>
+    <table class="cols-table">
+      <thead>
+        <tr>
+          <th>Kolumna</th>
+          <th>Typ</th>
+          <th>Flagi</th>
+          <th>Opis</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="col-name pk">id</span></td>
+          <td><span class="col-type">bigint</span></td>
+          <td><div class="col-flags"><span class="flag flag-pk">PK</span></div></td>
+          <td class="col-desc">Unikalny identyfikator leadu.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name fk">client_id</span></td>
+          <td><span class="col-type">bigint</span></td>
+          <td><div class="col-flags"><span class="flag flag-fk">FK</span><span class="flag flag-nullable">NULL</span></div></td>
+          <td class="col-desc">Wypełniane po konwersji leadu → <code>clients.id</code>. <code>null</code> = lead jeszcze nie skonwertowany. Pełni też rolę klucza multi-tenancy po konwersji.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name fk">contact_id</span></td>
+          <td><span class="col-type">bigint</span></td>
+          <td><div class="col-flags"><span class="flag flag-fk">FK</span><span class="flag flag-nullable">NULL</span></div></td>
+          <td class="col-desc">Konkretna osoba kontaktowa reprezentująca lead → <code>contacts.id</code>. Opcjonalna — lead może nie mieć jeszcze przypisanego kontaktu.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name fk">assigned_to</span></td>
+          <td><span class="col-type">bigint</span></td>
+          <td><div class="col-flags"><span class="flag flag-fk">FK</span><span class="flag flag-nullable">NULL</span></div></td>
+          <td class="col-desc">Pracownik odpowiedzialny za lead → <code>users.id</code>. Używany w Policy przy sprawdzaniu dostępu.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">title</span></td>
+          <td><span class="col-type">varchar</span></td>
+          <td></td>
+          <td class="col-desc">Tytuł / nazwa leadu np. „Strona www + SEO — Kowalski Transport". Widoczny na karcie Kanban.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">company_name</span></td>
+          <td><span class="col-type">varchar</span></td>
+          <td><div class="col-flags"><span class="flag flag-nullable">NULL</span></div></td>
+          <td class="col-desc">Nazwa firmy potencjalnego klienta — zanim powstanie pełny rekord <code>clients</code>. Kopiowana do <code>clients.name</code> przy konwersji.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">slug</span></td>
+          <td><span class="col-type">varchar</span></td>
+          <td></td>
+          <td class="col-desc">Identyfikator URL leadu, unikalny per <code>client_id</code>. Immutable — Spatie Sluggable z <code>onUpdate = false</code>.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">status</span></td>
+          <td><span class="col-type">enum</span></td>
+          <td><div class="col-flags"><span class="flag flag-enum">ENUM</span></div></td>
+          <td class="col-desc">Aktualny etap w lejku: <code>new</code> | <code>contacted</code> | <code>no_response</code> | <code>in_discussion</code> | <code>offer_sent</code> | <code>won</code> | <code>lost</code>. PHP enum <code>LeadStatus</code>. Zmiana statusu przesuwa kartę Kanban przez event→listener.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">source</span></td>
+          <td><span class="col-type">enum</span></td>
+          <td><div class="col-flags"><span class="flag flag-enum">ENUM</span></div></td>
+          <td class="col-desc">Skąd pochodzi lead: <code>manual</code> — dodany ręcznie, <code>import</code> — CSV, <code>form</code> — formularz kontaktowy, <code>referral</code> — polecenie.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">value</span></td>
+          <td><span class="col-type">decimal</span></td>
+          <td><div class="col-flags"><span class="flag flag-nullable">NULL</span></div></td>
+          <td class="col-desc">Szacowana wartość kontraktu (PLN). Używana w raportach pipeline i prognozowaniu przychodów.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">expected_close_date</span></td>
+          <td><span class="col-type">date</span></td>
+          <td><div class="col-flags"><span class="flag flag-nullable">NULL</span></div></td>
+          <td class="col-desc">Przewidywana data zamknięcia sprzedaży. Używana w SLA i raportach pipeline.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">notes</span></td>
+          <td><span class="col-type">text</span></td>
+          <td><div class="col-flags"><span class="flag flag-nullable">NULL</span></div></td>
+          <td class="col-desc">Dodatkowe notatki wewnętrzne — widoczne tylko dla pracowników.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">converted_at</span></td>
+          <td><span class="col-type">timestamp</span></td>
+          <td><div class="col-flags"><span class="flag flag-nullable">NULL</span></div></td>
+          <td class="col-desc">Data i czas konwersji leadu do klienta. <code>null</code> = niekonwertowany. Wypełniane automatycznie przy ustawieniu statusu <code>won</code>.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name fk">converted_to_client_id</span></td>
+          <td><span class="col-type">bigint</span></td>
+          <td><div class="col-flags"><span class="flag flag-fk">FK</span><span class="flag flag-nullable">NULL</span></div></td>
+          <td class="col-desc">Referencja do utworzonego klienta → <code>clients.id</code>. Umożliwia przejście z widoku leadu bezpośrednio do profilu klienta.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name fk">created_by</span></td>
+          <td><span class="col-type">bigint</span></td>
+          <td><div class="col-flags"><span class="flag flag-fk">FK</span></div></td>
+          <td class="col-desc">Pracownik który dodał lead → <code>users.id</code>.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">created_at</span></td>
+          <td><span class="col-type">timestamp</span></td>
+          <td></td>
+          <td class="col-desc">Data dodania leadu.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">updated_at</span></td>
+          <td><span class="col-type">timestamp</span></td>
+          <td></td>
+          <td class="col-desc">Data ostatniej modyfikacji.</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="rel-section">
+      <div class="rel-section-title">Relacje</div>
+      <div class="rel-list">
+        <span class="rel-chip">belongsTo → <code>clients</code> (po konwersji)</span>
+        <span class="rel-chip">belongsTo → <code>contacts</code></span>
+        <span class="rel-chip">belongsTo → <code>users</code> (assigned_to)</span>
+        <span class="rel-chip">hasMany → <code>lead_activities</code></span>
+        <span class="rel-chip">hasMany → <code>offers</code></span>
+        <span class="rel-chip">hasOne → <code>kanban_cards</code> (morph)</span>
+        <span class="rel-chip">hasOne → <code>clients</code> (converted_to)</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ────────────────────────────────────────────────────
+       TABLE: lead_activities
+  ──────────────────────────────────────────────────── -->
+  <div class="table-card">
+    <div class="table-card-header">
+      <div class="table-card-header-left">
+        <h3>lead_activities</h3>
+        <p class="table-desc">
+          Chronologiczna historia wszystkich kontaktów i zdarzeń związanych z leadem.
+          Każda akcja pracownika (telefon, email, spotkanie, notatka) jest rejestrowana
+          jako oddzielny rekord. Stanowi pełny audit trail procesu sprzedaży.
+        </p>
+      </div>
+      <div class="table-badge-group">
+        <span class="badge badge-layer2">Warstwa 2</span>
+      </div>
+    </div>
+    <table class="cols-table">
+      <thead>
+        <tr>
+          <th>Kolumna</th>
+          <th>Typ</th>
+          <th>Flagi</th>
+          <th>Opis</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="col-name pk">id</span></td>
+          <td><span class="col-type">bigint</span></td>
+          <td><div class="col-flags"><span class="flag flag-pk">PK</span></div></td>
+          <td class="col-desc">Unikalny identyfikator aktywności.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name fk">lead_id</span></td>
+          <td><span class="col-type">bigint</span></td>
+          <td><div class="col-flags"><span class="flag flag-fk">FK</span></div></td>
+          <td class="col-desc">Lead, którego dotyczy aktywność → <code>leads.id</code>.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name fk">user_id</span></td>
+          <td><span class="col-type">bigint</span></td>
+          <td><div class="col-flags"><span class="flag flag-fk">FK</span></div></td>
+          <td class="col-desc">Pracownik który wykonał czynność → <code>users.id</code>. Przy automatycznych wpisach (np. <code>status_change</code>) może być systemowy user.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">type</span></td>
+          <td><span class="col-type">enum</span></td>
+          <td><div class="col-flags"><span class="flag flag-enum">ENUM</span></div></td>
+          <td class="col-desc">Typ aktywności: <code>call</code> — rozmowa telefoniczna, <code>email</code> — wysłany/odebrany email, <code>meeting</code> — spotkanie, <code>note</code> — notatka tekstowa, <code>status_change</code> — automatyczny wpis przy zmianie statusu leadu.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">description</span></td>
+          <td><span class="col-type">text</span></td>
+          <td><div class="col-flags"><span class="flag flag-nullable">NULL</span></div></td>
+          <td class="col-desc">Treść notatki / opis wykonanej czynności. Dla <code>status_change</code> zawiera informację o poprzednim i nowym statusie.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">occurred_at</span></td>
+          <td><span class="col-type">timestamp</span></td>
+          <td></td>
+          <td class="col-desc">Rzeczywisty czas wykonania czynności — może różnić się od <code>created_at</code> gdy pracownik loguje aktywność z przeszłości (np. spotkanie sprzed 2 dni).</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">metadata</span></td>
+          <td><span class="col-type">json</span></td>
+          <td><div class="col-flags"><span class="flag flag-json">JSON</span><span class="flag flag-nullable">NULL</span></div></td>
+          <td class="col-desc">Dodatkowe dane specyficzne dla typu: dla <code>status_change</code> — <code>{"from": "contacted", "to": "in_discussion"}</code>; dla <code>call</code> — czas trwania; dla <code>meeting</code> — lokalizacja.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">created_at</span></td>
+          <td><span class="col-type">timestamp</span></td>
+          <td></td>
+          <td class="col-desc">Data dodania wpisu do systemu (może różnić się od <code>occurred_at</code>).</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="rel-section">
+      <div class="rel-section-title">Relacje</div>
+      <div class="rel-list">
+        <span class="rel-chip">belongsTo → <code>leads</code></span>
+        <span class="rel-chip">belongsTo → <code>users</code></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ────────────────────────────────────────────────────
+       TABLE: offers
+  ──────────────────────────────────────────────────── -->
+  <div class="table-card">
+    <div class="table-card-header">
+      <div class="table-card-header-left">
+        <h3>offers</h3>
+        <p class="table-desc">
+          Oferty handlowe wysyłane do leadów. Oferta jest odrębnym bytem —
+          nie aliasem leadu ani klienta. Może zawierać opcjonalny dokument TipTap
+          z pełną treścią oferty. Akceptacja oferty poprzedza konwersję leadu do klienta.
+        </p>
+      </div>
+      <div class="table-badge-group">
+        <span class="badge badge-layer2">Warstwa 2</span>
+      </div>
+    </div>
+    <table class="cols-table">
+      <thead>
+        <tr>
+          <th>Kolumna</th>
+          <th>Typ</th>
+          <th>Flagi</th>
+          <th>Opis</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="col-name pk">id</span></td>
+          <td><span class="col-type">bigint</span></td>
+          <td><div class="col-flags"><span class="flag flag-pk">PK</span></div></td>
+          <td class="col-desc">Unikalny identyfikator oferty.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name fk">lead_id</span></td>
+          <td><span class="col-type">bigint</span></td>
+          <td><div class="col-flags"><span class="flag flag-fk">FK</span></div></td>
+          <td class="col-desc">Lead, dla którego przygotowano ofertę → <code>leads.id</code>. Jeden lead może mieć wiele ofert (np. różne warianty cenowe).</td>
+        </tr>
+        <tr>
+          <td><span class="col-name fk">client_id</span></td>
+          <td><span class="col-type">bigint</span></td>
+          <td><div class="col-flags"><span class="flag flag-fk">FK</span><span class="flag flag-nullable">NULL</span></div></td>
+          <td class="col-desc">Wypełniane automatycznie przy konwersji leadu → <code>clients.id</code>. <code>null</code> = oferta dla jeszcze nieskonwertowanego leadu. Pełni rolę klucza multi-tenancy po konwersji.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">title</span></td>
+          <td><span class="col-type">varchar</span></td>
+          <td></td>
+          <td class="col-desc">Tytuł oferty np. „Pakiet SEO Premium — Q1 2026".</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">slug</span></td>
+          <td><span class="col-type">varchar</span></td>
+          <td></td>
+          <td class="col-desc">Identyfikator URL oferty, unikalny per <code>client_id</code>. Immutable.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">status</span></td>
+          <td><span class="col-type">enum</span></td>
+          <td><div class="col-flags"><span class="flag flag-enum">ENUM</span></div></td>
+          <td class="col-desc">Aktualny stan oferty: <code>draft</code> — w przygotowaniu, <code>sent</code> — wysłana do klienta, <code>accepted</code> — zaakceptowana, <code>rejected</code> — odrzucona, <code>expired</code> — minął termin ważności.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">value</span></td>
+          <td><span class="col-type">decimal</span></td>
+          <td><div class="col-flags"><span class="flag flag-nullable">NULL</span></div></td>
+          <td class="col-desc">Wartość oferty netto (PLN). Może różnić się od szacowanej wartości leadu.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">valid_until</span></td>
+          <td><span class="col-type">date</span></td>
+          <td><div class="col-flags"><span class="flag flag-nullable">NULL</span></div></td>
+          <td class="col-desc">Termin ważności oferty. Po przekroczeniu tej daty status zmienia się automatycznie na <code>expired</code> (scheduled job).</td>
+        </tr>
+        <tr>
+          <td><span class="col-name fk">document_id</span></td>
+          <td><span class="col-type">bigint</span></td>
+          <td><div class="col-flags"><span class="flag flag-fk">FK</span><span class="flag flag-nullable">NULL</span></div></td>
+          <td class="col-desc">Opcjonalny pełny dokument oferty stworzony w edytorze TipTap → <code>documents.id</code>. Może być eksportowany do PDF przez Browsershot.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">notes</span></td>
+          <td><span class="col-type">text</span></td>
+          <td><div class="col-flags"><span class="flag flag-nullable">NULL</span></div></td>
+          <td class="col-desc">Wewnętrzne notatki dotyczące oferty — niewidoczne dla klienta.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">accepted_at</span></td>
+          <td><span class="col-type">timestamp</span></td>
+          <td><div class="col-flags"><span class="flag flag-nullable">NULL</span></div></td>
+          <td class="col-desc">Data i czas akceptacji oferty przez klienta.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">rejected_at</span></td>
+          <td><span class="col-type">timestamp</span></td>
+          <td><div class="col-flags"><span class="flag flag-nullable">NULL</span></div></td>
+          <td class="col-desc">Data i czas odrzucenia oferty.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">converted_to_client_at</span></td>
+          <td><span class="col-type">timestamp</span></td>
+          <td><div class="col-flags"><span class="flag flag-nullable">NULL</span></div></td>
+          <td class="col-desc">Data, kiedy lead powiązany z ofertą został skonwertowany do klienta. Pozwala mierzyć czas od oferty do zamknięcia sprzedaży.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name fk">created_by</span></td>
+          <td><span class="col-type">bigint</span></td>
+          <td><div class="col-flags"><span class="flag flag-fk">FK</span></div></td>
+          <td class="col-desc">Pracownik który stworzył ofertę → <code>users.id</code>.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">created_at</span></td>
+          <td><span class="col-type">timestamp</span></td>
+          <td></td>
+          <td class="col-desc">Data utworzenia oferty.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">updated_at</span></td>
+          <td><span class="col-type">timestamp</span></td>
+          <td></td>
+          <td class="col-desc">Data ostatniej modyfikacji.</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="rel-section">
+      <div class="rel-section-title">Relacje</div>
+      <div class="rel-list">
+        <span class="rel-chip">belongsTo → <code>leads</code></span>
+        <span class="rel-chip">belongsTo → <code>clients</code> (po konwersji)</span>
+        <span class="rel-chip">belongsTo → <code>documents</code> (opcjonalnie)</span>
+        <span class="rel-chip">belongsTo → <code>users</code> (created_by)</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+       WARSTWA 3 — REALIZACJA
+  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
+  <div class="layer-header">
+    <div class="layer-number">Warstwa 3</div>
+    <h2>Realizacja</h2>
+    <p>Właściwa praca dla klientów — projekty, dokumenty, zgłoszenia, SLA, SEO, audyty, komunikacja i logi. 30 tabel.</p>
+  </div>
+
+  <!-- ────────────────────────────────────────────────────
+       TABLE: projects
+  ──────────────────────────────────────────────────── -->
+  <div class="table-card">
+    <div class="table-card-header">
+      <div class="table-card-header-left">
+        <h3>projects</h3>
+        <p class="table-desc">
+          Realizacje usług dla klientów — centrum Warstwy 3. Większość zasobów systemu
+          (<code>documents</code>, <code>seo_analyses</code>, <code>audits</code>, <code>tickets</code>)
+          jest przypisana do projektu. Projekt dziedziczy politykę SLA od klienta,
+          ale może mieć własną nadpisaną.
+        </p>
+      </div>
+      <div class="table-badge-group">
+        <span class="badge badge-layer3">Warstwa 3</span>
+      </div>
+    </div>
+    <table class="cols-table">
+      <thead>
+        <tr>
+          <th>Kolumna</th>
+          <th>Typ</th>
+          <th>Flagi</th>
+          <th>Opis</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="col-name pk">id</span></td>
+          <td><span class="col-type">bigint</span></td>
+          <td><div class="col-flags"><span class="flag flag-pk">PK</span></div></td>
+          <td class="col-desc">Unikalny identyfikator projektu.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name fk">client_id</span></td>
+          <td><span class="col-type">bigint</span></td>
+          <td><div class="col-flags"><span class="flag flag-fk">FK</span></div></td>
+          <td class="col-desc">Klient właściciel projektu → <code>clients.id</code>. Klucz multi-tenancy — Global Scope filtruje po tym polu.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">name</span></td>
+          <td><span class="col-type">varchar</span></td>
+          <td></td>
+          <td class="col-desc">Nazwa projektu np. „SEO + Content Marketing Q1 2026".</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">slug</span></td>
+          <td><span class="col-type">varchar</span></td>
+          <td></td>
+          <td class="col-desc">Identyfikator URL projektu, unikalny per <code>client_id</code>. Immutable. Używany w URL panelu klienta.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">description</span></td>
+          <td><span class="col-type">text</span></td>
+          <td><div class="col-flags"><span class="flag flag-nullable">NULL</span></div></td>
+          <td class="col-desc">Opis zakresu projektu — widoczny dla klienta w jego panelu.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">status</span></td>
+          <td><span class="col-type">enum</span></td>
+          <td><div class="col-flags"><span class="flag flag-enum">ENUM</span></div></td>
+          <td class="col-desc">Stan projektu: <code>planning</code> — w planowaniu, <code>active</code> — w realizacji, <code>on_hold</code> — wstrzymany, <code>completed</code> — zakończony, <code>cancelled</code> — anulowany.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name fk">sla_policy_id</span></td>
+          <td><span class="col-type">bigint</span></td>
+          <td><div class="col-flags"><span class="flag flag-fk">FK</span><span class="flag flag-nullable">NULL</span></div></td>
+          <td class="col-desc">Polityka SLA dedykowana temu projektowi → <code>sla_policies.id</code>. <code>null</code> = dziedziczy politykę z <code>clients.sla_policy_id</code>.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name fk">assigned_to</span></td>
+          <td><span class="col-type">bigint</span></td>
+          <td><div class="col-flags"><span class="flag flag-fk">FK</span><span class="flag flag-nullable">NULL</span></div></td>
+          <td class="col-desc">Główny opiekun projektu → <code>users.id</code>. Sprawdzany przez Policy przy dostępie managera/pracownika.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">deadline</span></td>
+          <td><span class="col-type">date</span></td>
+          <td><div class="col-flags"><span class="flag flag-nullable">NULL</span></div></td>
+          <td class="col-desc">Termin realizacji projektu. Przekroczenie deadlinu bez ukończenia wyzwala <code>sla_incidents</code> z <code>breach_type = deadline</code>.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">started_at</span></td>
+          <td><span class="col-type">timestamp</span></td>
+          <td><div class="col-flags"><span class="flag flag-nullable">NULL</span></div></td>
+          <td class="col-desc">Data faktycznego rozpoczęcia prac. Wypełniana przy zmianie statusu na <code>active</code>.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">completed_at</span></td>
+          <td><span class="col-type">timestamp</span></td>
+          <td><div class="col-flags"><span class="flag flag-nullable">NULL</span></div></td>
+          <td class="col-desc">Data zakończenia projektu. Wypełniana przy statusie <code>completed</code>.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name fk">created_by</span></td>
+          <td><span class="col-type">bigint</span></td>
+          <td><div class="col-flags"><span class="flag flag-fk">FK</span></div></td>
+          <td class="col-desc">Pracownik który utworzył projekt → <code>users.id</code>.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">created_at</span></td>
+          <td><span class="col-type">timestamp</span></td>
+          <td></td>
+          <td class="col-desc">Data utworzenia projektu.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">updated_at</span></td>
+          <td><span class="col-type">timestamp</span></td>
+          <td></td>
+          <td class="col-desc">Data ostatniej modyfikacji.</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="rel-section">
+      <div class="rel-section-title">Relacje</div>
+      <div class="rel-list">
+        <span class="rel-chip">belongsTo → <code>clients</code></span>
+        <span class="rel-chip">belongsTo → <code>sla_policies</code></span>
+        <span class="rel-chip">belongsTo → <code>users</code> (assigned_to)</span>
+        <span class="rel-chip">hasMany → <code>documents</code> (morph)</span>
+        <span class="rel-chip">hasMany → <code>seo_analyses</code></span>
+        <span class="rel-chip">hasMany → <code>audits</code></span>
+        <span class="rel-chip">hasMany → <code>tickets</code></span>
+        <span class="rel-chip">hasMany → <code>seo_competitors</code></span>
+        <span class="rel-chip">morphMany → <code>sla_incidents</code> (deadline breach)</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ────────────────────────────────────────────────────
+       TABLE: documents
+  ──────────────────────────────────────────────────── -->
+  <div class="table-card">
+    <div class="table-card-header">
+      <div class="table-card-header-left">
+        <h3>documents</h3>
+        <p class="table-desc">
+          Dokumenty tworzone w edytorze TipTap (ProseMirror). Polimorficznie powiązane
+          z projektami, klientami lub ticketami. Przechowują treść w formacie JSON (TipTap)
+          i wyrenderowanym HTML. Mogą być eksportowane do PDF przez Browsershot (async w kolejce).
+        </p>
+      </div>
+      <div class="table-badge-group">
+        <span class="badge badge-layer3">Warstwa 3</span>
+      </div>
+    </div>
+    <table class="cols-table">
+      <thead>
+        <tr>
+          <th>Kolumna</th>
+          <th>Typ</th>
+          <th>Flagi</th>
+          <th>Opis</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="col-name pk">id</span></td>
+          <td><span class="col-type">bigint</span></td>
+          <td><div class="col-flags"><span class="flag flag-pk">PK</span></div></td>
+          <td class="col-desc">Unikalny identyfikator dokumentu.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">documentable_type</span></td>
+          <td><span class="col-type">varchar</span></td>
+          <td><div class="col-flags"><span class="flag flag-poly">POLY</span></div></td>
+          <td class="col-desc">Klasa modelu właściciela dokumentu: <code>Project</code> | <code>Client</code> | <code>Ticket</code>. Para z <code>documentable_id</code> tworzy relację polimorficzną.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">documentable_id</span></td>
+          <td><span class="col-type">bigint</span></td>
+          <td><div class="col-flags"><span class="flag flag-poly">POLY</span></div></td>
+          <td class="col-desc">ID rekordu właściciela — projekt, klient lub ticket.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">title</span></td>
+          <td><span class="col-type">varchar</span></td>
+          <td></td>
+          <td class="col-desc">Tytuł dokumentu widoczny na liście. Używany też do generowania slugu.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">slug</span></td>
+          <td><span class="col-type">varchar</span></td>
+          <td></td>
+          <td class="col-desc">Identyfikator URL dokumentu, unikalny per <code>documentable</code>. Immutable — Spatie Sluggable.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">content_json</span></td>
+          <td><span class="col-type">longtext</span></td>
+          <td><div class="col-flags"><span class="flag flag-json">JSON</span><span class="flag flag-nullable">NULL</span></div></td>
+          <td class="col-desc">Treść dokumentu w formacie JSON TipTap (ProseMirror document model). To jest źródło prawdy — używane do edycji.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">content_html</span></td>
+          <td><span class="col-type">longtext</span></td>
+          <td><div class="col-flags"><span class="flag flag-nullable">NULL</span></div></td>
+          <td class="col-desc">Wyrenderowany HTML — generowany z <code>content_json</code> przy zapisie. Używany do podglądu i eksportu PDF przez Browsershot.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">pdf_path</span></td>
+          <td><span class="col-type">varchar</span></td>
+          <td><div class="col-flags"><span class="flag flag-nullable">NULL</span></div></td>
+          <td class="col-desc">Ścieżka do wygenerowanego pliku PDF w S3/MinIO. <code>null</code> = PDF nie został jeszcze wygenerowany lub jest w kolejce. Generowanie asynchroniczne przez Browsershot.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">version</span></td>
+          <td><span class="col-type">int</span></td>
+          <td></td>
+          <td class="col-desc">Aktualny numer wersji dokumentu. Inkrementowany przy każdym zapisie. Poprzednie wersje przechowywane w <code>document_versions</code>.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">is_published</span></td>
+          <td><span class="col-type">boolean</span></td>
+          <td><div class="col-flags"><span class="flag flag-bool">BOOL</span></div></td>
+          <td class="col-desc">Czy dokument jest widoczny dla klienta w jego panelu. <code>false</code> = roboczy draft, widoczny tylko dla pracowników.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name fk">created_by</span></td>
+          <td><span class="col-type">bigint</span></td>
+          <td><div class="col-flags"><span class="flag flag-fk">FK</span></div></td>
+          <td class="col-desc">Pracownik który stworzył dokument → <code>users.id</code>.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">created_at</span></td>
+          <td><span class="col-type">timestamp</span></td>
+          <td></td>
+          <td class="col-desc">Data utworzenia dokumentu.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">updated_at</span></td>
+          <td><span class="col-type">timestamp</span></td>
+          <td></td>
+          <td class="col-desc">Data ostatniej modyfikacji.</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="rel-section">
+      <div class="rel-section-title">Relacje</div>
+      <div class="rel-list">
+        <span class="rel-chip">morphTo → <code>projects</code> / <code>clients</code> / <code>tickets</code></span>
+        <span class="rel-chip">hasMany → <code>document_versions</code></span>
+        <span class="rel-chip">belongsTo → <code>users</code> (created_by)</span>
+        <span class="rel-chip">hasOne ← <code>offers</code> (document_id)</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ────────────────────────────────────────────────────
+       TABLE: document_versions
+  ──────────────────────────────────────────────────── -->
+  <div class="table-card">
+    <div class="table-card-header">
+      <div class="table-card-header-left">
+        <h3>document_versions</h3>
+        <p class="table-desc">
+          Historia wersji dokumentów TipTap. Przy każdym zapisie bieżąca treść
+          jest archiwizowana tutaj przed nadpisaniem. Umożliwia przeglądanie
+          i przywracanie wcześniejszych wersji.
+        </p>
+      </div>
+      <div class="table-badge-group">
+        <span class="badge badge-layer3">Warstwa 3</span>
+      </div>
+    </div>
+    <table class="cols-table">
+      <thead>
+        <tr>
+          <th>Kolumna</th>
+          <th>Typ</th>
+          <th>Flagi</th>
+          <th>Opis</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="col-name pk">id</span></td>
+          <td><span class="col-type">bigint</span></td>
+          <td><div class="col-flags"><span class="flag flag-pk">PK</span></div></td>
+          <td class="col-desc">Unikalny identyfikator wersji.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name fk">document_id</span></td>
+          <td><span class="col-type">bigint</span></td>
+          <td><div class="col-flags"><span class="flag flag-fk">FK</span></div></td>
+          <td class="col-desc">Dokument, do którego należy ta wersja → <code>documents.id</code>.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">version</span></td>
+          <td><span class="col-type">int</span></td>
+          <td></td>
+          <td class="col-desc">Numer wersji — odpowiada wartości <code>documents.version</code> w chwili archiwizacji. Para (<code>document_id</code>, <code>version</code>) jest unikalna.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">content_json</span></td>
+          <td><span class="col-type">longtext</span></td>
+          <td><div class="col-flags"><span class="flag flag-json">JSON</span></div></td>
+          <td class="col-desc">Zarchiwizowana treść dokumentu w formacie JSON TipTap — snapshot stanu przed nadpisaniem.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">title</span></td>
+          <td><span class="col-type">varchar</span></td>
+          <td></td>
+          <td class="col-desc">Tytuł dokumentu w chwili archiwizacji — może różnić się od aktualnego tytułu.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name fk">created_by</span></td>
+          <td><span class="col-type">bigint</span></td>
+          <td><div class="col-flags"><span class="flag flag-fk">FK</span></div></td>
+          <td class="col-desc">Użytkownik który dokonał zapisu tworzącego tę wersję → <code>users.id</code>.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">created_at</span></td>
+          <td><span class="col-type">timestamp</span></td>
+          <td></td>
+          <td class="col-desc">Data archiwizacji wersji.</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="rel-section">
+      <div class="rel-section-title">Relacje</div>
+      <div class="rel-list">
+        <span class="rel-chip">belongsTo → <code>documents</code></span>
+        <span class="rel-chip">belongsTo → <code>users</code> (created_by)</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ────────────────────────────────────────────────────
+       TABLE: sla_policies
+  ──────────────────────────────────────────────────── -->
+  <div class="table-card">
+    <div class="table-card-header">
+      <div class="table-card-header-left">
+        <h3>sla_policies</h3>
+        <p class="table-desc">
+          Polityki SLA definiujące wymagane czasy reakcji i rozwiązania zgłoszeń.
+          Mogą być globalne (<code>client_id = null</code>) lub dedykowane konkretnemu klientowi.
+          Polityka klienta nadpisuje globalną; polityka projektu nadpisuje politykę klienta.
+        </p>
+      </div>
+      <div class="table-badge-group">
+        <span class="badge badge-layer3">Warstwa 3</span>
+      </div>
+    </div>
+    <table class="cols-table">
+      <thead>
+        <tr>
+          <th>Kolumna</th>
+          <th>Typ</th>
+          <th>Flagi</th>
+          <th>Opis</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="col-name pk">id</span></td>
+          <td><span class="col-type">bigint</span></td>
+          <td><div class="col-flags"><span class="flag flag-pk">PK</span></div></td>
+          <td class="col-desc">Unikalny identyfikator polityki SLA.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name fk">client_id</span></td>
+          <td><span class="col-type">bigint</span></td>
+          <td><div class="col-flags"><span class="flag flag-fk">FK</span><span class="flag flag-nullable">NULL</span></div></td>
+          <td class="col-desc">Klient, dla którego dedykowana jest polityka → <code>clients.id</code>. <code>null</code> = polityka globalna (domyślna dla wszystkich klientów bez własnej polityki).</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">name</span></td>
+          <td><span class="col-type">varchar</span></td>
+          <td></td>
+          <td class="col-desc">Nazwa polityki np. „Standard", „Premium 24/7", „Enterprise".</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">priority</span></td>
+          <td><span class="col-type">enum</span></td>
+          <td><div class="col-flags"><span class="flag flag-enum">ENUM</span></div></td>
+          <td class="col-desc">Poziom priorytetu zgłoszeń, dla których obowiązuje ta polityka: <code>low</code> | <code>medium</code> | <code>high</code> | <code>critical</code>. Ticket dziedziczy politykę odpowiadającą swojemu priorytetowi.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">response_time_hours</span></td>
+          <td><span class="col-type">int</span></td>
+          <td></td>
+          <td class="col-desc">Maksymalny czas pierwszej reakcji na zgłoszenie (w godzinach). Przekroczenie → <code>sla_incidents</code> z <code>breach_type = response</code>.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">resolution_time_hours</span></td>
+          <td><span class="col-type">int</span></td>
+          <td></td>
+          <td class="col-desc">Maksymalny czas rozwiązania zgłoszenia (w godzinach). Przekroczenie → <code>sla_incidents</code> z <code>breach_type = resolution</code>.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">business_hours_only</span></td>
+          <td><span class="col-type">boolean</span></td>
+          <td><div class="col-flags"><span class="flag flag-bool">BOOL</span></div></td>
+          <td class="col-desc">Czy licznik SLA uwzględnia tylko godziny robocze (pon-pt 8:00–17:00). <code>true</code> = weekendy i noce nie są wliczane. Istotne przy automatycznym obliczaniu <code>sla_response_due_at</code>.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">created_at</span></td>
+          <td><span class="col-type">timestamp</span></td>
+          <td></td>
+          <td class="col-desc">Data utworzenia polityki.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">updated_at</span></td>
+          <td><span class="col-type">timestamp</span></td>
+          <td></td>
+          <td class="col-desc">Data ostatniej modyfikacji.</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="rel-section">
+      <div class="rel-section-title">Relacje</div>
+      <div class="rel-list">
+        <span class="rel-chip">belongsTo → <code>clients</code> (opcjonalnie)</span>
+        <span class="rel-chip">hasMany ← <code>clients</code> (sla_policy_id)</span>
+        <span class="rel-chip">hasMany ← <code>projects</code> (sla_policy_id)</span>
+        <span class="rel-chip">hasMany ← <code>tickets</code> (sla_policy_id)</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ────────────────────────────────────────────────────
+       TABLE: tickets
+  ──────────────────────────────────────────────────── -->
+  <div class="table-card">
+    <div class="table-card-header">
+      <div class="table-card-header-left">
+        <h3>tickets</h3>
+        <p class="table-desc">
+          Zgłoszenia serwisowe tworzone przez klientów. Sfera ludzka — klient ręcznie
+          zgłasza problem lub pytanie. Każde zgłoszenie ma własne liczniki SLA
+          (<code>sla_response_due_at</code>, <code>sla_resolution_due_at</code>) obliczane
+          na podstawie przypisanej polityki SLA i priorytetu. Może mieć kartę na tablicy Kanban.
+        </p>
+      </div>
+      <div class="table-badge-group">
+        <span class="badge badge-layer3">Warstwa 3</span>
+      </div>
+    </div>
+    <table class="cols-table">
+      <thead>
+        <tr>
+          <th>Kolumna</th>
+          <th>Typ</th>
+          <th>Flagi</th>
+          <th>Opis</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="col-name pk">id</span></td>
+          <td><span class="col-type">bigint</span></td>
+          <td><div class="col-flags"><span class="flag flag-pk">PK</span></div></td>
+          <td class="col-desc">Numeryczny identyfikator zgłoszenia — wyświetlany jako <code>#142</code> w interfejsie. Nie posiada slugu.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name fk">client_id</span></td>
+          <td><span class="col-type">bigint</span></td>
+          <td><div class="col-flags"><span class="flag flag-fk">FK</span></div></td>
+          <td class="col-desc">Klient który złożył zgłoszenie → <code>clients.id</code>. Klucz multi-tenancy.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name fk">project_id</span></td>
+          <td><span class="col-type">bigint</span></td>
+          <td><div class="col-flags"><span class="flag flag-fk">FK</span></div></td>
+          <td class="col-desc">Projekt, którego dotyczy zgłoszenie → <code>projects.id</code>. Zgłoszenia są zawsze powiązane z konkretnym projektem.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">created_by</span></td>
+          <td><span class="col-type">bigint</span></td>
+          <td><div class="col-flags"><span class="flag flag-poly">POLY</span></div></td>
+          <td class="col-desc">ID autora zgłoszenia. Para z <code>created_by_type</code> — może to być <code>User</code> (pracownik zakłada ticket za klienta) lub <code>Client</code> (klient z panelu).</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">created_by_type</span></td>
+          <td><span class="col-type">varchar</span></td>
+          <td><div class="col-flags"><span class="flag flag-poly">POLY</span></div></td>
+          <td class="col-desc">Klasa autora: <code>User</code> | <code>Client</code>.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">title</span></td>
+          <td><span class="col-type">varchar</span></td>
+          <td></td>
+          <td class="col-desc">Tytuł zgłoszenia — krótki opis problemu.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">description</span></td>
+          <td><span class="col-type">text</span></td>
+          <td></td>
+          <td class="col-desc">Pełny opis problemu podany przez zgłaszającego.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">priority</span></td>
+          <td><span class="col-type">enum</span></td>
+          <td><div class="col-flags"><span class="flag flag-enum">ENUM</span></div></td>
+          <td class="col-desc">Priorytet zgłoszenia: <code>low</code> | <code>medium</code> | <code>high</code> | <code>critical</code>. Determinuje, która polityka SLA zostanie zastosowana do obliczenia terminów.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">status</span></td>
+          <td><span class="col-type">enum</span></td>
+          <td><div class="col-flags"><span class="flag flag-enum">ENUM</span></div></td>
+          <td class="col-desc">Aktualny stan obsługi: <code>new</code> → <code>open</code> → <code>in_progress</code> → <code>waiting</code> → <code>resolved</code> → <code>closed</code>. Zmiana statusu przesuwa kartę Kanban.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name fk">sla_policy_id</span></td>
+          <td><span class="col-type">bigint</span></td>
+          <td><div class="col-flags"><span class="flag flag-fk">FK</span><span class="flag flag-nullable">NULL</span></div></td>
+          <td class="col-desc">Polityka SLA zastosowana do tego ticketu → <code>sla_policies.id</code>. Ustalana przy tworzeniu na podstawie priorytetu i klienta/projektu.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">sla_response_due_at</span></td>
+          <td><span class="col-type">timestamp</span></td>
+          <td><div class="col-flags"><span class="flag flag-nullable">NULL</span></div></td>
+          <td class="col-desc">Deadline pierwszej odpowiedzi — obliczany jako <code>created_at + response_time_hours</code> (z uwzględnieniem godzin roboczych jeśli <code>business_hours_only = true</code>).</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">sla_resolution_due_at</span></td>
+          <td><span class="col-type">timestamp</span></td>
+          <td><div class="col-flags"><span class="flag flag-nullable">NULL</span></div></td>
+          <td class="col-desc">Deadline rozwiązania zgłoszenia — obliczany jako <code>created_at + resolution_time_hours</code>.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">first_responded_at</span></td>
+          <td><span class="col-type">timestamp</span></td>
+          <td><div class="col-flags"><span class="flag flag-nullable">NULL</span></div></td>
+          <td class="col-desc">Czas pierwszej odpowiedzi pracownika. Wypełniany automatycznie przy pierwszym komentarzu non-internal. Używany do sprawdzenia czy SLA response zostało dotrzymane.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">resolved_at</span></td>
+          <td><span class="col-type">timestamp</span></td>
+          <td><div class="col-flags"><span class="flag flag-nullable">NULL</span></div></td>
+          <td class="col-desc">Czas zmiany statusu na <code>resolved</code>. Używany do pomiaru dotrzymania SLA resolution.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">closed_at</span></td>
+          <td><span class="col-type">timestamp</span></td>
+          <td><div class="col-flags"><span class="flag flag-nullable">NULL</span></div></td>
+          <td class="col-desc">Czas zamknięcia zgłoszenia (status <code>closed</code>). Ticket zamknięty nie może być ponownie otwarty — wymaga nowego zgłoszenia.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name fk">kanban_card_id</span></td>
+          <td><span class="col-type">bigint</span></td>
+          <td><div class="col-flags"><span class="flag flag-fk">FK</span><span class="flag flag-nullable">NULL</span></div></td>
+          <td class="col-desc">Powiązana karta Kanban → <code>kanban_cards.id</code>. Umożliwia zarządzanie ticketami z poziomu tablicy Kanban.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">created_at</span></td>
+          <td><span class="col-type">timestamp</span></td>
+          <td></td>
+          <td class="col-desc">Data złożenia zgłoszenia. Punkt startowy liczników SLA.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">updated_at</span></td>
+          <td><span class="col-type">timestamp</span></td>
+          <td></td>
+          <td class="col-desc">Data ostatniej modyfikacji.</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="rel-section">
+      <div class="rel-section-title">Relacje</div>
+      <div class="rel-list">
+        <span class="rel-chip">belongsTo → <code>clients</code></span>
+        <span class="rel-chip">belongsTo → <code>projects</code></span>
+        <span class="rel-chip">belongsTo → <code>sla_policies</code></span>
+        <span class="rel-chip">belongsTo → <code>kanban_cards</code></span>
+        <span class="rel-chip">hasMany → <code>ticket_comments</code></span>
+        <span class="rel-chip">hasMany → <code>documents</code> (morph)</span>
+        <span class="rel-chip">morphMany → <code>sla_incidents</code></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ────────────────────────────────────────────────────
+       TABLE: ticket_comments
+  ──────────────────────────────────────────────────── -->
+  <div class="table-card">
+    <div class="table-card-header">
+      <div class="table-card-header-left">
+        <h3>ticket_comments</h3>
+        <p class="table-desc">
+          Komentarze do zgłoszeń — widoczne dla klienta lub wyłącznie wewnętrzne
+          (notatki między pracownikami). Pierwszy komentarz non-internal od pracownika
+          automatycznie wypełnia <code>tickets.first_responded_at</code>.
+        </p>
+      </div>
+      <div class="table-badge-group">
+        <span class="badge badge-layer3">Warstwa 3</span>
+      </div>
+    </div>
+    <table class="cols-table">
+      <thead>
+        <tr>
+          <th>Kolumna</th>
+          <th>Typ</th>
+          <th>Flagi</th>
+          <th>Opis</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="col-name pk">id</span></td>
+          <td><span class="col-type">bigint</span></td>
+          <td><div class="col-flags"><span class="flag flag-pk">PK</span></div></td>
+          <td class="col-desc">Unikalny identyfikator komentarza.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name fk">ticket_id</span></td>
+          <td><span class="col-type">bigint</span></td>
+          <td><div class="col-flags"><span class="flag flag-fk">FK</span></div></td>
+          <td class="col-desc">Zgłoszenie, do którego należy komentarz → <code>tickets.id</code>.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">author_id</span></td>
+          <td><span class="col-type">bigint</span></td>
+          <td><div class="col-flags"><span class="flag flag-poly">POLY</span></div></td>
+          <td class="col-desc">ID autora komentarza. Para z <code>author_type</code>.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">author_type</span></td>
+          <td><span class="col-type">varchar</span></td>
+          <td><div class="col-flags"><span class="flag flag-poly">POLY</span></div></td>
+          <td class="col-desc">Klasa autora: <code>User</code> (pracownik) | <code>Client</code> (klient odpowiada z panelu). Decyduje skąd pobierać dane autora.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">is_internal</span></td>
+          <td><span class="col-type">boolean</span></td>
+          <td><div class="col-flags"><span class="flag flag-bool">BOOL</span></div></td>
+          <td class="col-desc">Czy komentarz jest wewnętrzną notatką. <code>true</code> = widoczny tylko dla pracowników agencji, klient go nie zobaczy. <code>false</code> = publiczny, widoczny dla klienta w panelu.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">content</span></td>
+          <td><span class="col-type">text</span></td>
+          <td></td>
+          <td class="col-desc">Treść komentarza. Może zawierać @wzmianki — parser tworzy wpisy w tabeli <code>mentions</code>.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">created_at</span></td>
+          <td><span class="col-type">timestamp</span></td>
+          <td></td>
+          <td class="col-desc">Data dodania komentarza.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">updated_at</span></td>
+          <td><span class="col-type">timestamp</span></td>
+          <td></td>
+          <td class="col-desc">Data ostatniej edycji komentarza.</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="rel-section">
+      <div class="rel-section-title">Relacje</div>
+      <div class="rel-list">
+        <span class="rel-chip">belongsTo → <code>tickets</code></span>
+        <span class="rel-chip">morphTo → <code>users</code> / <code>clients</code> (author)</span>
+        <span class="rel-chip">morphMany → <code>mentions</code></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ────────────────────────────────────────────────────
+       TABLE: sla_incidents
+  ──────────────────────────────────────────────────── -->
+  <div class="table-card">
+    <div class="table-card-header">
+      <div class="table-card-header-left">
+        <h3>sla_incidents</h3>
+        <p class="table-desc">
+          Naruszenia SLA wykrywane automatycznie przez <code>CheckSlaBreachesJob</code>
+          uruchamiany co 5 minut. Sfera systemowa — tworzony przez scheduler, nie przez człowieka.
+          Widoczny tylko dla adminów i managerów. Jeden ticket może wygenerować wiele incydentów
+          (<code>response</code> breach, potem <code>resolution</code> breach).
+        </p>
+      </div>
+      <div class="table-badge-group">
+        <span class="badge badge-layer3">Warstwa 3</span>
+      </div>
+    </div>
+    <table class="cols-table">
+      <thead>
+        <tr>
+          <th>Kolumna</th>
+          <th>Typ</th>
+          <th>Flagi</th>
+          <th>Opis</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="col-name pk">id</span></td>
+          <td><span class="col-type">bigint</span></td>
+          <td><div class="col-flags"><span class="flag flag-pk">PK</span></div></td>
+          <td class="col-desc">Unikalny identyfikator incydentu SLA.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">subject_type</span></td>
+          <td><span class="col-type">varchar</span></td>
+          <td><div class="col-flags"><span class="flag flag-poly">POLY</span></div></td>
+          <td class="col-desc">Klasa obiektu naruszającego SLA: <code>Ticket</code> (przekroczony czas reakcji/rozwiązania) | <code>Project</code> (przekroczony deadline). Para z <code>subject_id</code>.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">subject_id</span></td>
+          <td><span class="col-type">bigint</span></td>
+          <td><div class="col-flags"><span class="flag flag-poly">POLY</span></div></td>
+          <td class="col-desc">ID ticketu lub projektu naruszającego SLA.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">breach_type</span></td>
+          <td><span class="col-type">enum</span></td>
+          <td><div class="col-flags"><span class="flag flag-enum">ENUM</span></div></td>
+          <td class="col-desc">Typ naruszenia: <code>response</code> — brak pierwszej odpowiedzi w terminie, <code>resolution</code> — brak rozwiązania w terminie, <code>deadline</code> — przekroczony deadline projektu.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">breached_at</span></td>
+          <td><span class="col-type">timestamp</span></td>
+          <td></td>
+          <td class="col-desc">Czas, kiedy SLA zostało naruszone (moment przekroczenia terminu).</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">detected_at</span></td>
+          <td><span class="col-type">timestamp</span></td>
+          <td></td>
+          <td class="col-desc">Czas wykrycia naruszenia przez <code>CheckSlaBreachesJob</code>. Może być późniejszy niż <code>breached_at</code> o maksymalnie 5 minut (interwał joba).</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">notified</span></td>
+          <td><span class="col-type">boolean</span></td>
+          <td><div class="col-flags"><span class="flag flag-bool">BOOL</span></div></td>
+          <td class="col-desc">Czy powiadomienie o naruszeniu zostało wysłane. Zapobiega wielokrotnemu wysyłaniu powiadomień dla tego samego incydentu.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name fk">acknowledged_by</span></td>
+          <td><span class="col-type">bigint</span></td>
+          <td><div class="col-flags"><span class="flag flag-fk">FK</span><span class="flag flag-nullable">NULL</span></div></td>
+          <td class="col-desc">Pracownik który potwierdził przyjęcie incydentu do wiadomości → <code>users.id</code>. <code>null</code> = incydent niepotwierdzony.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">acknowledged_at</span></td>
+          <td><span class="col-type">timestamp</span></td>
+          <td><div class="col-flags"><span class="flag flag-nullable">NULL</span></div></td>
+          <td class="col-desc">Data i czas potwierdzenia incydentu.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">resolved_at</span></td>
+          <td><span class="col-type">timestamp</span></td>
+          <td><div class="col-flags"><span class="flag flag-nullable">NULL</span></div></td>
+          <td class="col-desc">Data i czas rozwiązania incydentu (zgłoszenie zostało obsłużone lub projekt ukończony po naruszeniu).</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">created_at</span></td>
+          <td><span class="col-type">timestamp</span></td>
+          <td></td>
+          <td class="col-desc">Data utworzenia rekordu przez scheduler.</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="rel-section">
+      <div class="rel-section-title">Relacje</div>
+      <div class="rel-list">
+        <span class="rel-chip">morphTo → <code>tickets</code> / <code>projects</code> (subject)</span>
+        <span class="rel-chip">belongsTo → <code>users</code> (acknowledged_by)</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ────────────────────────────────────────────────────
+       TABLE: kanban_boards
+  ──────────────────────────────────────────────────── -->
+  <div class="table-card">
+    <div class="table-card-header">
+      <div class="table-card-header-left">
+        <h3>kanban_boards</h3>
+        <p class="table-desc">
+          Tablice Kanban — kontenery dla zestawów kolumn. System obsługuje trzy typy tablic:
+          dla leadów, ticketów i zadań projektowych. Ujednolicony model pozwala używać
+          jednego komponentu React dla wszystkich typów.
+        </p>
+      </div>
+      <div class="table-badge-group">
+        <span class="badge badge-layer3">Warstwa 3</span>
+      </div>
+    </div>
+    <table class="cols-table">
+      <thead>
+        <tr><th>Kolumna</th><th>Typ</th><th>Flagi</th><th>Opis</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="col-name pk">id</span></td>
+          <td><span class="col-type">bigint</span></td>
+          <td><div class="col-flags"><span class="flag flag-pk">PK</span></div></td>
+          <td class="col-desc">Unikalny identyfikator tablicy.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">name</span></td>
+          <td><span class="col-type">varchar</span></td>
+          <td></td>
+          <td class="col-desc">Nazwa tablicy np. „Leady", „Zgłoszenia serwisowe".</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">board_type</span></td>
+          <td><span class="col-type">enum</span></td>
+          <td><div class="col-flags"><span class="flag flag-enum">ENUM</span></div></td>
+          <td class="col-desc">Typ tablicy: <code>leads</code> | <code>tickets</code> | <code>project_tasks</code>. Determinuje jakiego typu karty (<code>cardable_type</code>) mogą znajdować się na tablicy.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">created_at</span></td>
+          <td><span class="col-type">timestamp</span></td>
+          <td></td>
+          <td class="col-desc">Data utworzenia tablicy.</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="rel-section">
+      <div class="rel-section-title">Relacje</div>
+      <div class="rel-list">
+        <span class="rel-chip">hasMany → <code>kanban_columns</code></span>
+        <span class="rel-chip">hasMany → <code>kanban_cards</code></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ────────────────────────────────────────────────────
+       TABLE: kanban_columns
+  ──────────────────────────────────────────────────── -->
+  <div class="table-card">
+    <div class="table-card-header">
+      <div class="table-card-header-left">
+        <h3>kanban_columns</h3>
+        <p class="table-desc">
+          Kolumny w tablicy Kanban. Dla tablicy leadów predefiniowane 7 kolumn odpowiada
+          wartościom enuma <code>LeadStatus</code>. Kolejność kolumn określa pole <code>position</code>.
+        </p>
+      </div>
+      <div class="table-badge-group">
+        <span class="badge badge-layer3">Warstwa 3</span>
+      </div>
+    </div>
+    <table class="cols-table">
+      <thead>
+        <tr><th>Kolumna</th><th>Typ</th><th>Flagi</th><th>Opis</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="col-name pk">id</span></td>
+          <td><span class="col-type">bigint</span></td>
+          <td><div class="col-flags"><span class="flag flag-pk">PK</span></div></td>
+          <td class="col-desc">Unikalny identyfikator kolumny.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name fk">board_id</span></td>
+          <td><span class="col-type">bigint</span></td>
+          <td><div class="col-flags"><span class="flag flag-fk">FK</span></div></td>
+          <td class="col-desc">Tablica, do której należy kolumna → <code>kanban_boards.id</code>.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">name</span></td>
+          <td><span class="col-type">varchar</span></td>
+          <td></td>
+          <td class="col-desc">Wyświetlana nazwa kolumny np. „Nowy", „W realizacji", „Wygrany".</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">position</span></td>
+          <td><span class="col-type">int</span></td>
+          <td></td>
+          <td class="col-desc">Kolejność wyświetlania kolumny od lewej (0-based). Przy drag &amp; drop kolumn aktualizowane przez dnd-kit.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">color</span></td>
+          <td><span class="col-type">varchar</span></td>
+          <td><div class="col-flags"><span class="flag flag-nullable">NULL</span></div></td>
+          <td class="col-desc">Kolor nagłówka kolumny (hex lub nazwa CSS). Używany do wizualnego rozróżnienia kolumn.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">created_at</span></td>
+          <td><span class="col-type">timestamp</span></td>
+          <td></td>
+          <td class="col-desc">Data utworzenia kolumny.</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="rel-section">
+      <div class="rel-section-title">Relacje</div>
+      <div class="rel-list">
+        <span class="rel-chip">belongsTo → <code>kanban_boards</code></span>
+        <span class="rel-chip">hasMany → <code>kanban_cards</code></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ────────────────────────────────────────────────────
+       TABLE: kanban_cards
+  ──────────────────────────────────────────────────── -->
+  <div class="table-card">
+    <div class="table-card-header">
+      <div class="table-card-header-left">
+        <h3>kanban_cards</h3>
+        <p class="table-desc">
+          Karty Kanban — polimorficzne wrappery dla leadów, ticketów lub zadań projektowych.
+          Zmiana statusu leadu automatycznie przesuwa kartę do odpowiedniej kolumny przez
+          event → listener. Pozycja karty w kolumnie aktualizowana przy drag &amp; drop.
+        </p>
+      </div>
+      <div class="table-badge-group">
+        <span class="badge badge-layer3">Warstwa 3</span>
+      </div>
+    </div>
+    <table class="cols-table">
+      <thead>
+        <tr><th>Kolumna</th><th>Typ</th><th>Flagi</th><th>Opis</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="col-name pk">id</span></td>
+          <td><span class="col-type">bigint</span></td>
+          <td><div class="col-flags"><span class="flag flag-pk">PK</span></div></td>
+          <td class="col-desc">Unikalny identyfikator karty.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name fk">board_id</span></td>
+          <td><span class="col-type">bigint</span></td>
+          <td><div class="col-flags"><span class="flag flag-fk">FK</span></div></td>
+          <td class="col-desc">Tablica, na której znajduje się karta → <code>kanban_boards.id</code>.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name fk">column_id</span></td>
+          <td><span class="col-type">bigint</span></td>
+          <td><div class="col-flags"><span class="flag flag-fk">FK</span></div></td>
+          <td class="col-desc">Kolumna, w której aktualnie znajduje się karta → <code>kanban_columns.id</code>. Aktualizowane przy zmianie statusu lub drag &amp; drop.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">position</span></td>
+          <td><span class="col-type">int</span></td>
+          <td></td>
+          <td class="col-desc">Kolejność karty w kolumnie (0-based). Aktualizowane przez dnd-kit przy przeciąganiu.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">cardable_type</span></td>
+          <td><span class="col-type">varchar</span></td>
+          <td><div class="col-flags"><span class="flag flag-poly">POLY</span></div></td>
+          <td class="col-desc">Klasa modelu reprezentowanego przez kartę: <code>Lead</code> | <code>Ticket</code> | <code>ProjectTask</code>.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">cardable_id</span></td>
+          <td><span class="col-type">bigint</span></td>
+          <td><div class="col-flags"><span class="flag flag-poly">POLY</span></div></td>
+          <td class="col-desc">ID leadu, ticketu lub zadania powiązanego z kartą.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name fk">assigned_to</span></td>
+          <td><span class="col-type">bigint</span></td>
+          <td><div class="col-flags"><span class="flag flag-fk">FK</span><span class="flag flag-nullable">NULL</span></div></td>
+          <td class="col-desc">Pracownik przypisany do karty → <code>users.id</code>. Wyświetlany jako avatar na karcie Kanban.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">due_at</span></td>
+          <td><span class="col-type">timestamp</span></td>
+          <td><div class="col-flags"><span class="flag flag-nullable">NULL</span></div></td>
+          <td class="col-desc">Termin wykonania widoczny na karcie. Wyświetlany w kolorze czerwonym po przekroczeniu.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">created_at</span></td>
+          <td><span class="col-type">timestamp</span></td>
+          <td></td>
+          <td class="col-desc">Data utworzenia karty.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">updated_at</span></td>
+          <td><span class="col-type">timestamp</span></td>
+          <td></td>
+          <td class="col-desc">Data ostatniej modyfikacji.</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="rel-section">
+      <div class="rel-section-title">Relacje</div>
+      <div class="rel-list">
+        <span class="rel-chip">belongsTo → <code>kanban_boards</code></span>
+        <span class="rel-chip">belongsTo → <code>kanban_columns</code></span>
+        <span class="rel-chip">morphTo → <code>leads</code> / <code>tickets</code> / <code>ProjectTask</code></span>
+        <span class="rel-chip">belongsTo → <code>users</code> (assigned_to)</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ────────────────────────────────────────────────────
+       TABLE: notifications
+  ──────────────────────────────────────────────────── -->
+  <div class="table-card">
+    <div class="table-card-header">
+      <div class="table-card-header-left">
+        <h3>notifications</h3>
+        <p class="table-desc">
+          Powiadomienia in-app generowane przez Laravel Notifications. Standardowa tabela
+          frameworka — każde powiadomienie to rekord JSON z typem i danymi. Odczytywane
+          przez frontend przez Laravel Echo / Reverb (real-time broadcast).
+          Stanowią też inbox wewnętrzny — łączą powiadomienia systemowe z wiadomościami od ludzi.
+        </p>
+      </div>
+      <div class="table-badge-group">
+        <span class="badge badge-layer3">Warstwa 3</span>
+      </div>
+    </div>
+    <table class="cols-table">
+      <thead>
+        <tr><th>Kolumna</th><th>Typ</th><th>Flagi</th><th>Opis</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="col-name pk">id</span></td>
+          <td><span class="col-type">uuid</span></td>
+          <td><div class="col-flags"><span class="flag flag-pk">PK</span></div></td>
+          <td class="col-desc">UUID powiadomienia — standard Laravel Notifications (nie bigint).</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">type</span></td>
+          <td><span class="col-type">varchar</span></td>
+          <td></td>
+          <td class="col-desc">Pełna nazwa klasy powiadomienia np. <code>App\Notifications\TicketUpdated</code>. Używana do renderowania odpowiedniego komponentu w UI.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">notifiable_type</span></td>
+          <td><span class="col-type">varchar</span></td>
+          <td><div class="col-flags"><span class="flag flag-poly">POLY</span></div></td>
+          <td class="col-desc">Klasa odbiorcy powiadomienia: <code>User</code> | <code>Client</code>.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">notifiable_id</span></td>
+          <td><span class="col-type">bigint</span></td>
+          <td><div class="col-flags"><span class="flag flag-poly">POLY</span></div></td>
+          <td class="col-desc">ID odbiorcy.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">data</span></td>
+          <td><span class="col-type">json</span></td>
+          <td><div class="col-flags"><span class="flag flag-json">JSON</span></div></td>
+          <td class="col-desc">Payload powiadomienia — tytuł, treść, link, ID powiązanego obiektu. Struktura zależy od <code>type</code>. Renderowany przez frontend na podstawie pola <code>type</code>.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">read_at</span></td>
+          <td><span class="col-type">timestamp</span></td>
+          <td><div class="col-flags"><span class="flag flag-nullable">NULL</span></div></td>
+          <td class="col-desc">Czas odczytania powiadomienia. <code>null</code> = nieprzeczytane. Używany do wyświetlania licznika nieprzeczytanych w UI.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">created_at</span></td>
+          <td><span class="col-type">timestamp</span></td>
+          <td></td>
+          <td class="col-desc">Data wysłania powiadomienia.</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="rel-section">
+      <div class="rel-section-title">Relacje</div>
+      <div class="rel-list">
+        <span class="rel-chip">morphTo → <code>users</code> / <code>clients</code> (notifiable)</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ────────────────────────────────────────────────────
+       TABLE: notification_preferences
+  ──────────────────────────────────────────────────── -->
+  <div class="table-card">
+    <div class="table-card-header">
+      <div class="table-card-header-left">
+        <h3>notification_preferences</h3>
+        <p class="table-desc">
+          Preferencje użytkownika dotyczące kanałów powiadomień per typ zdarzenia.
+          Jeden rekord = jeden typ zdarzenia dla jednego użytkownika. Pozwala np. ustawić,
+          że naruszenia SLA przychodzą emailem i SMS-em, ale wiadomości — tylko in-app.
+          SMS respektuje quiet hours.
+        </p>
+      </div>
+      <div class="table-badge-group">
+        <span class="badge badge-layer3">Warstwa 3</span>
+      </div>
+    </div>
+    <table class="cols-table">
+      <thead>
+        <tr><th>Kolumna</th><th>Typ</th><th>Flagi</th><th>Opis</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="col-name pk">id</span></td>
+          <td><span class="col-type">bigint</span></td>
+          <td><div class="col-flags"><span class="flag flag-pk">PK</span></div></td>
+          <td class="col-desc">Unikalny identyfikator preferencji.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name fk">user_id</span></td>
+          <td><span class="col-type">bigint</span></td>
+          <td><div class="col-flags"><span class="flag flag-fk">FK</span></div></td>
+          <td class="col-desc">Użytkownik, którego dotyczą preferencje → <code>users.id</code>.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">notification_type</span></td>
+          <td><span class="col-type">varchar</span></td>
+          <td></td>
+          <td class="col-desc">Typ zdarzenia: <code>ticket_update</code> | <code>sla_breach</code> | <code>audit_complete</code> | <code>pdf_ready</code> | <code>deadline</code> | <code>mention</code> | <code>message</code> | <code>task_assigned</code> | <code>comment_reply</code>.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">channels</span></td>
+          <td><span class="col-type">json</span></td>
+          <td><div class="col-flags"><span class="flag flag-json">JSON</span></div></td>
+          <td class="col-desc">Tablica aktywnych kanałów dla tego typu zdarzenia np. <code>["mail", "database", "broadcast"]</code>. Dostępne kanały: <code>mail</code> | <code>sms</code> | <code>database</code> | <code>broadcast</code>.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">quiet_hours_from</span></td>
+          <td><span class="col-type">time</span></td>
+          <td><div class="col-flags"><span class="flag flag-nullable">NULL</span></div></td>
+          <td class="col-desc">Początek ciszy nocnej (np. <code>22:00</code>). W tym przedziale kanał SMS jest blokowany.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">quiet_hours_to</span></td>
+          <td><span class="col-type">time</span></td>
+          <td><div class="col-flags"><span class="flag flag-nullable">NULL</span></div></td>
+          <td class="col-desc">Koniec ciszy nocnej (np. <code>08:00</code>).</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">quiet_hours_timezone</span></td>
+          <td><span class="col-type">varchar</span></td>
+          <td></td>
+          <td class="col-desc">Strefa czasowa użytkownika dla quiet hours np. <code>Europe/Warsaw</code>. Niezbędna do poprawnego przeliczenia czasu.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">created_at</span></td>
+          <td><span class="col-type">timestamp</span></td>
+          <td></td>
+          <td class="col-desc">Data utworzenia preferencji.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">updated_at</span></td>
+          <td><span class="col-type">timestamp</span></td>
+          <td></td>
+          <td class="col-desc">Data ostatniej modyfikacji.</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="rel-section">
+      <div class="rel-section-title">Relacje</div>
+      <div class="rel-list">
+        <span class="rel-chip">belongsTo → <code>users</code></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ────────────────────────────────────────────────────
+       TABLE: conversations
+  ──────────────────────────────────────────────────── -->
+  <div class="table-card">
+    <div class="table-card-header">
+      <div class="table-card-header-left">
+        <h3>conversations</h3>
+        <p class="table-desc">
+          Wątki wiadomości wewnętrznych — zunifikowany inbox łączący komunikację
+          człowiek→człowiek z notyfikacjami systemowymi. Rozmowa może być między
+          pracownikami lub między pracownikiem a klientem. Każda nowa wiadomość
+          tworzy powiadomienie dla wszystkich uczestników przez Reverb.
+        </p>
+      </div>
+      <div class="table-badge-group">
+        <span class="badge badge-layer3">Warstwa 3</span>
+      </div>
+    </div>
+    <table class="cols-table">
+      <thead>
+        <tr><th>Kolumna</th><th>Typ</th><th>Flagi</th><th>Opis</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="col-name pk">id</span></td>
+          <td><span class="col-type">bigint</span></td>
+          <td><div class="col-flags"><span class="flag flag-pk">PK</span></div></td>
+          <td class="col-desc">Unikalny identyfikator rozmowy.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name fk">created_by</span></td>
+          <td><span class="col-type">bigint</span></td>
+          <td><div class="col-flags"><span class="flag flag-fk">FK</span></div></td>
+          <td class="col-desc">Użytkownik który zainicjował rozmowę → <code>users.id</code>.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">subject</span></td>
+          <td><span class="col-type">varchar</span></td>
+          <td><div class="col-flags"><span class="flag flag-nullable">NULL</span></div></td>
+          <td class="col-desc">Opcjonalny temat rozmowy. <code>null</code> = rozmowa bez tematu (np. szybka wiadomość direct).</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">created_at</span></td>
+          <td><span class="col-type">timestamp</span></td>
+          <td></td>
+          <td class="col-desc">Data rozpoczęcia rozmowy.</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="rel-section">
+      <div class="rel-section-title">Relacje</div>
+      <div class="rel-list">
+        <span class="rel-chip">belongsTo → <code>users</code> (created_by)</span>
+        <span class="rel-chip">hasMany → <code>conversation_participants</code></span>
+        <span class="rel-chip">hasMany → <code>messages</code></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ────────────────────────────────────────────────────
+       TABLE: conversation_participants
+  ──────────────────────────────────────────────────── -->
+  <div class="table-card">
+    <div class="table-card-header">
+      <div class="table-card-header-left">
+        <h3>conversation_participants</h3>
+        <p class="table-desc">
+          Pivot łączący rozmowy z ich uczestnikami. Uczestnikami mogą być zarówno
+          pracownicy (<code>User</code>) jak i klienci (<code>Client</code>). Pole
+          <code>last_read_at</code> pozwala obliczać liczbę nieprzeczytanych wiadomości
+          per uczestnik.
+        </p>
+      </div>
+      <div class="table-badge-group">
+        <span class="badge badge-layer3">Warstwa 3</span>
+        <span class="badge badge-pivot">PIVOT</span>
+      </div>
+    </div>
+    <table class="cols-table">
+      <thead>
+        <tr><th>Kolumna</th><th>Typ</th><th>Flagi</th><th>Opis</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="col-name pk">id</span></td>
+          <td><span class="col-type">bigint</span></td>
+          <td><div class="col-flags"><span class="flag flag-pk">PK</span></div></td>
+          <td class="col-desc">Unikalny identyfikator udziału w rozmowie.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name fk">conversation_id</span></td>
+          <td><span class="col-type">bigint</span></td>
+          <td><div class="col-flags"><span class="flag flag-fk">FK</span></div></td>
+          <td class="col-desc">Rozmowa → <code>conversations.id</code>.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">participable_type</span></td>
+          <td><span class="col-type">varchar</span></td>
+          <td><div class="col-flags"><span class="flag flag-poly">POLY</span></div></td>
+          <td class="col-desc">Klasa uczestnika: <code>User</code> | <code>Client</code>.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">participable_id</span></td>
+          <td><span class="col-type">bigint</span></td>
+          <td><div class="col-flags"><span class="flag flag-poly">POLY</span></div></td>
+          <td class="col-desc">ID uczestnika.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">last_read_at</span></td>
+          <td><span class="col-type">timestamp</span></td>
+          <td><div class="col-flags"><span class="flag flag-nullable">NULL</span></div></td>
+          <td class="col-desc">Czas ostatniego odczytania rozmowy przez tego uczestnika. Używany do obliczania badge z liczbą nieprzeczytanych: <code>messages WHERE created_at > last_read_at</code>.</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="rel-section">
+      <div class="rel-section-title">Relacje</div>
+      <div class="rel-list">
+        <span class="rel-chip">belongsTo → <code>conversations</code></span>
+        <span class="rel-chip">morphTo → <code>users</code> / <code>clients</code></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ────────────────────────────────────────────────────
+       TABLE: messages
+  ──────────────────────────────────────────────────── -->
+  <div class="table-card">
+    <div class="table-card-header">
+      <div class="table-card-header-left">
+        <h3>messages</h3>
+        <p class="table-desc">
+          Wiadomości w rozmowie. Wysyłane przez pracowników lub klientów.
+          Każda nowa wiadomość wyzwala broadcast przez Reverb → Echo do wszystkich
+          uczestników online oraz tworzy wpisy w <code>notifications</code> dla
+          tych offline. Może zawierać @wzmianki.
+        </p>
+      </div>
+      <div class="table-badge-group">
+        <span class="badge badge-layer3">Warstwa 3</span>
+      </div>
+    </div>
+    <table class="cols-table">
+      <thead>
+        <tr><th>Kolumna</th><th>Typ</th><th>Flagi</th><th>Opis</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="col-name pk">id</span></td>
+          <td><span class="col-type">bigint</span></td>
+          <td><div class="col-flags"><span class="flag flag-pk">PK</span></div></td>
+          <td class="col-desc">Unikalny identyfikator wiadomości.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name fk">conversation_id</span></td>
+          <td><span class="col-type">bigint</span></td>
+          <td><div class="col-flags"><span class="flag flag-fk">FK</span></div></td>
+          <td class="col-desc">Rozmowa, do której należy wiadomość → <code>conversations.id</code>.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">sender_type</span></td>
+          <td><span class="col-type">varchar</span></td>
+          <td><div class="col-flags"><span class="flag flag-poly">POLY</span></div></td>
+          <td class="col-desc">Klasa nadawcy: <code>User</code> | <code>Client</code>.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">sender_id</span></td>
+          <td><span class="col-type">bigint</span></td>
+          <td><div class="col-flags"><span class="flag flag-poly">POLY</span></div></td>
+          <td class="col-desc">ID nadawcy wiadomości.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">body</span></td>
+          <td><span class="col-type">text</span></td>
+          <td></td>
+          <td class="col-desc">Treść wiadomości. Może zawierać @wzmianki — parser tworzy wpisy w <code>mentions</code>.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">created_at</span></td>
+          <td><span class="col-type">timestamp</span></td>
+          <td></td>
+          <td class="col-desc">Data wysłania wiadomości. Używana do sortowania i obliczania nieprzeczytanych.</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="rel-section">
+      <div class="rel-section-title">Relacje</div>
+      <div class="rel-list">
+        <span class="rel-chip">belongsTo → <code>conversations</code></span>
+        <span class="rel-chip">morphTo → <code>users</code> / <code>clients</code> (sender)</span>
+        <span class="rel-chip">morphMany → <code>mentions</code></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ────────────────────────────────────────────────────
+       TABLE: mentions
+  ──────────────────────────────────────────────────── -->
+  <div class="table-card">
+    <div class="table-card-header">
+      <div class="table-card-header-left">
+        <h3>mentions</h3>
+        <p class="table-desc">
+          Rejestr @wzmianek w wiadomościach, komentarzach ticketów i komentarzach dokumentów.
+          Każde oznaczenie tworzy rekord i wyzwala powiadomienie typu <code>mention</code>
+          do oznaczonej osoby.
+        </p>
+      </div>
+      <div class="table-badge-group">
+        <span class="badge badge-layer3">Warstwa 3</span>
+      </div>
+    </div>
+    <table class="cols-table">
+      <thead>
+        <tr><th>Kolumna</th><th>Typ</th><th>Flagi</th><th>Opis</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="col-name pk">id</span></td>
+          <td><span class="col-type">bigint</span></td>
+          <td><div class="col-flags"><span class="flag flag-pk">PK</span></div></td>
+          <td class="col-desc">Unikalny identyfikator wzmianki.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">mentionable_type</span></td>
+          <td><span class="col-type">varchar</span></td>
+          <td><div class="col-flags"><span class="flag flag-poly">POLY</span></div></td>
+          <td class="col-desc">Klasa obiektu zawierającego wzmiankę: <code>Message</code> | <code>TicketComment</code> | <code>DocumentComment</code>.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">mentionable_id</span></td>
+          <td><span class="col-type">bigint</span></td>
+          <td><div class="col-flags"><span class="flag flag-poly">POLY</span></div></td>
+          <td class="col-desc">ID wiadomości lub komentarza zawierającego wzmiankę.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">mentioned_type</span></td>
+          <td><span class="col-type">varchar</span></td>
+          <td><div class="col-flags"><span class="flag flag-poly">POLY</span></div></td>
+          <td class="col-desc">Klasa oznaczonej osoby: <code>User</code> | <code>Client</code>.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">mentioned_id</span></td>
+          <td><span class="col-type">bigint</span></td>
+          <td><div class="col-flags"><span class="flag flag-poly">POLY</span></div></td>
+          <td class="col-desc">ID oznaczonej osoby.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">created_at</span></td>
+          <td><span class="col-type">timestamp</span></td>
+          <td></td>
+          <td class="col-desc">Data dodania wzmianki.</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="rel-section">
+      <div class="rel-section-title">Relacje</div>
+      <div class="rel-list">
+        <span class="rel-chip">morphTo → <code>messages</code> / <code>ticket_comments</code> (mentionable)</span>
+        <span class="rel-chip">morphTo → <code>users</code> / <code>clients</code> (mentioned)</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ────────────────────────────────────────────────────
+       TABLE: activity_log
+  ──────────────────────────────────────────────────── -->
+  <div class="table-card">
+    <div class="table-card-header">
+      <div class="table-card-header-left">
+        <h3>activity_log</h3>
+        <p class="table-desc">
+          Audit trail całego systemu — zarządzany przez Spatie Activity Log.
+          Każda akcja admina i klienta (create, update, delete, status change)
+          jest rejestrowana automatycznie przez Model Events lub ręcznie.
+          Przechowuje diff (poprzednia vs nowa wartość) w polu <code>properties</code>.
+        </p>
+      </div>
+      <div class="table-badge-group">
+        <span class="badge badge-layer3">Warstwa 3</span>
+        <span class="badge badge-spatie">Spatie</span>
+      </div>
+    </div>
+    <table class="cols-table">
+      <thead>
+        <tr><th>Kolumna</th><th>Typ</th><th>Flagi</th><th>Opis</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="col-name pk">id</span></td>
+          <td><span class="col-type">bigint</span></td>
+          <td><div class="col-flags"><span class="flag flag-pk">PK</span></div></td>
+          <td class="col-desc">Unikalny identyfikator wpisu w logu.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">log_name</span></td>
+          <td><span class="col-type">varchar</span></td>
+          <td><div class="col-flags"><span class="flag flag-nullable">NULL</span></div></td>
+          <td class="col-desc">Kategoria logu np. <code>default</code>, <code>auth</code>, <code>crm</code>. Umożliwia filtrowanie logów po obszarze systemu.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">description</span></td>
+          <td><span class="col-type">text</span></td>
+          <td></td>
+          <td class="col-desc">Opis akcji np. <code>created</code>, <code>updated</code>, <code>deleted</code>, <code>status_changed</code>.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">subject_type</span></td>
+          <td><span class="col-type">varchar</span></td>
+          <td><div class="col-flags"><span class="flag flag-poly">POLY</span><span class="flag flag-nullable">NULL</span></div></td>
+          <td class="col-desc">Klasa modelu, na którym wykonano akcję np. <code>Lead</code>, <code>Ticket</code>, <code>Client</code>.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">subject_id</span></td>
+          <td><span class="col-type">bigint</span></td>
+          <td><div class="col-flags"><span class="flag flag-poly">POLY</span><span class="flag flag-nullable">NULL</span></div></td>
+          <td class="col-desc">ID obiektu, na którym wykonano akcję.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">causer_type</span></td>
+          <td><span class="col-type">varchar</span></td>
+          <td><div class="col-flags"><span class="flag flag-poly">POLY</span><span class="flag flag-nullable">NULL</span></div></td>
+          <td class="col-desc">Klasa wykonawcy akcji: <code>User</code> | <code>Client</code>. <code>null</code> = akcja systemowa.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">causer_id</span></td>
+          <td><span class="col-type">bigint</span></td>
+          <td><div class="col-flags"><span class="flag flag-poly">POLY</span><span class="flag flag-nullable">NULL</span></div></td>
+          <td class="col-desc">ID wykonawcy akcji.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">properties</span></td>
+          <td><span class="col-type">json</span></td>
+          <td><div class="col-flags"><span class="flag flag-json">JSON</span><span class="flag flag-nullable">NULL</span></div></td>
+          <td class="col-desc">Diff zmian: <code>{"old": {"status": "new"}, "attributes": {"status": "contacted"}}</code>. Kluczowe dla audytu — pozwala odtworzyć historię każdego rekordu.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">created_at</span></td>
+          <td><span class="col-type">timestamp</span></td>
+          <td></td>
+          <td class="col-desc">Data i czas wykonania akcji.</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="rel-section">
+      <div class="rel-section-title">Relacje</div>
+      <div class="rel-list">
+        <span class="rel-chip">morphTo → dowolny model (subject)</span>
+        <span class="rel-chip">morphTo → <code>users</code> / <code>clients</code> (causer)</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ────────────────────────────────────────────────────
+       TABLE: slug_redirects
+  ──────────────────────────────────────────────────── -->
+  <div class="table-card">
+    <div class="table-card-header">
+      <div class="table-card-header-left">
+        <h3>slug_redirects</h3>
+        <p class="table-desc">
+          Archiwum starych slugów po ręcznej zmianie. Middleware sprawdza tę tabelę
+          gdy zasób nie zostanie znaleziony po aktualnym slugu i zwraca przekierowanie
+          301 do nowego URL. Zapobiega martwym linkom po rebrandingu lub zmianach nazw.
+        </p>
+      </div>
+      <div class="table-badge-group">
+        <span class="badge badge-layer3">Warstwa 3</span>
+      </div>
+    </div>
+    <table class="cols-table">
+      <thead>
+        <tr><th>Kolumna</th><th>Typ</th><th>Flagi</th><th>Opis</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="col-name pk">id</span></td>
+          <td><span class="col-type">bigint</span></td>
+          <td><div class="col-flags"><span class="flag flag-pk">PK</span></div></td>
+          <td class="col-desc">Unikalny identyfikator przekierowania.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">sluggable_type</span></td>
+          <td><span class="col-type">varchar</span></td>
+          <td><div class="col-flags"><span class="flag flag-poly">POLY</span></div></td>
+          <td class="col-desc">Klasa modelu, którego slug się zmienił: <code>Client</code> | <code>Project</code> | <code>Lead</code> | <code>Offer</code> | <code>Document</code> | <code>Audit</code>.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">sluggable_id</span></td>
+          <td><span class="col-type">bigint</span></td>
+          <td><div class="col-flags"><span class="flag flag-poly">POLY</span></div></td>
+          <td class="col-desc">ID rekordu, którego slug się zmienił.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">old_slug</span></td>
+          <td><span class="col-type">varchar</span></td>
+          <td></td>
+          <td class="col-desc">Stary slug — ten, który ma być przekierowany do nowego URL rekordu.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name fk">changed_by</span></td>
+          <td><span class="col-type">bigint</span></td>
+          <td><div class="col-flags"><span class="flag flag-fk">FK</span></div></td>
+          <td class="col-desc">Użytkownik który dokonał zmiany slugu → <code>users.id</code>. Do celów audytu.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">created_at</span></td>
+          <td><span class="col-type">timestamp</span></td>
+          <td></td>
+          <td class="col-desc">Data zmiany slugu.</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="rel-section">
+      <div class="rel-section-title">Relacje</div>
+      <div class="rel-list">
+        <span class="rel-chip">morphTo → dowolny sluggable model</span>
+        <span class="rel-chip">belongsTo → <code>users</code> (changed_by)</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ────────────────────────────────────────────────────
+       TABLE: seo_analyses
+  ──────────────────────────────────────────────────── -->
+  <div class="table-card">
+    <div class="table-card-header">
+      <div class="table-card-header-left">
+        <h3>seo_analyses</h3>
+        <p class="table-desc">
+          Wyniki analizy SEO projektu. Może być samodzielna (<code>audit_id = null</code>)
+          lub składową audytu zbiorczego. Pipeline kolejkowy: CrawlWebsiteJob →
+          FetchGSCDataJob + FetchGA4DataJob → AnalyzeKeywordsJob + AnalyzeSemanticsJob →
+          GenerateAuditReportJob → NotifyAuditCompleteJob.
+        </p>
+      </div>
+      <div class="table-badge-group">
+        <span class="badge badge-layer3">Warstwa 3</span>
+      </div>
+    </div>
+    <table class="cols-table">
+      <thead>
+        <tr><th>Kolumna</th><th>Typ</th><th>Flagi</th><th>Opis</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="col-name pk">id</span></td>
+          <td><span class="col-type">bigint</span></td>
+          <td><div class="col-flags"><span class="flag flag-pk">PK</span></div></td>
+          <td class="col-desc">Unikalny identyfikator analizy SEO.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name fk">project_id</span></td>
+          <td><span class="col-type">bigint</span></td>
+          <td><div class="col-flags"><span class="flag flag-fk">FK</span></div></td>
+          <td class="col-desc">Projekt, którego strona jest analizowana → <code>projects.id</code>.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name fk">audit_id</span></td>
+          <td><span class="col-type">bigint</span></td>
+          <td><div class="col-flags"><span class="flag flag-fk">FK</span><span class="flag flag-nullable">NULL</span></div></td>
+          <td class="col-desc">Audyt nadrzędny → <code>audits.id</code>. <code>null</code> = samodzielna analiza widoczna w sekcji „Analizy SEO" projektu.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">status</span></td>
+          <td><span class="col-type">enum</span></td>
+          <td><div class="col-flags"><span class="flag flag-enum">ENUM</span></div></td>
+          <td class="col-desc">Stan przetwarzania: <code>pending</code> → <code>running</code> → <code>completed</code> | <code>failed</code>. Aktualizowany przez joby w kolejce.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">score</span></td>
+          <td><span class="col-type">int</span></td>
+          <td><div class="col-flags"><span class="flag flag-nullable">NULL</span></div></td>
+          <td class="col-desc">Ogólny wynik SEO 0–100. Obliczany po zakończeniu analizy na podstawie liczby i wagi znalezionych problemów.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">keywords_count</span></td>
+          <td><span class="col-type">int</span></td>
+          <td></td>
+          <td class="col-desc">Liczba monitorowanych słów kluczowych wykrytych podczas analizy.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">issues_count</span></td>
+          <td><span class="col-type">int</span></td>
+          <td></td>
+          <td class="col-desc">Łączna liczba wykrytych problemów SEO (wszystkie severity).</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">gsc_connected</span></td>
+          <td><span class="col-type">boolean</span></td>
+          <td><div class="col-flags"><span class="flag flag-bool">BOOL</span></div></td>
+          <td class="col-desc">Czy dane z Google Search Console były dostępne podczas analizy.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">ga4_connected</span></td>
+          <td><span class="col-type">boolean</span></td>
+          <td><div class="col-flags"><span class="flag flag-bool">BOOL</span></div></td>
+          <td class="col-desc">Czy dane z Google Analytics 4 były dostępne podczas analizy.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">completed_at</span></td>
+          <td><span class="col-type">timestamp</span></td>
+          <td><div class="col-flags"><span class="flag flag-nullable">NULL</span></div></td>
+          <td class="col-desc">Data zakończenia analizy (ostatni job w pipeline).</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">created_at</span></td>
+          <td><span class="col-type">timestamp</span></td>
+          <td></td>
+          <td class="col-desc">Data zlecenia analizy.</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="rel-section">
+      <div class="rel-section-title">Relacje</div>
+      <div class="rel-list">
+        <span class="rel-chip">belongsTo → <code>projects</code></span>
+        <span class="rel-chip">belongsTo → <code>audits</code> (opcjonalnie)</span>
+        <span class="rel-chip">hasMany → <code>seo_issues</code></span>
+        <span class="rel-chip">hasMany → <code>seo_keyword_ranks</code></span>
+        <span class="rel-chip">hasMany → <code>seo_monthly_snapshots</code></span>
+        <span class="rel-chip">hasMany → <code>seo_cwv_snapshots</code></span>
+        <span class="rel-chip">hasMany → <code>seo_backlinks</code></span>
+        <span class="rel-chip">hasMany → <code>seo_keyword_opportunities</code></span>
+        <span class="rel-chip">hasMany → <code>seo_competitor_ranks</code></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ────────────────────────────────────────────────────
+       TABLE: seo_issues
+  ──────────────────────────────────────────────────── -->
+  <div class="table-card">
+    <div class="table-card-header">
+      <div class="table-card-header-left">
+        <h3>seo_issues</h3>
+        <p class="table-desc">
+          Wykryte problemy SEO z konkretnych analiz. Każdy problem ma przypisany poziom
+          krytyczności i opcjonalne przypisanie do pracownika. Może być powiązany
+          z poprzednią wersją tego samego problemu (do śledzenia regresji).
+        </p>
+      </div>
+      <div class="table-badge-group">
+        <span class="badge badge-layer3">Warstwa 3</span>
+      </div>
+    </div>
+    <table class="cols-table">
+      <thead>
+        <tr><th>Kolumna</th><th>Typ</th><th>Flagi</th><th>Opis</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="col-name pk">id</span></td>
+          <td><span class="col-type">bigint</span></td>
+          <td><div class="col-flags"><span class="flag flag-pk">PK</span></div></td>
+          <td class="col-desc">Unikalny identyfikator problemu SEO.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name fk">seo_analysis_id</span></td>
+          <td><span class="col-type">bigint</span></td>
+          <td><div class="col-flags"><span class="flag flag-fk">FK</span></div></td>
+          <td class="col-desc">Analiza, podczas której wykryto problem → <code>seo_analyses.id</code>.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name fk">previous_issue_id</span></td>
+          <td><span class="col-type">bigint</span></td>
+          <td><div class="col-flags"><span class="flag flag-fk">FK</span><span class="flag flag-nullable">NULL</span></div></td>
+          <td class="col-desc">Problem z poprzedniej analizy, który odpowiada temu samemu błędowi → <code>seo_issues.id</code>. Umożliwia śledzenie czy problem jest nowy czy powraca.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">type</span></td>
+          <td><span class="col-type">varchar</span></td>
+          <td></td>
+          <td class="col-desc">Typ problemu np. <code>missing_meta_description</code>, <code>broken_link</code>, <code>duplicate_h1</code>, <code>slow_page</code>.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">severity</span></td>
+          <td><span class="col-type">enum</span></td>
+          <td><div class="col-flags"><span class="flag flag-enum">ENUM</span></div></td>
+          <td class="col-desc">Krytyczność problemu: <code>critical</code> — blokuje pozycjonowanie, <code>warning</code> — obniża wynik, <code>info</code> — do rozważenia.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">url</span></td>
+          <td><span class="col-type">varchar</span></td>
+          <td></td>
+          <td class="col-desc">URL strony, na której wykryto problem.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">description</span></td>
+          <td><span class="col-type">text</span></td>
+          <td></td>
+          <td class="col-desc">Szczegółowy opis problemu — co jest nie tak i dlaczego wpływa na SEO.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">recommendation</span></td>
+          <td><span class="col-type">text</span></td>
+          <td><div class="col-flags"><span class="flag flag-nullable">NULL</span></div></td>
+          <td class="col-desc">Konkretna rekomendacja naprawy — generowana przez AI (Claude/OpenAI) lub predefiniowana per typ.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name fk">assigned_to</span></td>
+          <td><span class="col-type">bigint</span></td>
+          <td><div class="col-flags"><span class="flag flag-fk">FK</span><span class="flag flag-nullable">NULL</span></div></td>
+          <td class="col-desc">Pracownik odpowiedzialny za naprawę → <code>users.id</code>.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">due_date</span></td>
+          <td><span class="col-type">date</span></td>
+          <td><div class="col-flags"><span class="flag flag-nullable">NULL</span></div></td>
+          <td class="col-desc">Termin naprawy problemu.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">notes</span></td>
+          <td><span class="col-type">text</span></td>
+          <td><div class="col-flags"><span class="flag flag-nullable">NULL</span></div></td>
+          <td class="col-desc">Wewnętrzne notatki pracownika dotyczące naprawy.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">fixed_at</span></td>
+          <td><span class="col-type">timestamp</span></td>
+          <td><div class="col-flags"><span class="flag flag-nullable">NULL</span></div></td>
+          <td class="col-desc">Data naprawy problemu. <code>null</code> = problem wciąż aktywny.</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="rel-section">
+      <div class="rel-section-title">Relacje</div>
+      <div class="rel-list">
+        <span class="rel-chip">belongsTo → <code>seo_analyses</code></span>
+        <span class="rel-chip">belongsTo → <code>seo_issues</code> (previous_issue)</span>
+        <span class="rel-chip">belongsTo → <code>users</code> (assigned_to)</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ────────────────────────────────────────────────────
+       TABLE: seo_keyword_ranks
+  ──────────────────────────────────────────────────── -->
+  <div class="table-card">
+    <div class="table-card-header">
+      <div class="table-card-header-left">
+        <h3>seo_keyword_ranks</h3>
+        <p class="table-desc">
+          Pozycje słów kluczowych w czasie — hypertabela TimescaleDB (time-series).
+          Dane z Google Search Console: pozycja, kliknięcia, wyświetlenia, CTR.
+          Partycjonowana po czasie dla wydajnych zapytań zakresu dat i trendów pozycji.
+        </p>
+      </div>
+      <div class="table-badge-group">
+        <span class="badge badge-layer3">Warstwa 3</span>
+        <span class="badge badge-timescale">TimescaleDB</span>
+      </div>
+    </div>
+    <table class="cols-table">
+      <thead>
+        <tr><th>Kolumna</th><th>Typ</th><th>Flagi</th><th>Opis</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="col-name pk">id</span></td>
+          <td><span class="col-type">bigint</span></td>
+          <td><div class="col-flags"><span class="flag flag-pk">PK</span></div></td>
+          <td class="col-desc">Unikalny identyfikator rekordu rankingu.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name fk">seo_analysis_id</span></td>
+          <td><span class="col-type">bigint</span></td>
+          <td><div class="col-flags"><span class="flag flag-fk">FK</span></div></td>
+          <td class="col-desc">Analiza SEO, z której pochodzi ten ranking → <code>seo_analyses.id</code>.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">keyword</span></td>
+          <td><span class="col-type">varchar</span></td>
+          <td></td>
+          <td class="col-desc">Słowo kluczowe lub fraza np. „agencja SEO Warszawa".</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">position</span></td>
+          <td><span class="col-type">int</span></td>
+          <td></td>
+          <td class="col-desc">Średnia pozycja w wynikach Google dla tego słowa w danym okresie (1 = najlepsza).</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">clicks</span></td>
+          <td><span class="col-type">int</span></td>
+          <td></td>
+          <td class="col-desc">Liczba kliknięć z Google Search dla tego słowa w danym okresie.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">impressions</span></td>
+          <td><span class="col-type">int</span></td>
+          <td></td>
+          <td class="col-desc">Liczba wyświetleń strony w wynikach dla tego słowa.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">ctr</span></td>
+          <td><span class="col-type">decimal</span></td>
+          <td></td>
+          <td class="col-desc">Click-Through Rate = clicks / impressions. Wyrażony jako ułamek dziesiętny (0.05 = 5%).</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">url</span></td>
+          <td><span class="col-type">varchar</span></td>
+          <td></td>
+          <td class="col-desc">URL strony rankującej dla tego słowa kluczowego.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">device</span></td>
+          <td><span class="col-type">enum</span></td>
+          <td><div class="col-flags"><span class="flag flag-enum">ENUM</span></div></td>
+          <td class="col-desc">Urządzenie: <code>desktop</code> | <code>mobile</code> | <code>tablet</code>. GSC raportuje osobno dla każdego urządzenia.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">time</span></td>
+          <td><span class="col-type">timestamp</span></td>
+          <td><div class="col-flags"><span class="flag flag-ts">TIME COLUMN</span></div></td>
+          <td class="col-desc">Kolumna czasu hypertabeli TimescaleDB — punkt startowy partycji czasowej. Używana do zapytań <code>time_bucket()</code> i wykresów trendów.</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="rel-section">
+      <div class="rel-section-title">Relacje</div>
+      <div class="rel-list">
+        <span class="rel-chip">belongsTo → <code>seo_analyses</code></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ────────────────────────────────────────────────────
+       TABLE: seo_monthly_snapshots
+  ──────────────────────────────────────────────────── -->
+  <div class="table-card">
+    <div class="table-card-header">
+      <div class="table-card-header-left">
+        <h3>seo_monthly_snapshots</h3>
+        <p class="table-desc">
+          Zagregowane miesięczne podsumowania wyników SEO — dane z GSC i GA4.
+          Przechowuje pre-agregowane metryki co eliminuje potrzebę drogi agregacji
+          w locie przy generowaniu raportów miesięcznych dla klienta.
+        </p>
+      </div>
+      <div class="table-badge-group">
+        <span class="badge badge-layer3">Warstwa 3</span>
+      </div>
+    </div>
+    <table class="cols-table">
+      <thead>
+        <tr><th>Kolumna</th><th>Typ</th><th>Flagi</th><th>Opis</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="col-name pk">id</span></td>
+          <td><span class="col-type">bigint</span></td>
+          <td><div class="col-flags"><span class="flag flag-pk">PK</span></div></td>
+          <td class="col-desc">Unikalny identyfikator snapshotu.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name fk">seo_analysis_id</span></td>
+          <td><span class="col-type">bigint</span></td>
+          <td><div class="col-flags"><span class="flag flag-fk">FK</span></div></td>
+          <td class="col-desc">Analiza SEO, z której pochodzi snapshot → <code>seo_analyses.id</code>.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">period_start</span></td>
+          <td><span class="col-type">date</span></td>
+          <td></td>
+          <td class="col-desc">Pierwszy dzień okresu (np. 2026-01-01).</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">period_end</span></td>
+          <td><span class="col-type">date</span></td>
+          <td></td>
+          <td class="col-desc">Ostatni dzień okresu (np. 2026-01-31).</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">organic_sessions</span></td>
+          <td><span class="col-type">int</span></td>
+          <td></td>
+          <td class="col-desc">Sesje z ruchu organicznego (Google) — z GA4.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">organic_conversions</span></td>
+          <td><span class="col-type">int</span></td>
+          <td></td>
+          <td class="col-desc">Konwersje z ruchu organicznego — z GA4.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">avg_ctr</span></td>
+          <td><span class="col-type">decimal</span></td>
+          <td></td>
+          <td class="col-desc">Średni CTR w całym miesiącu — z GSC.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">avg_position</span></td>
+          <td><span class="col-type">decimal</span></td>
+          <td></td>
+          <td class="col-desc">Średnia pozycja we wszystkich słowach kluczowych w miesiącu — z GSC.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">top3_count</span></td>
+          <td><span class="col-type">int</span></td>
+          <td></td>
+          <td class="col-desc">Liczba słów kluczowych w TOP 3 Google.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">top10_count</span></td>
+          <td><span class="col-type">int</span></td>
+          <td></td>
+          <td class="col-desc">Liczba słów kluczowych w TOP 10 Google.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">top50_count</span></td>
+          <td><span class="col-type">int</span></td>
+          <td></td>
+          <td class="col-desc">Liczba słów kluczowych w TOP 50 Google.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">impressions</span></td>
+          <td><span class="col-type">int</span></td>
+          <td></td>
+          <td class="col-desc">Łączna liczba wyświetleń w GSC w miesiącu.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">clicks</span></td>
+          <td><span class="col-type">int</span></td>
+          <td></td>
+          <td class="col-desc">Łączna liczba kliknięć z GSC w miesiącu.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">new_backlinks</span></td>
+          <td><span class="col-type">int</span></td>
+          <td></td>
+          <td class="col-desc">Nowe backlinki pozyskane w miesiącu.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">lost_backlinks</span></td>
+          <td><span class="col-type">int</span></td>
+          <td></td>
+          <td class="col-desc">Backlinki utracone w miesiącu.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">referring_domains</span></td>
+          <td><span class="col-type">int</span></td>
+          <td></td>
+          <td class="col-desc">Łączna liczba unikalnych domen odsyłających na koniec miesiąca.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">created_at</span></td>
+          <td><span class="col-type">timestamp</span></td>
+          <td></td>
+          <td class="col-desc">Data wygenerowania snapshotu.</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="rel-section">
+      <div class="rel-section-title">Relacje</div>
+      <div class="rel-list">
+        <span class="rel-chip">belongsTo → <code>seo_analyses</code></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ────────────────────────────────────────────────────
+       TABLE: seo_cwv_snapshots
+  ──────────────────────────────────────────────────── -->
+  <div class="table-card">
+    <div class="table-card-header">
+      <div class="table-card-header-left">
+        <h3>seo_cwv_snapshots</h3>
+        <p class="table-desc">
+          Pomiary Core Web Vitals per URL i urządzenie — hypertabela TimescaleDB.
+          Dane z PageSpeed Insights API i GSC Field Data. Pozwala śledzić trendy
+          wydajności strony w czasie: LCP, CLS, INP (wskaźniki Google page experience).
+        </p>
+      </div>
+      <div class="table-badge-group">
+        <span class="badge badge-layer3">Warstwa 3</span>
+        <span class="badge badge-timescale">TimescaleDB</span>
+      </div>
+    </div>
+    <table class="cols-table">
+      <thead>
+        <tr><th>Kolumna</th><th>Typ</th><th>Flagi</th><th>Opis</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="col-name pk">id</span></td>
+          <td><span class="col-type">bigint</span></td>
+          <td><div class="col-flags"><span class="flag flag-pk">PK</span></div></td>
+          <td class="col-desc">Unikalny identyfikator pomiaru.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name fk">seo_analysis_id</span></td>
+          <td><span class="col-type">bigint</span></td>
+          <td><div class="col-flags"><span class="flag flag-fk">FK</span></div></td>
+          <td class="col-desc">Analiza SEO → <code>seo_analyses.id</code>.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">url</span></td>
+          <td><span class="col-type">varchar</span></td>
+          <td></td>
+          <td class="col-desc">Mierzony URL strony.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">lcp_ms</span></td>
+          <td><span class="col-type">int</span></td>
+          <td><div class="col-flags"><span class="flag flag-nullable">NULL</span></div></td>
+          <td class="col-desc">Largest Contentful Paint w milisekundach. Google: &lt;2500ms dobry, &gt;4000ms zły.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">cls_score</span></td>
+          <td><span class="col-type">decimal</span></td>
+          <td><div class="col-flags"><span class="flag flag-nullable">NULL</span></div></td>
+          <td class="col-desc">Cumulative Layout Shift — wskaźnik wizualnej stabilności. Google: &lt;0.1 dobry, &gt;0.25 zły.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">inp_ms</span></td>
+          <td><span class="col-type">int</span></td>
+          <td><div class="col-flags"><span class="flag flag-nullable">NULL</span></div></td>
+          <td class="col-desc">Interaction to Next Paint w milisekundach (następca FID). Google: &lt;200ms dobry, &gt;500ms zły.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">fcp_ms</span></td>
+          <td><span class="col-type">int</span></td>
+          <td><div class="col-flags"><span class="flag flag-nullable">NULL</span></div></td>
+          <td class="col-desc">First Contentful Paint w milisekundach.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">ttfb_ms</span></td>
+          <td><span class="col-type">int</span></td>
+          <td><div class="col-flags"><span class="flag flag-nullable">NULL</span></div></td>
+          <td class="col-desc">Time to First Byte w milisekundach — czas odpowiedzi serwera.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">performance_score</span></td>
+          <td><span class="col-type">int</span></td>
+          <td><div class="col-flags"><span class="flag flag-nullable">NULL</span></div></td>
+          <td class="col-desc">Łączny wynik Performance z PageSpeed Insights (0–100).</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">device</span></td>
+          <td><span class="col-type">enum</span></td>
+          <td><div class="col-flags"><span class="flag flag-enum">ENUM</span></div></td>
+          <td class="col-desc">Urządzenie pomiaru: <code>mobile</code> | <code>desktop</code>. PSI raportuje osobno.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">source</span></td>
+          <td><span class="col-type">enum</span></td>
+          <td><div class="col-flags"><span class="flag flag-enum">ENUM</span></div></td>
+          <td class="col-desc">Źródło danych: <code>pagespeed</code> — lab data z PSI API, <code>gsc_field</code> — field data z GSC (rzeczywiste dane użytkowników).</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">measured_at</span></td>
+          <td><span class="col-type">timestamp</span></td>
+          <td><div class="col-flags"><span class="flag flag-ts">TIME COLUMN</span></div></td>
+          <td class="col-desc">Kolumna czasu hypertabeli TimescaleDB — czas wykonania pomiaru.</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="rel-section">
+      <div class="rel-section-title">Relacje</div>
+      <div class="rel-list">
+        <span class="rel-chip">belongsTo → <code>seo_analyses</code></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ────────────────────────────────────────────────────
+       TABLE: seo_backlinks
+  ──────────────────────────────────────────────────── -->
+  <div class="table-card">
+    <div class="table-card-header">
+      <div class="table-card-header-left">
+        <h3>seo_backlinks</h3>
+        <p class="table-desc">
+          Backlinki — linki zewnętrzne wskazujące na stronę klienta. Śledzenie
+          profilu linków: nowe pozyskane, utracone, toxic links. Źródło danych:
+          zewnętrzne API (Ahrefs/Semrush) lub własny crawler.
+        </p>
+      </div>
+      <div class="table-badge-group">
+        <span class="badge badge-layer3">Warstwa 3</span>
+      </div>
+    </div>
+    <table class="cols-table">
+      <thead>
+        <tr><th>Kolumna</th><th>Typ</th><th>Flagi</th><th>Opis</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="col-name pk">id</span></td>
+          <td><span class="col-type">bigint</span></td>
+          <td><div class="col-flags"><span class="flag flag-pk">PK</span></div></td>
+          <td class="col-desc">Unikalny identyfikator backlinku.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name fk">seo_analysis_id</span></td>
+          <td><span class="col-type">bigint</span></td>
+          <td><div class="col-flags"><span class="flag flag-fk">FK</span></div></td>
+          <td class="col-desc">Analiza SEO → <code>seo_analyses.id</code>.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">referring_domain</span></td>
+          <td><span class="col-type">varchar</span></td>
+          <td></td>
+          <td class="col-desc">Domena odsyłająca (np. <code>example.com</code>).</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">target_url</span></td>
+          <td><span class="col-type">varchar</span></td>
+          <td></td>
+          <td class="col-desc">URL strony klienta, do której prowadzi link.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">anchor_text</span></td>
+          <td><span class="col-type">varchar</span></td>
+          <td><div class="col-flags"><span class="flag flag-nullable">NULL</span></div></td>
+          <td class="col-desc">Tekst kotwicy linku. Ważny dla SEO — powinien zawierać słowa kluczowe.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">domain_rating</span></td>
+          <td><span class="col-type">int</span></td>
+          <td><div class="col-flags"><span class="flag flag-nullable">NULL</span></div></td>
+          <td class="col-desc">Autorytet domeny odsyłającej (0–100, Ahrefs DR lub podobna metryka). Im wyższy, tym bardziej wartościowy link.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">is_toxic</span></td>
+          <td><span class="col-type">boolean</span></td>
+          <td><div class="col-flags"><span class="flag flag-bool">BOOL</span></div></td>
+          <td class="col-desc">Czy link jest uznany za szkodliwy (spam, PBN, niska jakość). Linki toksyczne powinny być dodane do Google Disavow.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">first_seen_at</span></td>
+          <td><span class="col-type">date</span></td>
+          <td><div class="col-flags"><span class="flag flag-nullable">NULL</span></div></td>
+          <td class="col-desc">Data pierwszego wykrycia linku.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">last_seen_at</span></td>
+          <td><span class="col-type">date</span></td>
+          <td><div class="col-flags"><span class="flag flag-nullable">NULL</span></div></td>
+          <td class="col-desc">Data ostatniej weryfikacji że link nadal istnieje.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">lost_at</span></td>
+          <td><span class="col-type">date</span></td>
+          <td><div class="col-flags"><span class="flag flag-nullable">NULL</span></div></td>
+          <td class="col-desc">Data utraty linku. <code>null</code> = link nadal aktywny.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">created_at</span></td>
+          <td><span class="col-type">timestamp</span></td>
+          <td></td>
+          <td class="col-desc">Data dodania rekordu do bazy.</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="rel-section">
+      <div class="rel-section-title">Relacje</div>
+      <div class="rel-list">
+        <span class="rel-chip">belongsTo → <code>seo_analyses</code></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ────────────────────────────────────────────────────
+       TABLE: seo_competitors
+  ──────────────────────────────────────────────────── -->
+  <div class="table-card">
+    <div class="table-card-header">
+      <div class="table-card-header-left">
+        <h3>seo_competitors</h3>
+        <p class="table-desc">
+          Lista konkurentów monitorowanych dla danego projektu. Competitor to domena,
+          której pozycje śledzić się w tych samych słowach kluczowych co klient.
+          Używana do analizy porównawczej (gap analysis).
+        </p>
+      </div>
+      <div class="table-badge-group">
+        <span class="badge badge-layer3">Warstwa 3</span>
+      </div>
+    </div>
+    <table class="cols-table">
+      <thead>
+        <tr><th>Kolumna</th><th>Typ</th><th>Flagi</th><th>Opis</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="col-name pk">id</span></td>
+          <td><span class="col-type">bigint</span></td>
+          <td><div class="col-flags"><span class="flag flag-pk">PK</span></div></td>
+          <td class="col-desc">Unikalny identyfikator konkurenta.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name fk">project_id</span></td>
+          <td><span class="col-type">bigint</span></td>
+          <td><div class="col-flags"><span class="flag flag-fk">FK</span></div></td>
+          <td class="col-desc">Projekt, dla którego monitorowany jest ten konkurent → <code>projects.id</code>.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">domain</span></td>
+          <td><span class="col-type">varchar</span></td>
+          <td></td>
+          <td class="col-desc">Domena konkurenta np. <code>konkurent.pl</code>.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">label</span></td>
+          <td><span class="col-type">varchar</span></td>
+          <td><div class="col-flags"><span class="flag flag-nullable">NULL</span></div></td>
+          <td class="col-desc">Opcjonalna etykieta wyświetlana w UI np. „Główny konkurent" lub nazwa firmy.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">is_active</span></td>
+          <td><span class="col-type">boolean</span></td>
+          <td><div class="col-flags"><span class="flag flag-bool">BOOL</span></div></td>
+          <td class="col-desc">Czy konkurent jest aktualnie monitorowany. <code>false</code> = wyłączony z kolejnych analiz bez usuwania historii.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">added_at</span></td>
+          <td><span class="col-type">timestamp</span></td>
+          <td></td>
+          <td class="col-desc">Data dodania konkurenta do monitorowania.</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="rel-section">
+      <div class="rel-section-title">Relacje</div>
+      <div class="rel-list">
+        <span class="rel-chip">belongsTo → <code>projects</code></span>
+        <span class="rel-chip">hasMany → <code>seo_competitor_ranks</code></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ────────────────────────────────────────────────────
+       TABLE: seo_competitor_ranks
+  ──────────────────────────────────────────────────── -->
+  <div class="table-card">
+    <div class="table-card-header">
+      <div class="table-card-header-left">
+        <h3>seo_competitor_ranks</h3>
+        <p class="table-desc">
+          Pozycje konkurentów dla tych samych słów kluczowych — hypertabela TimescaleDB.
+          Pozwala tworzyć porównawcze wykresy: klient vs konkurenci w czasie.
+          Używana w analizie gap keywords.
+        </p>
+      </div>
+      <div class="table-badge-group">
+        <span class="badge badge-layer3">Warstwa 3</span>
+        <span class="badge badge-timescale">TimescaleDB</span>
+      </div>
+    </div>
+    <table class="cols-table">
+      <thead>
+        <tr><th>Kolumna</th><th>Typ</th><th>Flagi</th><th>Opis</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="col-name pk">id</span></td>
+          <td><span class="col-type">bigint</span></td>
+          <td><div class="col-flags"><span class="flag flag-pk">PK</span></div></td>
+          <td class="col-desc">Unikalny identyfikator rekordu.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name fk">competitor_id</span></td>
+          <td><span class="col-type">bigint</span></td>
+          <td><div class="col-flags"><span class="flag flag-fk">FK</span></div></td>
+          <td class="col-desc">Konkurent → <code>seo_competitors.id</code>.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name fk">seo_analysis_id</span></td>
+          <td><span class="col-type">bigint</span></td>
+          <td><div class="col-flags"><span class="flag flag-fk">FK</span></div></td>
+          <td class="col-desc">Analiza SEO, podczas której pobrano dane → <code>seo_analyses.id</code>.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">keyword</span></td>
+          <td><span class="col-type">varchar</span></td>
+          <td></td>
+          <td class="col-desc">Słowo kluczowe — powinno pokrywać się ze słowami z <code>seo_keyword_ranks</code> aby umożliwić porównanie.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">position</span></td>
+          <td><span class="col-type">int</span></td>
+          <td><div class="col-flags"><span class="flag flag-nullable">NULL</span></div></td>
+          <td class="col-desc">Pozycja konkurenta dla słowa kluczowego. <code>null</code> = brak w TOP 100.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">url</span></td>
+          <td><span class="col-type">varchar</span></td>
+          <td><div class="col-flags"><span class="flag flag-nullable">NULL</span></div></td>
+          <td class="col-desc">URL strony konkurenta rankującej dla tego słowa.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">time</span></td>
+          <td><span class="col-type">timestamp</span></td>
+          <td><div class="col-flags"><span class="flag flag-ts">TIME COLUMN</span></div></td>
+          <td class="col-desc">Kolumna czasu hypertabeli TimescaleDB.</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="rel-section">
+      <div class="rel-section-title">Relacje</div>
+      <div class="rel-list">
+        <span class="rel-chip">belongsTo → <code>seo_competitors</code></span>
+        <span class="rel-chip">belongsTo → <code>seo_analyses</code></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ────────────────────────────────────────────────────
+       TABLE: seo_keyword_opportunities
+  ──────────────────────────────────────────────────── -->
+  <div class="table-card">
+    <div class="table-card-header">
+      <div class="table-card-header-left">
+        <h3>seo_keyword_opportunities</h3>
+        <p class="table-desc">
+          Szanse słów kluczowych — frazy o dobrym wolumenie, na które klient
+          jeszcze nie rankuje lub rankuje słabo. Generowane przez AI na podstawie
+          analizy gap względem konkurentów i danych z GSC.
+        </p>
+      </div>
+      <div class="table-badge-group">
+        <span class="badge badge-layer3">Warstwa 3</span>
+      </div>
+    </div>
+    <table class="cols-table">
+      <thead>
+        <tr><th>Kolumna</th><th>Typ</th><th>Flagi</th><th>Opis</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="col-name pk">id</span></td>
+          <td><span class="col-type">bigint</span></td>
+          <td><div class="col-flags"><span class="flag flag-pk">PK</span></div></td>
+          <td class="col-desc">Unikalny identyfikator szansy.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name fk">seo_analysis_id</span></td>
+          <td><span class="col-type">bigint</span></td>
+          <td><div class="col-flags"><span class="flag flag-fk">FK</span></div></td>
+          <td class="col-desc">Analiza SEO → <code>seo_analyses.id</code>.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">keyword</span></td>
+          <td><span class="col-type">varchar</span></td>
+          <td></td>
+          <td class="col-desc">Fraza kluczowa będąca szansą.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">search_volume</span></td>
+          <td><span class="col-type">int</span></td>
+          <td></td>
+          <td class="col-desc">Miesięczna liczba wyszukiwań frazy w Google (z zewnętrznego API).</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">difficulty</span></td>
+          <td><span class="col-type">int</span></td>
+          <td><div class="col-flags"><span class="flag flag-nullable">NULL</span></div></td>
+          <td class="col-desc">Trudność pozycjonowania frazy (0–100). Im wyższy, tym trudniej wyprzedzić konkurencję.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">competitor_positions</span></td>
+          <td><span class="col-type">json</span></td>
+          <td><div class="col-flags"><span class="flag flag-json">JSON</span><span class="flag flag-nullable">NULL</span></div></td>
+          <td class="col-desc">Pozycje konkurentów dla tej frazy: <code>{"konkurent.pl": 3, "inny.pl": 7}</code>. Kontekst do oceny szansy.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">has_dedicated_page</span></td>
+          <td><span class="col-type">boolean</span></td>
+          <td><div class="col-flags"><span class="flag flag-bool">BOOL</span></div></td>
+          <td class="col-desc">Czy klient ma już stronę zoptymalizowaną pod tę frazę. <code>false</code> = trzeba stworzyć nową stronę lub treść.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">recommendation</span></td>
+          <td><span class="col-type">text</span></td>
+          <td><div class="col-flags"><span class="flag flag-nullable">NULL</span></div></td>
+          <td class="col-desc">Rekomendacja AI: co zrobić żeby zaatakować tę frazę — nowa podstrona, rozszerzenie treści, linkowanie wewnętrzne.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">created_at</span></td>
+          <td><span class="col-type">timestamp</span></td>
+          <td></td>
+          <td class="col-desc">Data wykrycia szansy.</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="rel-section">
+      <div class="rel-section-title">Relacje</div>
+      <div class="rel-list">
+        <span class="rel-chip">belongsTo → <code>seo_analyses</code></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ────────────────────────────────────────────────────
+       TABLE: audits
+  ──────────────────────────────────────────────────── -->
+  <div class="table-card">
+    <div class="table-card-header">
+      <div class="table-card-header-left">
+        <h3>audits</h3>
+        <p class="table-desc">
+          Audyty zbiorcze — byt nadrzędny grupujący analizy różnych typów w jeden raport.
+          Audyt typu <code>full</code> uruchamia wszystkie składowe (SEO, techniczny, UX, security).
+          Każda składowa może być też uruchomiona samodzielnie jako osobna analiza.
+        </p>
+      </div>
+      <div class="table-badge-group">
+        <span class="badge badge-layer3">Warstwa 3</span>
+      </div>
+    </div>
+    <table class="cols-table">
+      <thead>
+        <tr><th>Kolumna</th><th>Typ</th><th>Flagi</th><th>Opis</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="col-name pk">id</span></td>
+          <td><span class="col-type">bigint</span></td>
+          <td><div class="col-flags"><span class="flag flag-pk">PK</span></div></td>
+          <td class="col-desc">Unikalny identyfikator audytu.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name fk">project_id</span></td>
+          <td><span class="col-type">bigint</span></td>
+          <td><div class="col-flags"><span class="flag flag-fk">FK</span></div></td>
+          <td class="col-desc">Projekt, dla którego przeprowadzany jest audyt → <code>projects.id</code>.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">type</span></td>
+          <td><span class="col-type">enum</span></td>
+          <td><div class="col-flags"><span class="flag flag-enum">ENUM</span></div></td>
+          <td class="col-desc">Zakres audytu: <code>seo</code> | <code>technical</code> | <code>ux</code> | <code>security</code> | <code>full</code> (wszystkie typy naraz).</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">status</span></td>
+          <td><span class="col-type">enum</span></td>
+          <td><div class="col-flags"><span class="flag flag-enum">ENUM</span></div></td>
+          <td class="col-desc">Stan audytu: <code>pending</code> → <code>running</code> → <code>completed</code> | <code>failed</code>.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">overall_score</span></td>
+          <td><span class="col-type">int</span></td>
+          <td><div class="col-flags"><span class="flag flag-nullable">NULL</span></div></td>
+          <td class="col-desc">Zagregowany wynik audytu 0–100. Obliczany jako ważona średnia wyników z <code>audit_scores</code> per kategoria.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">slug</span></td>
+          <td><span class="col-type">varchar</span></td>
+          <td></td>
+          <td class="col-desc">Identyfikator URL audytu, unikalny per <code>project_id</code>. Immutable — Spatie Sluggable.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">started_at</span></td>
+          <td><span class="col-type">timestamp</span></td>
+          <td><div class="col-flags"><span class="flag flag-nullable">NULL</span></div></td>
+          <td class="col-desc">Data uruchomienia pierwszego joba w pipeline audytu.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">completed_at</span></td>
+          <td><span class="col-type">timestamp</span></td>
+          <td><div class="col-flags"><span class="flag flag-nullable">NULL</span></div></td>
+          <td class="col-desc">Data zakończenia ostatniego joba w pipeline. Wyzwala <code>NotifyAuditCompleteJob</code>.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name fk">created_by</span></td>
+          <td><span class="col-type">bigint</span></td>
+          <td><div class="col-flags"><span class="flag flag-fk">FK</span></div></td>
+          <td class="col-desc">Pracownik który zlecił audyt → <code>users.id</code>.</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="rel-section">
+      <div class="rel-section-title">Relacje</div>
+      <div class="rel-list">
+        <span class="rel-chip">belongsTo → <code>projects</code></span>
+        <span class="rel-chip">belongsTo → <code>users</code> (created_by)</span>
+        <span class="rel-chip">hasMany → <code>seo_analyses</code></span>
+        <span class="rel-chip">hasMany → <code>audit_issues</code></span>
+        <span class="rel-chip">hasMany → <code>audit_scores</code></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ────────────────────────────────────────────────────
+       TABLE: audit_issues
+  ──────────────────────────────────────────────────── -->
+  <div class="table-card">
+    <div class="table-card-header">
+      <div class="table-card-header-left">
+        <h3>audit_issues</h3>
+        <p class="table-desc">
+          Problemy wykryte podczas audytu zbiorczego — szerszy zakres niż <code>seo_issues</code>,
+          obejmuje UX, security, performance i treść. Każdy problem ma kategorię,
+          krytyczność i rekomendację naprawy.
+        </p>
+      </div>
+      <div class="table-badge-group">
+        <span class="badge badge-layer3">Warstwa 3</span>
+      </div>
+    </div>
+    <table class="cols-table">
+      <thead>
+        <tr><th>Kolumna</th><th>Typ</th><th>Flagi</th><th>Opis</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="col-name pk">id</span></td>
+          <td><span class="col-type">bigint</span></td>
+          <td><div class="col-flags"><span class="flag flag-pk">PK</span></div></td>
+          <td class="col-desc">Unikalny identyfikator problemu.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name fk">audit_id</span></td>
+          <td><span class="col-type">bigint</span></td>
+          <td><div class="col-flags"><span class="flag flag-fk">FK</span></div></td>
+          <td class="col-desc">Audyt, podczas którego wykryto problem → <code>audits.id</code>.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">category</span></td>
+          <td><span class="col-type">enum</span></td>
+          <td><div class="col-flags"><span class="flag flag-enum">ENUM</span></div></td>
+          <td class="col-desc">Obszar problemu: <code>ux</code> | <code>security</code> | <code>performance</code> | <code>technical</code> | <code>content</code> | <code>seo</code>. Odpowiada kategoriom w <code>audit_scores</code>.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">type</span></td>
+          <td><span class="col-type">varchar</span></td>
+          <td></td>
+          <td class="col-desc">Szczegółowy typ problemu np. <code>no_https</code>, <code>missing_alt_text</code>, <code>sql_injection_risk</code>.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">severity</span></td>
+          <td><span class="col-type">enum</span></td>
+          <td><div class="col-flags"><span class="flag flag-enum">ENUM</span></div></td>
+          <td class="col-desc">Krytyczność: <code>critical</code> | <code>warning</code> | <code>info</code>.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">url</span></td>
+          <td><span class="col-type">varchar</span></td>
+          <td><div class="col-flags"><span class="flag flag-nullable">NULL</span></div></td>
+          <td class="col-desc">URL strony z problemem. <code>null</code> = problem dotyczy całej witryny.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">description</span></td>
+          <td><span class="col-type">text</span></td>
+          <td></td>
+          <td class="col-desc">Opis problemu.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">recommendation</span></td>
+          <td><span class="col-type">text</span></td>
+          <td><div class="col-flags"><span class="flag flag-nullable">NULL</span></div></td>
+          <td class="col-desc">Konkretna rekomendacja naprawy — może być generowana przez AI.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name fk">assigned_to</span></td>
+          <td><span class="col-type">bigint</span></td>
+          <td><div class="col-flags"><span class="flag flag-fk">FK</span><span class="flag flag-nullable">NULL</span></div></td>
+          <td class="col-desc">Pracownik odpowiedzialny za naprawę → <code>users.id</code>.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">due_date</span></td>
+          <td><span class="col-type">date</span></td>
+          <td><div class="col-flags"><span class="flag flag-nullable">NULL</span></div></td>
+          <td class="col-desc">Termin naprawy.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">fixed_at</span></td>
+          <td><span class="col-type">timestamp</span></td>
+          <td><div class="col-flags"><span class="flag flag-nullable">NULL</span></div></td>
+          <td class="col-desc">Data naprawy problemu. <code>null</code> = problem aktywny.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">created_at</span></td>
+          <td><span class="col-type">timestamp</span></td>
+          <td></td>
+          <td class="col-desc">Data wykrycia problemu.</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="rel-section">
+      <div class="rel-section-title">Relacje</div>
+      <div class="rel-list">
+        <span class="rel-chip">belongsTo → <code>audits</code></span>
+        <span class="rel-chip">belongsTo → <code>users</code> (assigned_to)</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ────────────────────────────────────────────────────
+       TABLE: audit_scores
+  ──────────────────────────────────────────────────── -->
+  <div class="table-card">
+    <div class="table-card-header">
+      <div class="table-card-header-left">
+        <h3>audit_scores</h3>
+        <p class="table-desc">
+          Wyniki punktowe audytu per kategoria. Każdy audyt ma osobny wynik dla SEO,
+          performance, UX, security i content. Używane do wykresów radar/gauge
+          w raporcie audytu i obliczania <code>audits.overall_score</code>.
+        </p>
+      </div>
+      <div class="table-badge-group">
+        <span class="badge badge-layer3">Warstwa 3</span>
+      </div>
+    </div>
+    <table class="cols-table">
+      <thead>
+        <tr><th>Kolumna</th><th>Typ</th><th>Flagi</th><th>Opis</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="col-name pk">id</span></td>
+          <td><span class="col-type">bigint</span></td>
+          <td><div class="col-flags"><span class="flag flag-pk">PK</span></div></td>
+          <td class="col-desc">Unikalny identyfikator wyniku.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name fk">audit_id</span></td>
+          <td><span class="col-type">bigint</span></td>
+          <td><div class="col-flags"><span class="flag flag-fk">FK</span></div></td>
+          <td class="col-desc">Audyt, do którego należy wynik → <code>audits.id</code>.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">category</span></td>
+          <td><span class="col-type">enum</span></td>
+          <td><div class="col-flags"><span class="flag flag-enum">ENUM</span></div></td>
+          <td class="col-desc">Kategoria oceniana: <code>seo</code> | <code>performance</code> | <code>ux</code> | <code>security</code> | <code>content</code>. Para (<code>audit_id</code>, <code>category</code>) powinna być unikalna.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">score</span></td>
+          <td><span class="col-type">int</span></td>
+          <td></td>
+          <td class="col-desc">Wynik kategorii 0–100. Obliczany na podstawie liczby i wagi problemów (<code>audit_issues</code>) w tej kategorii.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">details</span></td>
+          <td><span class="col-type">json</span></td>
+          <td><div class="col-flags"><span class="flag flag-json">JSON</span><span class="flag flag-nullable">NULL</span></div></td>
+          <td class="col-desc">Szczegóły składowe wyniku: <code>{"critical": 2, "warnings": 5, "info": 12, "passed": 43}</code>. Używane do breakdown w UI.</td>
+        </tr>
+        <tr>
+          <td><span class="col-name">measured_at</span></td>
+          <td><span class="col-type">timestamp</span></td>
+          <td></td>
+          <td class="col-desc">Data i czas obliczenia wyniku.</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="rel-section">
+      <div class="rel-section-title">Relacje</div>
+      <div class="rel-list">
+        <span class="rel-chip">belongsTo → <code>audits</code></span>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /content -->
+</body>
+</html>
