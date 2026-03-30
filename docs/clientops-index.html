@@ -169,7 +169,34 @@
   }
   a.toc-doc-title:hover { text-decoration: underline; }
   .toc-doc-sub {
-    font-size: 11px; color: var(--gray-600);
+    font-size: 11px; color: var(--gray-600); margin-bottom: 6px;
+  }
+  .toc-sections {
+    list-style: none;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2px 16px;
+    margin-top: 6px;
+    padding-top: 6px;
+    border-top: 1px solid var(--border);
+  }
+  .toc-sections.single-col {
+    grid-template-columns: 1fr;
+  }
+  .toc-section-item {
+    font-size: 10.5px;
+    color: var(--gray-400);
+    display: flex;
+    align-items: baseline;
+    gap: 5px;
+    line-height: 1.5;
+  }
+  .toc-section-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    color: var(--gray-200);
+    flex-shrink: 0;
+    min-width: 14px;
   }
   .toc-doc-meta {
     display: flex; gap: 12px; align-items: center;
@@ -387,25 +414,55 @@
 
   <ul class="toc-list">
 
+    <!-- 01 -->
     <li class="toc-doc-item">
       <div class="toc-doc-accent" style="background:#0ea5e9;"></div>
       <div class="toc-doc-num">01</div>
       <div class="toc-doc-body">
         <a class="toc-doc-title" href="clientops-crm-spec.html" target="_blank">Architektura &amp; Stack Technologiczny</a>
-        <div class="toc-doc-sub">Kompletna specyfikacja systemu — 27 tabel, 13 modułów, auth, kolejki, WebSocket, SLA, dokumenty</div>
+        <div class="toc-doc-sub">Specyfikacja Techniczna — 11 sekcji · 42 pp</div>
+        <ul class="toc-sections">
+          <li class="toc-section-item"><span class="toc-section-num">1</span>Przegląd systemu i moduły</li>
+          <li class="toc-section-item"><span class="toc-section-num">2</span>Stack technologiczny</li>
+          <li class="toc-section-item"><span class="toc-section-num">3</span>Architektura subdomen i multi-tenancy</li>
+          <li class="toc-section-item"><span class="toc-section-num">4</span>Moduł SEO z AI</li>
+          <li class="toc-section-item"><span class="toc-section-num">5</span>System SLA i ticketów</li>
+          <li class="toc-section-item"><span class="toc-section-num">6</span>Dokumenty — edycja online i PDF</li>
+          <li class="toc-section-item"><span class="toc-section-num">7</span>Powiadomienia wielokanałowe</li>
+          <li class="toc-section-item"><span class="toc-section-num">8</span>Role i uprawnienia</li>
+          <li class="toc-section-item"><span class="toc-section-num">9</span>Audit log — rejestrowanie aktywności</li>
+          <li class="toc-section-item"><span class="toc-section-num">10</span>Priorytety i plan wdrożenia</li>
+          <li class="toc-section-item"><span class="toc-section-num">11</span>Discovery &amp; Brief AI</li>
+        </ul>
       </div>
       <div class="toc-doc-meta">
-        <span class="toc-doc-version">v1.5.0</span>
+        <span class="toc-doc-version">v1.6.0</span>
         <span class="toc-doc-status status-ready">Gotowy</span>
       </div>
     </li>
 
+    <!-- 02 -->
     <li class="toc-doc-item">
       <div class="toc-doc-accent" style="background:#0d9488;"></div>
       <div class="toc-doc-num">02</div>
       <div class="toc-doc-body">
         <a class="toc-doc-title" href="clientops-architecture.html" target="_blank">Architektura i Model Danych</a>
-        <div class="toc-doc-sub">Diagramy ERD Mermaid, schematy tabel, 3 warstwy danych, relacje między modelami</div>
+        <div class="toc-doc-sub">ERD, schematy tabel, 3 warstwy danych — 13 sekcji · 27 pp</div>
+        <ul class="toc-sections">
+          <li class="toc-section-item"><span class="toc-section-num">1</span>Podział systemu na warstwy — 27 tabel</li>
+          <li class="toc-section-item"><span class="toc-section-num">2</span>ERD — diagram relacji (Mermaid)</li>
+          <li class="toc-section-item"><span class="toc-section-num">3</span>Schematy tabel — Warstwa 1: Tożsamość</li>
+          <li class="toc-section-item"><span class="toc-section-num">4</span>Schematy tabel — Warstwa 2: Sprzedaż</li>
+          <li class="toc-section-item"><span class="toc-section-num">5</span>Schematy tabel — Warstwa 3: Projekty i dokumenty</li>
+          <li class="toc-section-item"><span class="toc-section-num">6</span>Schematy tabel — Warstwa 3: SLA, tickety, Kanban</li>
+          <li class="toc-section-item"><span class="toc-section-num">7</span>Schematy tabel — Warstwa 3: Inbox, audit log, SEO</li>
+          <li class="toc-section-item"><span class="toc-section-num">8</span>Flow sprzedaży — od leadu do projektu</li>
+          <li class="toc-section-item"><span class="toc-section-num">9</span>Kanban — statusy, kolumny, ujednolicony model</li>
+          <li class="toc-section-item"><span class="toc-section-num">10</span>Tickets vs SLA Incidents — dwie sfery</li>
+          <li class="toc-section-item"><span class="toc-section-num">11</span>Inbox i wiadomości wewnętrzne — flow</li>
+          <li class="toc-section-item"><span class="toc-section-num">12</span>Audyty i analizy SEO — pipeline</li>
+          <li class="toc-section-item"><span class="toc-section-num">13</span>Struktura menu — panel admina i klienta</li>
+        </ul>
       </div>
       <div class="toc-doc-meta">
         <span class="toc-doc-version">v2.0.0</span>
@@ -413,12 +470,16 @@
       </div>
     </li>
 
+    <!-- 03 -->
     <li class="toc-doc-item">
       <div class="toc-doc-accent" style="background:#7c3aed;"></div>
       <div class="toc-doc-num">03</div>
       <div class="toc-doc-body">
         <a class="toc-doc-title" href="clientops-libraries.html" target="_blank">Mapowanie Bibliotek JS</a>
-        <div class="toc-doc-sub">Bootstrap → React SPA: React 19, TanStack Query, dnd-kit, TipTap, echarts, Zustand i pozostałe</div>
+        <div class="toc-doc-sub">Bootstrap → React SPA: React 19, TanStack Query, dnd-kit, TipTap, echarts — 7 pp</div>
+        <ul class="toc-sections single-col">
+          <li class="toc-section-item"><span class="toc-section-num">—</span>Mapowanie bibliotek JS: ClientOps Bootstrap → React (tabela porównawcza)</li>
+        </ul>
       </div>
       <div class="toc-doc-meta">
         <span class="toc-doc-version">v1.0.0</span>
@@ -426,12 +487,16 @@
       </div>
     </li>
 
+    <!-- 04 -->
     <li class="toc-doc-item">
       <div class="toc-doc-accent" style="background:#38bdf8;"></div>
       <div class="toc-doc-num">04</div>
       <div class="toc-doc-body">
         <a class="toc-doc-title" href="clientops-structure.html" target="_blank">Struktura Frontend — ClientOps Design System</a>
-        <div class="toc-doc-sub">Organizacja plików React SPA, phoenix-design-system, tokeny CSS, komponenty, cva warianty</div>
+        <div class="toc-doc-sub">Organizacja plików, phoenix-design-system, tokeny CSS, komponenty cva — 7 pp</div>
+        <ul class="toc-sections single-col">
+          <li class="toc-section-item"><span class="toc-section-num">—</span>Struktura plików i architektura CSS (admin SPA · client SPA · design system)</li>
+        </ul>
       </div>
       <div class="toc-doc-meta">
         <span class="toc-doc-version">v1.0.0</span>
@@ -439,12 +504,24 @@
       </div>
     </li>
 
+    <!-- 05 -->
     <li class="toc-doc-item">
       <div class="toc-doc-accent" style="background:#38bdf8;"></div>
       <div class="toc-doc-num">05</div>
       <div class="toc-doc-body">
         <a class="toc-doc-title" href="clientops-implementation.html" target="_blank">Przewodnik Implementacji</a>
-        <div class="toc-doc-sub">Krok po kroku przez 6 faz wdrożenia — od auth i multi-tenancy po moduł SEO z AI</div>
+        <div class="toc-doc-sub">Krok po kroku przez 6 faz wdrożenia — 9 sekcji · 34 pp</div>
+        <ul class="toc-sections">
+          <li class="toc-section-item"><span class="toc-section-num">1</span>Wprowadzenie — jak korzystać z tego dokumentu</li>
+          <li class="toc-section-item"><span class="toc-section-num">2</span>Środowisko deweloperskie</li>
+          <li class="toc-section-item"><span class="toc-section-num">3</span>Faza 1 — Auth, role, multi-tenancy</li>
+          <li class="toc-section-item"><span class="toc-section-num">4</span>Faza 2 — CRM: klienci, leady, Kanban, oferty</li>
+          <li class="toc-section-item"><span class="toc-section-num">5</span>Faza 3 — Tickety i SLA</li>
+          <li class="toc-section-item"><span class="toc-section-num">6</span>Faza 4 — Dokumenty i PDF</li>
+          <li class="toc-section-item"><span class="toc-section-num">7</span>Faza 5 — Powiadomienia i wiadomości wewnętrzne</li>
+          <li class="toc-section-item"><span class="toc-section-num">8</span>Faza 6 — SEO z AI</li>
+          <li class="toc-section-item"><span class="toc-section-num">9</span>Strategia testowania</li>
+        </ul>
       </div>
       <div class="toc-doc-meta">
         <span class="toc-doc-version">v1.0.0</span>
@@ -452,12 +529,16 @@
       </div>
     </li>
 
+    <!-- 06 -->
     <li class="toc-doc-item">
       <div class="toc-doc-accent" style="background:#059669;"></div>
       <div class="toc-doc-num">06</div>
       <div class="toc-doc-body">
         <a class="toc-doc-title" href="clientops-seo.html" target="_blank">Moduł SEO &amp; AI</a>
-        <div class="toc-doc-sub">Pipeline Horizon, Google Search Console, GA4, PageSpeed Insights, analiza semantyczna AI, TimescaleDB</div>
+        <div class="toc-doc-sub">Pipeline Horizon, GSC, GA4, PageSpeed, TimescaleDB — 3 pp · W przygotowaniu</div>
+        <ul class="toc-sections single-col">
+          <li class="toc-section-item"><span class="toc-section-num">—</span>Strona tytułowa + placeholder — pełna treść w trakcie opracowania (Faza 6)</li>
+        </ul>
       </div>
       <div class="toc-doc-meta">
         <span class="toc-doc-version">v1.0.0</span>
@@ -465,12 +546,16 @@
       </div>
     </li>
 
+    <!-- 07 -->
     <li class="toc-doc-item">
       <div class="toc-doc-accent" style="background:#d97706;"></div>
       <div class="toc-doc-num">07</div>
       <div class="toc-doc-body">
         <a class="toc-doc-title" href="clientops-audit.html" target="_blank">Moduł Audytów</a>
-        <div class="toc-doc-sub">5 typów audytów (SEO/tech/UX/security/full), generowanie PDF, dostęp w panelu klienta, auto-miesięczne</div>
+        <div class="toc-doc-sub">5 typów audytów, generowanie PDF, panel klienta — 3 pp · W przygotowaniu</div>
+        <ul class="toc-sections single-col">
+          <li class="toc-section-item"><span class="toc-section-num">—</span>Strona tytułowa + placeholder — pełna treść w trakcie opracowania (Faza 6)</li>
+        </ul>
       </div>
       <div class="toc-doc-meta">
         <span class="toc-doc-version">v1.0.0</span>
@@ -478,12 +563,22 @@
       </div>
     </li>
 
+    <!-- 08 -->
     <li class="toc-doc-item">
       <div class="toc-doc-accent" style="background:#4f46e5;"></div>
       <div class="toc-doc-num">08</div>
       <div class="toc-doc-body">
         <a class="toc-doc-title" href="clientops-infrastructure.html" target="_blank">Wymagania Infrastrukturalne</a>
-        <div class="toc-doc-sub">Serwery dla 10/100/5 000 klientów, Horizon, Redis Cluster, TimescaleDB, bottlenecki, koszty</div>
+        <div class="toc-doc-sub">Serwery dla 10/100/5 000 klientów, Redis Cluster, koszty — 7 sekcji · 19 pp</div>
+        <ul class="toc-sections">
+          <li class="toc-section-item"><span class="toc-section-num">1</span>Charakterystyka systemu i model obciążenia</li>
+          <li class="toc-section-item"><span class="toc-section-num">2</span>Scenariusz: 10 klientów — Single Server</li>
+          <li class="toc-section-item"><span class="toc-section-num">3</span>Scenariusz: 100 klientów — Mały Klaster</li>
+          <li class="toc-section-item"><span class="toc-section-num">4</span>Scenariusz: 5 000 klientów — Klaster Produkcyjny</li>
+          <li class="toc-section-item"><span class="toc-section-num">5</span>Krytyczne indeksy bazy danych</li>
+          <li class="toc-section-item"><span class="toc-section-num">6</span>Wąskie gardła i optymalizacje</li>
+          <li class="toc-section-item"><span class="toc-section-num">7</span>Zestawienie kosztów i rekomendacje</li>
+        </ul>
       </div>
       <div class="toc-doc-meta">
         <span class="toc-doc-version">v1.0.0</span>
@@ -491,12 +586,22 @@
       </div>
     </li>
 
+    <!-- 09 -->
     <li class="toc-doc-item">
       <div class="toc-doc-accent" style="background:#be123c;"></div>
       <div class="toc-doc-num">09</div>
       <div class="toc-doc-body">
         <a class="toc-doc-title" href="clientops-business.html" target="_blank">Model Biznesowy</a>
-        <div class="toc-doc-sub">Subskrypcja SaaS vs. sprzedaż instancji, tiery cenowe, fazy monetyzacji, propozycja wartości</div>
+        <div class="toc-doc-sub">Subskrypcja SaaS, tiery cenowe, fazy monetyzacji — 7 sekcji · 14 pp</div>
+        <ul class="toc-sections">
+          <li class="toc-section-item"><span class="toc-section-num">1</span>Werdykt — który model i dlaczego</li>
+          <li class="toc-section-item"><span class="toc-section-num">2</span>Porównanie modeli — subskrypcja vs. sprzedaż instancji</li>
+          <li class="toc-section-item"><span class="toc-section-num">3</span>Model subskrypcyjny — szczegóły</li>
+          <li class="toc-section-item"><span class="toc-section-num">4</span>Struktura cenowa — tiery</li>
+          <li class="toc-section-item"><span class="toc-section-num">5</span>Unikalne wyróżniki — propozycja wartości</li>
+          <li class="toc-section-item"><span class="toc-section-num">6</span>Fazy monetyzacji</li>
+          <li class="toc-section-item"><span class="toc-section-num">7</span>Kluczowa rekomendacja strategiczna</li>
+        </ul>
       </div>
       <div class="toc-doc-meta">
         <span class="toc-doc-version">v1.0.0</span>
@@ -505,277 +610,6 @@
     </li>
 
   </ul>
-</div>
-
-<!-- ═══════════════════════════════════════════════════════════ LIBRARY PAGE 1 (docs 01–04) -->
-<div class="library-page" style="page-break-after: always;">
-  <div class="page-header">
-    <div class="page-header-icon">📄</div>
-    <div>
-      <div class="page-header-label">Biblioteka — Dokumenty 01–04</div>
-      <div class="page-header-title">Specyfikacja · Architektura · Biblioteki · Struktura</div>
-    </div>
-  </div>
-
-  <!-- 01 -->
-  <div class="doc-card">
-    <div class="mini-cover mc-spec">
-      <div class="mini-num">01</div>
-      <div class="mini-logo">Client<span>Ops</span></div>
-      <div class="mini-divider"></div>
-      <div class="mini-title">Architektura &amp; Stack Technologiczny</div>
-      <div class="mini-badge">v1.5.0</div>
-    </div>
-    <div class="doc-info">
-      <div class="doc-info-top">
-        <div class="doc-info-title">Architektura &amp; Stack Technologiczny</div>
-        <div class="doc-info-version">v1.5.0 · Marzec 2026</div>
-      </div>
-      <div class="doc-info-sub">Specyfikacja Techniczna · PDF: 01-clientops-crm-spec-v1.5.0.pdf</div>
-      <div class="doc-info-desc">Kompletna specyfikacja systemu CRM — pełny stack (Laravel 12, React 19, PostgreSQL + TimescaleDB, Redis, Reverb), opisy 13 modułów, schematy 27 tabel, role Spatie, auth Sanctum + OAuth + 2FA, pipeline SEO i priorytety wdrożenia.</div>
-      <div class="doc-info-tags">
-        <span class="doc-tag tag-spec">27 tabel</span>
-        <span class="doc-tag tag-spec">13 modułów</span>
-        <span class="doc-tag tag-spec">6 ról</span>
-        <span class="doc-tag tag-spec">Laravel 12</span>
-        <span class="doc-tag tag-spec">React 19</span>
-        <span class="doc-tag tag-neutral">multi-tenant</span>
-      </div>
-    </div>
-  </div>
-
-  <!-- 02 -->
-  <div class="doc-card">
-    <div class="mini-cover mc-arch">
-      <div class="mini-num">02</div>
-      <div class="mini-logo">Client<span>Ops</span></div>
-      <div class="mini-divider"></div>
-      <div class="mini-title">Architektura i Model Danych</div>
-      <div class="mini-badge">v2.0.0</div>
-    </div>
-    <div class="doc-info">
-      <div class="doc-info-top">
-        <div class="doc-info-title">Architektura i Model Danych</div>
-        <div class="doc-info-version">v2.0.0 · Marzec 2026</div>
-      </div>
-      <div class="doc-info-sub">Model Danych &amp; Diagramy ERD · PDF: 02-clientops-architecture-v2.0.0.pdf</div>
-      <div class="doc-info-desc">Szczegółowy model danych systemu — diagramy ERD w Mermaid, schematy wszystkich tabel z typami kolumn, 3 warstwy architektury danych (tożsamość → sprzedaż → realizacja), relacje polimorficzne i kluczowe zasady projektowe.</div>
-      <div class="doc-info-tags">
-        <span class="doc-tag tag-arch">27 tabel</span>
-        <span class="doc-tag tag-arch">diagramy ERD</span>
-        <span class="doc-tag tag-arch">3 warstwy</span>
-        <span class="doc-tag tag-arch">Mermaid</span>
-        <span class="doc-tag tag-neutral">TimescaleDB</span>
-      </div>
-    </div>
-  </div>
-
-  <!-- 03 -->
-  <div class="doc-card">
-    <div class="mini-cover mc-lib">
-      <div class="mini-num">03</div>
-      <div class="mini-logo">Client<span>Ops</span></div>
-      <div class="mini-divider"></div>
-      <div class="mini-title">Mapowanie Bibliotek JS</div>
-      <div class="mini-badge">v1.0.0</div>
-    </div>
-    <div class="doc-info">
-      <div class="doc-info-top">
-        <div class="doc-info-title">Mapowanie Bibliotek JS — ClientOps Bootstrap → React</div>
-        <div class="doc-info-version">v1.0.0 · Marzec 2026</div>
-      </div>
-      <div class="doc-info-sub">Frontend Dependencies · PDF: 03-clientops-libraries-v1.0.0.pdf</div>
-      <div class="doc-info-desc">Kompletne mapowanie bibliotek JavaScript z ClientOps Bootstrap na ich odpowiedniki w React SPA. Dla każdej funkcjonalności — właściwa biblioteka, uzasadnienie wyboru oraz czego celowo nie ma w stacku i dlaczego.</div>
-      <div class="doc-info-tags">
-        <span class="doc-tag tag-lib">TanStack Query v5</span>
-        <span class="doc-tag tag-lib">dnd-kit</span>
-        <span class="doc-tag tag-lib">TipTap v2</span>
-        <span class="doc-tag tag-lib">echarts</span>
-        <span class="doc-tag tag-lib">Zustand</span>
-      </div>
-    </div>
-  </div>
-
-  <!-- 04 -->
-  <div class="doc-card">
-    <div class="mini-cover mc-struct">
-      <div class="mini-num">04</div>
-      <div class="mini-logo">Client<span>Ops</span></div>
-      <div class="mini-divider"></div>
-      <div class="mini-title">ClientOps Design System</div>
-      <div class="mini-badge">v1.0.0</div>
-    </div>
-    <div class="doc-info">
-      <div class="doc-info-top">
-        <div class="doc-info-title">Struktura Frontend — ClientOps Design System</div>
-        <div class="doc-info-version">v1.0.0 · Marzec 2026</div>
-      </div>
-      <div class="doc-info-sub">Frontend Architecture · PDF: 04-clientops-structure-v1.0.0.pdf</div>
-      <div class="doc-info-desc">Organizacja plików React SPA, phoenix-design-system (tokeny CSS, komponenty), migracja z Bootstrap do cva, Tailwind v4, routing React Router v7, podział na admin SPA i client SPA na subdomenach.</div>
-      <div class="doc-info-tags">
-        <span class="doc-tag tag-spec">phoenix-design-system</span>
-        <span class="doc-tag tag-spec">cva</span>
-        <span class="doc-tag tag-spec">Tailwind v4</span>
-        <span class="doc-tag tag-spec">React Router v7</span>
-        <span class="doc-tag tag-neutral">2 SPA</span>
-      </div>
-    </div>
-  </div>
-
-</div>
-
-<!-- ═══════════════════════════════════════════════════════════ LIBRARY PAGE 2 (docs 05–08) -->
-<div class="library-page" style="page-break-after: always;">
-  <div class="page-header">
-    <div class="page-header-icon">📄</div>
-    <div>
-      <div class="page-header-label">Biblioteka — Dokumenty 05–08</div>
-      <div class="page-header-title">Implementacja · SEO &amp; AI · Audyty · Infrastruktura</div>
-    </div>
-  </div>
-
-  <!-- 05 -->
-  <div class="doc-card">
-    <div class="mini-cover mc-impl">
-      <div class="mini-num">05</div>
-      <div class="mini-logo">Client<span>Ops</span></div>
-      <div class="mini-divider"></div>
-      <div class="mini-title">Przewodnik Implementacji</div>
-      <div class="mini-badge">v1.0.0</div>
-    </div>
-    <div class="doc-info">
-      <div class="doc-info-top">
-        <div class="doc-info-title">Przewodnik Implementacji</div>
-        <div class="doc-info-version">v1.0.0 · Marzec 2026</div>
-      </div>
-      <div class="doc-info-sub">Implementation Guide · PDF: 05-clientops-implementation-v1.0.0.pdf</div>
-      <div class="doc-info-desc">Praktyczny przewodnik przez 6 faz wdrożenia systemu — od konfiguracji środowiska i auth (Sanctum, Socialite, 2FA) przez CRM, SLA, dokumenty TipTap, powiadomienia wielokanałowe po moduł SEO z AI. Przykłady kodu, migracje DB, konfiguracja Horizon.</div>
-      <div class="doc-info-tags">
-        <span class="doc-tag tag-spec">6 faz</span>
-        <span class="doc-tag tag-spec">auth + 2FA</span>
-        <span class="doc-tag tag-spec">Sanctum</span>
-        <span class="doc-tag tag-spec">Horizon</span>
-        <span class="doc-tag tag-neutral">przykłady kodu</span>
-      </div>
-    </div>
-  </div>
-
-  <!-- 06 -->
-  <div class="doc-card">
-    <div class="mini-cover mc-seo">
-      <div class="mini-num">06</div>
-      <div class="mini-logo">Client<span>Ops</span></div>
-      <div class="mini-divider"></div>
-      <div class="mini-title">Moduł SEO &amp; AI</div>
-      <div class="mini-badge">v1.0.0</div>
-    </div>
-    <div class="doc-info">
-      <div class="doc-info-top">
-        <div class="doc-info-title">Moduł SEO &amp; AI</div>
-        <div class="doc-info-version">v1.0.0 · Marzec 2026</div>
-      </div>
-      <div class="doc-info-sub">SEO Module Spec · PDF: 06-clientops-seo-v1.0.0.pdf · <em style="color:#d97706;">W przygotowaniu</em></div>
-      <div class="doc-info-desc">Specyfikacja najcięższego modułu systemu — pipeline kolejkowy (CrawlWebsite → FetchGSC → FetchGA4 → AnalyzeKeywords → AnalyzeSemantics → GenerateReport), trendy pozycji w TimescaleDB, rekomendacje AI, Core Web Vitals, raporty PDF.</div>
-      <div class="doc-info-tags">
-        <span class="doc-tag tag-seo">Google GSC</span>
-        <span class="doc-tag tag-seo">Google GA4</span>
-        <span class="doc-tag tag-seo">PageSpeed</span>
-        <span class="doc-tag tag-seo">Claude / OpenAI</span>
-        <span class="doc-tag tag-seo">TimescaleDB</span>
-        <span class="doc-tag tag-wip">Faza 6</span>
-      </div>
-    </div>
-  </div>
-
-  <!-- 07 -->
-  <div class="doc-card">
-    <div class="mini-cover mc-audit">
-      <div class="mini-num">07</div>
-      <div class="mini-logo">Client<span>Ops</span></div>
-      <div class="mini-divider"></div>
-      <div class="mini-title">Moduł Audytów</div>
-      <div class="mini-badge">v1.0.0</div>
-    </div>
-    <div class="doc-info">
-      <div class="doc-info-top">
-        <div class="doc-info-title">Moduł Audytów</div>
-        <div class="doc-info-version">v1.0.0 · Marzec 2026</div>
-      </div>
-      <div class="doc-info-sub">Audit Module Spec · PDF: 07-clientops-audit-v1.0.0.pdf · <em style="color:#d97706;">W przygotowaniu</em></div>
-      <div class="doc-info-desc">System audytów jako byt nadrzędny — typy: SEO, techniczny, UX, security, full. Generowanie raportów PDF przez Browsershot, agregacja wyników analiz SEO, dostęp przez panel klienta na subdomenach, automatyczne miesięczne audyty per klient.</div>
-      <div class="doc-info-tags">
-        <span class="doc-tag tag-audit">5 typów</span>
-        <span class="doc-tag tag-audit">Browsershot PDF</span>
-        <span class="doc-tag tag-audit">panel klienta</span>
-        <span class="doc-tag tag-audit">auto-miesięczne</span>
-        <span class="doc-tag tag-wip">W przygotowaniu</span>
-      </div>
-    </div>
-  </div>
-
-  <!-- 08 -->
-  <div class="doc-card">
-    <div class="mini-cover mc-infra">
-      <div class="mini-num">08</div>
-      <div class="mini-logo">Client<span>Ops</span></div>
-      <div class="mini-divider"></div>
-      <div class="mini-title">Wymagania Infrastrukturalne</div>
-      <div class="mini-badge">v1.0.0</div>
-    </div>
-    <div class="doc-info">
-      <div class="doc-info-top">
-        <div class="doc-info-title">Wymagania Infrastrukturalne</div>
-        <div class="doc-info-version">v1.0.0 · Marzec 2026</div>
-      </div>
-      <div class="doc-info-sub">Infrastructure Requirements · PDF: 08-clientops-infrastructure-v1.0.0.pdf</div>
-      <div class="doc-info-desc">Wymagania sprzętowe dla 3 scenariuszy skali (10 / 100 / 5 000 klientów). Specyfikacja serwerów, konfiguracja Horizon per kolejka, krytyczne indeksy DB, wąskie gardła (Chromium PDF, SLA scan, Google API rate limits, AI cost), ścieżka skalowania i koszty.</div>
-      <div class="doc-info-tags">
-        <span class="doc-tag tag-infra">10 klientów €30–60</span>
-        <span class="doc-tag tag-infra">100 klientów €175–350</span>
-        <span class="doc-tag tag-infra">5k klientów €2 500–6 000</span>
-        <span class="doc-tag tag-neutral">Redis Cluster</span>
-        <span class="doc-tag tag-neutral">TimescaleDB HA</span>
-      </div>
-    </div>
-  </div>
-
-</div>
-
-<!-- ═══════════════════════════════════════════════════════════ LIBRARY PAGE 3 (doc 09) -->
-<div class="library-page">
-  <div class="page-header">
-    <div class="page-header-icon">💼</div>
-    <div>
-      <div class="page-header-label">Biblioteka — Dokument 09</div>
-      <div class="page-header-title">Strategia Biznesowa</div>
-    </div>
-  </div>
-
-  <!-- 09 -->
-  <div class="doc-card">
-    <div class="mini-cover" style="background: linear-gradient(135deg, #0f172a 0%, #1a0a14 100%); --mc-blob1: rgba(190,18,60,0.20); --mc-blob2: rgba(244,63,94,0.12);">
-      <div class="mini-num">09</div>
-      <div class="mini-logo">Client<span style="color:#fb7185;">Ops</span></div>
-      <div class="mini-divider" style="background: linear-gradient(90deg, #be123c, #d97706);"></div>
-      <div class="mini-title">Model Biznesowy</div>
-      <div class="mini-badge">v1.0.0</div>
-    </div>
-    <div class="doc-info">
-      <div class="doc-info-top">
-        <div class="doc-info-title">Model Biznesowy — Subskrypcja SaaS</div>
-        <div class="doc-info-version">v1.0.0 · Marzec 2026</div>
-      </div>
-      <div class="doc-info-sub">Business Strategy · PDF: 09-clientops-business-v1.0.0.pdf</div>
-      <div class="doc-info-desc">Analiza modeli monetyzacji (subskrypcja vs. sprzedaż instancji), struktura cenowa z 4 tierami (Starter 99zł / Growth 299zł / Agency 799zł / Enterprise), fazy komercjalizacji, unikalne wyróżniki na rynku polskim i kluczowe rekomendacje strategiczne.</div>
-      <div class="doc-info-tags">
-        <span class="doc-tag" style="background:#fff1f2;color:#be123c;border-color:#fecdd3;">SaaS / MRR</span>
-        <span class="doc-tag" style="background:#fff1f2;color:#be123c;border-color:#fecdd3;">4 tiery cenowe</span>
-        <span class="doc-tag" style="background:#fff1f2;color:#be123c;border-color:#fecdd3;">agencje SEO PL</span>
-        <span class="doc-tag tag-neutral">unit economics</span>
-        <span class="doc-tag tag-neutral">fazy monetyzacji</span>
-      </div>
-    </div>
-  </div>
 
   <div class="page-footer">
     <span>Maciej Fiałkowski</span>

@@ -1,0 +1,670 @@
+<!doctype html>
+<html lang="pl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ClientOps — Pytania do rozmowy</title>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
+
+      :root {
+        --primary: #1e40af;
+        --primary-light: #eff6ff;
+        --accent: #0ea5e9;
+        --dark: #0f172a;
+        --gray-800: #1e293b;
+        --gray-600: #475569;
+        --gray-400: #94a3b8;
+        --gray-100: #f1f5f9;
+        --gray-50: #f8fafc;
+        --border: #e2e8f0;
+        --green: #059669;
+        --green-light: #ecfdf5;
+        --orange: #d97706;
+        --orange-light: #fffbeb;
+        --red: #dc2626;
+        --red-light: #fef2f2;
+        --purple: #7c3aed;
+        --purple-light: #f5f3ff;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Inter", -apple-system, sans-serif;
+        color: var(--dark);
+        background: white;
+        font-size: 13px;
+        line-height: 1.6;
+      }
+
+      /* COVER */
+      .cover {
+        min-height: 100vh;
+        background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 50%, #0f172a 100%);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        padding: 60px 40px;
+        page-break-after: always;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .cover::before {
+        content: "";
+        position: absolute;
+        width: 600px;
+        height: 600px;
+        background: radial-gradient(circle, rgba(14, 165, 233, 0.15) 0%, transparent 70%);
+        top: -100px;
+        right: -100px;
+        border-radius: 50%;
+      }
+
+      .cover::after {
+        content: "";
+        position: absolute;
+        width: 400px;
+        height: 400px;
+        background: radial-gradient(circle, rgba(124, 58, 237, 0.1) 0%, transparent 70%);
+        bottom: -50px;
+        left: -50px;
+        border-radius: 50%;
+      }
+
+      .cover-badge {
+        background: rgba(14, 165, 233, 0.2);
+        border: 1px solid rgba(14, 165, 233, 0.4);
+        color: #7dd3fc;
+        padding: 6px 18px;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: 500;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        margin-bottom: 32px;
+        position: relative;
+        z-index: 1;
+      }
+
+      .cover-logo {
+        font-size: 52px;
+        font-weight: 700;
+        color: white;
+        letter-spacing: -2px;
+        margin-bottom: 8px;
+        position: relative;
+        z-index: 1;
+      }
+
+      .cover-logo span {
+        color: #38bdf8;
+      }
+
+      .cover-subtitle {
+        font-size: 18px;
+        color: #94a3b8;
+        font-weight: 300;
+        margin-bottom: 48px;
+        position: relative;
+        z-index: 1;
+      }
+
+      .cover-divider {
+        width: 60px;
+        height: 2px;
+        background: linear-gradient(90deg, #0ea5e9, #7c3aed);
+        margin: 0 auto 48px;
+        position: relative;
+        z-index: 1;
+      }
+
+      .cover-title {
+        font-size: 32px;
+        font-weight: 700;
+        color: white;
+        margin-bottom: 16px;
+        line-height: 1.2;
+        position: relative;
+        z-index: 1;
+      }
+
+      .cover-desc {
+        font-size: 15px;
+        color: #64748b;
+        max-width: 520px;
+        margin-bottom: 64px;
+        position: relative;
+        z-index: 1;
+      }
+
+      .cover-meta {
+        display: flex;
+        gap: 40px;
+        position: relative;
+        z-index: 1;
+      }
+
+      .cover-meta-item {
+        text-align: center;
+      }
+
+      .cover-meta-label {
+        font-size: 10px;
+        color: #475569;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 4px;
+      }
+
+      .cover-meta-value {
+        font-size: 14px;
+        color: #94a3b8;
+        font-weight: 500;
+      }
+
+      .cover-footer {
+        position: absolute;
+        bottom: 40px;
+        left: 0;
+        right: 0;
+        text-align: center;
+        font-size: 11px;
+        color: #334155;
+        z-index: 1;
+      }
+
+      /* CONTENT */
+      .container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 60px 40px;
+      }
+
+      .section {
+        margin-bottom: 48px;
+        page-break-inside: avoid;
+      }
+
+      .section-header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 20px;
+        padding-bottom: 12px;
+        border-bottom: 2px solid var(--border);
+      }
+
+      .section-icon {
+        width: 36px;
+        height: 36px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+        flex-shrink: 0;
+      }
+
+      .icon-blue   { background: var(--primary-light); }
+      .icon-green  { background: var(--green-light); }
+      .icon-orange { background: var(--orange-light); }
+      .icon-purple { background: var(--purple-light); }
+      .icon-red    { background: var(--red-light); }
+      .icon-gray   { background: var(--gray-100); }
+
+      .section-title {
+        font-size: 17px;
+        font-weight: 600;
+        color: var(--dark);
+      }
+
+      .section-count {
+        margin-left: auto;
+        font-size: 11px;
+        color: var(--gray-400);
+        font-weight: 500;
+        background: var(--gray-100);
+        padding: 2px 10px;
+        border-radius: 12px;
+      }
+
+      .questions-list {
+        list-style: none;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .question-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        padding: 14px 16px;
+        background: var(--gray-50);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+      }
+
+      .question-checkbox {
+        width: 18px;
+        height: 18px;
+        border: 2px solid var(--border);
+        border-radius: 4px;
+        flex-shrink: 0;
+        margin-top: 1px;
+      }
+
+      .question-text {
+        font-size: 13px;
+        color: var(--gray-800);
+        line-height: 1.55;
+        flex: 1;
+      }
+
+      .question-note {
+        font-size: 11px;
+        color: var(--gray-400);
+        margin-top: 3px;
+        font-style: italic;
+      }
+
+      /* HIGHLIGHT BOX */
+      .highlight-box {
+        background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 100%);
+        border-radius: 12px;
+        padding: 28px 32px;
+        margin: 40px 0;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .highlight-box::before {
+        content: "";
+        position: absolute;
+        top: -30px; right: -30px;
+        width: 120px; height: 120px;
+        background: radial-gradient(circle, rgba(14,165,233,0.2) 0%, transparent 70%);
+        border-radius: 50%;
+      }
+
+      .highlight-label {
+        font-size: 10px;
+        font-weight: 600;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        color: #38bdf8;
+        margin-bottom: 10px;
+      }
+
+      .highlight-text {
+        font-size: 15px;
+        font-weight: 500;
+        color: white;
+        line-height: 1.6;
+      }
+
+      /* NOTES AREA */
+      .notes-section {
+        margin-top: 48px;
+        page-break-before: always;
+      }
+
+      .notes-title {
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--gray-600);
+        margin-bottom: 16px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .notes-lines {
+        display: flex;
+        flex-direction: column;
+        gap: 28px;
+      }
+
+      .notes-line {
+        border-bottom: 1px solid var(--border);
+        min-height: 28px;
+      }
+
+      /* FOOTER */
+      .doc-footer {
+        margin-top: 60px;
+        padding-top: 20px;
+        border-top: 1px solid var(--border);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 11px;
+        color: var(--gray-400);
+      }
+
+      @media print {
+        body { font-size: 12px; }
+        .container { padding: 40px 32px; }
+        .cover { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+        .highlight-box { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+        .section { page-break-inside: avoid; }
+      }
+    </style>
+  </head>
+  <body>
+
+    <!-- COVER -->
+    <div class="cover">
+      <div class="cover-badge">Co-founders · Kick-off</div>
+      <div class="cover-logo">Client<span>Ops</span></div>
+      <div class="cover-subtitle">SaaS CRM Platform</div>
+      <div class="cover-divider"></div>
+      <div class="cover-title">Pytania do rozmowy<br>założycielskiej</div>
+      <div class="cover-desc">
+        Lista kwestii do omówienia przed wspólnym startem projektu —
+        od podziału ról po hosting i pierwszego klienta.
+      </div>
+      <div class="cover-meta">
+        <div class="cover-meta-item">
+          <div class="cover-meta-label">Data</div>
+          <div class="cover-meta-value">Marzec 2026</div>
+        </div>
+        <div class="cover-meta-item">
+          <div class="cover-meta-label">Uczestnicy</div>
+          <div class="cover-meta-value">Maciej + kolega</div>
+        </div>
+        <div class="cover-meta-item">
+          <div class="cover-meta-label">Status</div>
+          <div class="cover-meta-value">Do omówienia</div>
+        </div>
+      </div>
+      <div class="cover-footer">Maciej Fiałkowski · ClientOps</div>
+    </div>
+
+    <!-- CONTENT -->
+    <div class="container">
+
+      <!-- BIZNES I WŁASNOŚĆ -->
+      <div class="section">
+        <div class="section-header">
+          <div class="section-icon icon-blue">⚖️</div>
+          <div class="section-title">Biznes i własność</div>
+          <div class="section-count">5 pytań</div>
+        </div>
+        <ul class="questions-list">
+          <li class="question-item">
+            <div class="question-checkbox"></div>
+            <div>
+              <div class="question-text">Jaki podział udziałów? 50/50 czy inny?</div>
+              <div class="question-note">Ustalcie to teraz — po sukcesie rozmowa jest trudniejsza</div>
+            </div>
+          </li>
+          <li class="question-item">
+            <div class="question-checkbox"></div>
+            <div>
+              <div class="question-text">Czy zakładamy spółkę (sp. z o.o.) czy działamy na JDG jednego z nas?</div>
+              <div class="question-note">JDG na start, sp. z o.o. gdy pojawią się pierwsze przychody — to częste podejście</div>
+            </div>
+          </li>
+          <li class="question-item">
+            <div class="question-checkbox"></div>
+            <div>
+              <div class="question-text">Kto wystawia faktury klientom na starcie?</div>
+            </div>
+          </li>
+          <li class="question-item">
+            <div class="question-checkbox"></div>
+            <div>
+              <div class="question-text">Co jeśli jeden z nas chce wyjść z projektu?</div>
+              <div class="question-note">Klauzula odkupu udziałów, harmonogram vesting — warto ustalić na piśmie</div>
+            </div>
+          </li>
+          <li class="question-item">
+            <div class="question-checkbox"></div>
+            <div>
+              <div class="question-text">Czy mamy wspólny budżet startowy, czy projekt finansuje się sam od zera?</div>
+              <div class="question-note">Hosting, domeny, narzędzia, ew. Stripe fees — warto mieć choćby mały bufor</div>
+            </div>
+          </li>
+        </ul>
+      </div>
+
+      <!-- PODZIAŁ RÓL -->
+      <div class="section">
+        <div class="section-header">
+          <div class="section-icon icon-green">👥</div>
+          <div class="section-title">Podział ról i czas</div>
+          <div class="section-count">4 pytania</div>
+        </div>
+        <ul class="questions-list">
+          <li class="question-item">
+            <div class="question-checkbox"></div>
+            <div>
+              <div class="question-text">Kto odpowiada za development, kto za sprzedaż i kontakt z klientami?</div>
+            </div>
+          </li>
+          <li class="question-item">
+            <div class="question-checkbox"></div>
+            <div>
+              <div class="question-text">Kto ma decydujący głos przy spornych decyzjach technicznych?</div>
+              <div class="question-note">Bez tego decyzje mogą się ciągnąć tygodniami</div>
+            </div>
+          </li>
+          <li class="question-item">
+            <div class="question-checkbox"></div>
+            <div>
+              <div class="question-text">Ile godzin tygodniowo każdy może realnie poświęcić na start?</div>
+            </div>
+          </li>
+          <li class="question-item">
+            <div class="question-checkbox"></div>
+            <div>
+              <div class="question-text">Czy to projekt side-hustle czy planujemy przejść na full-time — i kiedy?</div>
+            </div>
+          </li>
+        </ul>
+      </div>
+
+      <!-- HOSTING I INFRASTRUKTURA -->
+      <div class="section">
+        <div class="section-header">
+          <div class="section-icon icon-orange">🖥️</div>
+          <div class="section-title">Hosting i infrastruktura</div>
+          <div class="section-count">5 pytań</div>
+        </div>
+        <ul class="questions-list">
+          <li class="question-item">
+            <div class="question-checkbox"></div>
+            <div>
+              <div class="question-text">VPS (Hetzner, DigitalOcean) czy managed (Laravel Cloud + Forge)?</div>
+              <div class="question-note">VPS taniej, managed mniej devops — zależy kto będzie administrował serwerem</div>
+            </div>
+          </li>
+          <li class="question-item">
+            <div class="question-checkbox"></div>
+            <div>
+              <div class="question-text">Kto administruje serwerem na co dzień?</div>
+            </div>
+          </li>
+          <li class="question-item">
+            <div class="question-checkbox"></div>
+            <div>
+              <div class="question-text">Jak dzielimy dostępy — serwery, domeny, konta cloudowe, Stripe?</div>
+              <div class="question-note">Zasada: żaden zasób nie leży tylko na jednym koncie</div>
+            </div>
+          </li>
+          <li class="question-item">
+            <div class="question-checkbox"></div>
+            <div>
+              <div class="question-text">Backup i disaster recovery — kto jest za to odpowiedzialny?</div>
+            </div>
+          </li>
+          <li class="question-item">
+            <div class="question-checkbox"></div>
+            <div>
+              <div class="question-text">Koszty infrastruktury — wspólne konto czy refakturowanie między sobą?</div>
+            </div>
+          </li>
+        </ul>
+      </div>
+
+      <!-- NAZWA I MARKA -->
+      <div class="section">
+        <div class="section-header">
+          <div class="section-icon icon-purple">🏷️</div>
+          <div class="section-title">Nazwa i marka</div>
+          <div class="section-count">4 pytania</div>
+        </div>
+        <ul class="questions-list">
+          <li class="question-item">
+            <div class="question-checkbox"></div>
+            <div>
+              <div class="question-text">Czy <strong>clientops.pl</strong> to nazwa docelowa czy robocza?</div>
+              <div class="question-note">Sprawdźcie też .com — przydatne gdy przyjdzie skalowanie poza Polskę</div>
+            </div>
+          </li>
+          <li class="question-item">
+            <div class="question-checkbox"></div>
+            <div>
+              <div class="question-text">Czy celujemy od razu w .com dla skalowalności poza polskim rynkiem?</div>
+            </div>
+          </li>
+          <li class="question-item">
+            <div class="question-checkbox"></div>
+            <div>
+              <div class="question-text">Kto rejestruje domenę i markę — na spółkę czy na jedną osobę?</div>
+            </div>
+          </li>
+          <li class="question-item">
+            <div class="question-checkbox"></div>
+            <div>
+              <div class="question-text">Czy nazwa ma sugerować CRM, agencje, SEO — czy być neutralna na przyszłość?</div>
+            </div>
+          </li>
+        </ul>
+      </div>
+
+      <!-- KLIENCI I RYNEK -->
+      <div class="section">
+        <div class="section-header">
+          <div class="section-icon icon-green">🎯</div>
+          <div class="section-title">Klienci i rynek</div>
+          <div class="section-count">5 pytań</div>
+        </div>
+        <ul class="questions-list">
+          <li class="question-item">
+            <div class="question-checkbox"></div>
+            <div>
+              <div class="question-text">Kto jest naszym pierwszym klientem — płacącym, przed publicznym launchem?</div>
+              <div class="question-note">Jeden płacący pilot przed launchem jest wart więcej niż 100 zapisów na listę</div>
+            </div>
+          </li>
+          <li class="question-item">
+            <div class="question-checkbox"></div>
+            <div>
+              <div class="question-text">W kogo celujemy: agencje marketingowe, software house'y, freelancerzy?</div>
+            </div>
+          </li>
+          <li class="question-item">
+            <div class="question-checkbox"></div>
+            <div>
+              <div class="question-text">Jaka cena za plan startowy?</div>
+              <div class="question-note">Nie zgadujcie — zapytajcie 5 potencjalnych klientów zanim ustalacie cennik</div>
+            </div>
+          </li>
+          <li class="question-item">
+            <div class="question-checkbox"></div>
+            <div>
+              <div class="question-text">Czy sprzedajemy aktywnie (cold outreach) czy liczymy na inbound / SEO?</div>
+            </div>
+          </li>
+          <li class="question-item">
+            <div class="question-checkbox"></div>
+            <div>
+              <div class="question-text">Kiedy uznajemy że produkt jest gotowy do pierwszego klienta?</div>
+              <div class="question-note">Ustalcie konkretną listę funkcji "must have" — nie "kiedy wszystko gotowe"</div>
+            </div>
+          </li>
+        </ul>
+      </div>
+
+      <!-- TECHNICZNE -->
+      <div class="section">
+        <div class="section-header">
+          <div class="section-icon icon-gray">⚙️</div>
+          <div class="section-title">Decyzje techniczne</div>
+          <div class="section-count">4 pytania</div>
+        </div>
+        <ul class="questions-list">
+          <li class="question-item">
+            <div class="question-checkbox"></div>
+            <div>
+              <div class="question-text">Czy kolega też koduje — jeśli tak, jeden repo, branch strategy, code review?</div>
+            </div>
+          </li>
+          <li class="question-item">
+            <div class="question-checkbox"></div>
+            <div>
+              <div class="question-text">Czy używamy zaprojektowanego stacku (Laravel + React + PostgreSQL) czy coś zmienia?</div>
+            </div>
+          </li>
+          <li class="question-item">
+            <div class="question-checkbox"></div>
+            <div>
+              <div class="question-text">Staging environment osobny od produkcji — od dnia 1?</div>
+            </div>
+          </li>
+          <li class="question-item">
+            <div class="question-checkbox"></div>
+            <div>
+              <div class="question-text">Integracja płatności: Stripe (karty, EU standard) czy Przelewy24 (BLIK, polski rynek)?</div>
+              <div class="question-note">Stripe jest standardem SaaS, P24 lepszy dla polskich klientów B2C — można mieć oba</div>
+            </div>
+          </li>
+        </ul>
+      </div>
+
+      <!-- HIGHLIGHT — NAJWAŻNIEJSZE PYTANIE -->
+      <div class="highlight-box">
+        <div class="highlight-label">Najważniejsze pytanie ze wszystkich</div>
+        <div class="highlight-text">
+          Jaki jest nasz horyzont — za ile miesięcy projekt musi zarabiać żeby miało sens
+          kontynuować, i co robimy jeśli tego nie osiągniemy?
+        </div>
+      </div>
+
+      <!-- NOTATKI -->
+      <div class="notes-section">
+        <div class="notes-title">Notatki ze spotkania</div>
+        <div class="notes-lines">
+          <div class="notes-line"></div>
+          <div class="notes-line"></div>
+          <div class="notes-line"></div>
+          <div class="notes-line"></div>
+          <div class="notes-line"></div>
+          <div class="notes-line"></div>
+          <div class="notes-line"></div>
+          <div class="notes-line"></div>
+          <div class="notes-line"></div>
+          <div class="notes-line"></div>
+          <div class="notes-line"></div>
+          <div class="notes-line"></div>
+        </div>
+      </div>
+
+      <!-- FOOTER -->
+      <div class="doc-footer">
+        <span>ClientOps · Rozmowa założycielska · Marzec 2026</span>
+        <span>Maciej Fiałkowski</span>
+      </div>
+
+    </div>
+  </body>
+</html>

@@ -746,8 +746,8 @@
       <div class="cover-divider"></div>
       <div class="cover-title">Architektura &amp; Stack Technologiczny</div>
       <div class="cover-desc">
-        Kompletna specyfikacja systemu CRM z panelem klienta, modułem SEO AI, systemem SLA, edytorem
-        dokumentów i powiadomieniami wielokanałowymi.
+        Kompletna specyfikacja systemu CRM z panelem klienta, modułem Discovery &amp; Brief AI,
+        systemem SLA, edytorem dokumentów, modułem SEO AI i powiadomieniami wielokanałowymi.
       </div>
       <div class="cover-meta">
         <div class="cover-meta-item">
@@ -756,7 +756,7 @@
         </div>
         <div class="cover-meta-item">
           <div class="cover-meta-label">Wersja</div>
-          <div class="cover-meta-value">1.5.0</div>
+          <div class="cover-meta-value">1.6.0</div>
         </div>
         <div class="cover-meta-item">
           <div class="cover-meta-label">Stack</div>
@@ -772,7 +772,7 @@
     <!-- TOC -->
     <div class="toc-page">
       <div class="toc-title">Spis treści</div>
-      <div class="toc-subtitle">Dokument zawiera 10 sekcji</div>
+      <div class="toc-subtitle">Dokument zawiera 11 sekcji</div>
       <ul class="toc-list">
         <li class="toc-section">
           <div class="toc-item">
@@ -841,6 +841,13 @@
           <div class="toc-item">
             <div class="toc-num">10</div>
             <span class="toc-text">Priorytety i plan wdrożenia</span>
+            <div class="toc-dots"></div>
+          </div>
+        </li>
+        <li class="toc-section">
+          <div class="toc-item">
+            <div class="toc-num">11</div>
+            <span class="toc-text">Discovery &amp; Brief AI — moduł onboardingu projektowego</span>
             <div class="toc-dots"></div>
           </div>
         </li>
@@ -946,6 +953,31 @@
           <div class="card-body">
             Ujednolicony Kanban obsługujący leady, tickety i zadania projektowe. Jeden model z
             polymorphic relations, drag &amp; drop (dnd-kit).
+          </div>
+        </div>
+      </div>
+
+      <div class="card-grid">
+        <div class="card" style="border-left: 3px solid #7c3aed;">
+          <div class="card-title">
+            <div class="card-icon" style="background: #f5f3ff">🎙️</div>
+            Discovery &amp; Brief AI
+          </div>
+          <div class="card-body">
+            Nagranie rozmowy z klientem → transkrypcja Whisper → brief AI. Kwestionariusz z pytaniami
+            stałymi i generowanymi przez AI w kontekście branży klienta. Analiza stron referencyjnych
+            (Vision AI) i generowanie makiety wireframe. Integracja z modułem SEO (tryb redesign).
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">
+            <div class="card-icon" style="background: #fff7ed">🔗</div>
+            Flow sprzedaży
+          </div>
+          <div class="card-body">
+            Lead → Oferta → <strong>Discovery Session</strong> → Projekt → zasoby projektu.
+            Discovery jest pomostem między sprzedażą a realizacją — brief zatwierdza klient
+            w panelu klienckim.
           </div>
         </div>
       </div>
@@ -2358,6 +2390,19 @@ activity_log
           </div>
         </li>
         <li class="priority-item">
+          <div class="priority-num" style="background: var(--purple-light); border-color: var(--purple); color: var(--purple);">4.5</div>
+          <div class="priority-content">
+            <div class="priority-title">Discovery &amp; Brief AI</div>
+            <div class="priority-desc">
+              Pipeline kolejkowy: transkrypcja Whisper API, ekstrakcja briefa (Claude), analiza stron
+              referencyjnych (Puppeteer + Vision AI), generowanie wireframe (JSON → renderer React).
+              Kwestionariusz: pytania stałe + AI-generowane per branża klienta. Eksport PDF briefa
+              i makiety przez Browsershot. Wymaga działającego Dokumenty (faza 4) — korzysta z PDF
+              exportu. Pełna integracja z SEO możliwa w fazie 6.
+            </div>
+          </div>
+        </li>
+        <li class="priority-item">
           <div class="priority-num">5</div>
           <div class="priority-content">
             <div class="priority-title">Powiadomienia</div>
@@ -2458,8 +2503,13 @@ activity_log
           font-size: 11px;
         "
       >
-        ClientOps CRM — Specyfikacja Techniczna v1.5 &nbsp;·&nbsp; Marzec 2026 &nbsp;·&nbsp; Laravel
+        ClientOps CRM — Specyfikacja Techniczna v1.6 &nbsp;·&nbsp; Marzec 2026 &nbsp;·&nbsp; Laravel
         12 + React 19 + TypeScript
+      </div>
+
+      <!-- CROSS-DOCUMENT NAV — updated version -->
+      <div style="margin-top:12px; padding:10px 14px; background:#f5f3ff; border:1px solid #ddd6fe; border-radius:8px; font-size:11px; color:#4c1d95;">
+        <strong>v1.6.0</strong> — dodano moduł Discovery &amp; Brief AI (sekcja 11), faza 4.5 w roadmapie, aktualizacja flow sprzedaży.
       </div>
 
       <!-- CROSS-DOCUMENT NAV -->
@@ -2468,7 +2518,7 @@ activity_log
         <div style="display:flex; gap:16px; flex-wrap:wrap;">
           <div style="background:#eff6ff; border:1px solid #bfdbfe; border-radius:6px; padding:8px 14px;">
             <div style="font-weight:700; color:#1e40af; margin-bottom:2px;">📋 Ten dokument</div>
-            <div style="color:#475569;">Specyfikacja Techniczna v1.5</div>
+            <div style="color:#475569;">Specyfikacja Techniczna v1.6</div>
             <div style="color:#94a3b8; font-size:10px; margin-top:2px;">Stack, moduły, decyzje techniczne</div>
           </div>
           <div style="background:#f0fdfa; border:1px solid #99f6e4; border-radius:6px; padding:8px 14px;">
@@ -2490,6 +2540,242 @@ activity_log
       </div>
     </div>
   
+    <!-- SECTION 11: DISCOVERY & BRIEF AI -->
+    <div class="page page-break">
+      <div class="section-header">
+        <div class="section-num" style="background: var(--purple-light); border-color: var(--purple); color: var(--purple);">11</div>
+        <div class="section-title-wrap">
+          <div class="section-label">AI Module</div>
+          <div class="section-title">Discovery &amp; Brief AI — onboarding projektowy</div>
+        </div>
+      </div>
+
+      <p>
+        Moduł przekształca nagranie rozmowy z klientem w gotowy brief projektowy, makietę wireframe i założenia SEO.
+        Pozycjonowany między Ofertą a Projektem — brief zatwierdza klient w panelu klienckim, dopiero wtedy tworzony jest projekt.
+      </p>
+
+      <div class="info-box purple">
+        <strong>Miejsce w flow sprzedaży:</strong>
+        Lead → Oferta → <strong>Discovery Session</strong> → Brief (zatwierdzony przez klienta) → Projekt → zasoby projektu.
+        Tabele <code>discovery_*</code> należą do warstwy 2.5 — pomostowej między Sprzedażą a Realizacją.
+      </div>
+
+      <h3>Dwa tryby pracy</h3>
+      <table>
+        <thead>
+          <tr><th>Tryb</th><th>Wyzwalacz</th><th>Integracja SEO</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Nowa strona</strong></td>
+            <td>Klient nie ma strony lub tworzymy od zera</td>
+            <td>AI sugeruje słowa kluczowe, strukturę URL, analizę konkurencji</td>
+          </tr>
+          <tr>
+            <td><strong>Redesign</strong></td>
+            <td>Istniejąca strona — modernizacja lub przepisanie</td>
+            <td>GSC: aktualne rankingi do ochrony, mapa URL, audyt meta/H1</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>Pipeline kolejkowy</h3>
+      <div class="flow">
+        <div class="flow-step">Upload nagrania</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">TranscribeRecordingJob<br><small style="color:var(--gray-400)">Whisper API</small></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">ExtractBriefDataJob<br><small style="color:var(--gray-400)">Claude API</small></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">[redesign]<br>FetchSeoContextJob</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">GenerateSiteAssumptionsJob</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">AnalyzeReferenceUrlsJob<br><small style="color:var(--gray-400)">Puppeteer + Vision</small></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">GenerateWireframeJob</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">NotifyBriefReadyJob</div>
+      </div>
+      <p style="margin-top:8px; font-size:12px; color:var(--gray-600)">Wszystkie joby na kolejce <code>ai-processing</code> przez Laravel Horizon.</p>
+
+      <h3>Model danych</h3>
+      <div class="card-grid">
+        <div class="card">
+          <div class="card-title"><div class="card-icon" style="background:var(--purple-light)">🎙️</div>discovery_sessions</div>
+          <div class="card-body">
+            <code>project_id, created_by, mode: new_site|redesign,<br>
+            recording_path, recording_duration_sec, transcript,<br>
+            status: processing|review|approved|exported,<br>
+            existing_url (nullable), approved_at, approved_by</code>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title"><div class="card-icon" style="background:var(--primary-light)">📋</div>discovery_briefs</div>
+          <div class="card-body">
+            <code>session_id, client_goals, target_audience,<br>
+            tone_keywords (JSON), required_languages (JSON),<br>
+            integrations_needed (JSON), seo_keywords_suggested (JSON),<br>
+            pages (JSON), sections_per_page (JSON), ai_notes</code>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title"><div class="card-icon" style="background:var(--green-light)">🔗</div>discovery_references</div>
+          <div class="card-body">
+            <code>session_id, url, screenshot_path, analyzed_at,<br>
+            design_notes (text),<br>
+            elements_to_adopt (JSON)</code>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title"><div class="card-icon" style="background:var(--orange-light)">🖼️</div>discovery_wireframes</div>
+          <div class="card-body">
+            <code>session_id, version,<br>
+            structure_json (JSON — renderer React),<br>
+            html_preview_path (nullable),<br>
+            generated_at, regenerated_at</code>
+          </div>
+        </div>
+      </div>
+
+      <h3>Kwestionariusz Discovery</h3>
+      <p>Formularz wysyłany klientowi przed lub po nagraniu. Trzy warstwy pytań — odpowiedzi wzbogacają prompt AI przy ekstrakcji briefa.</p>
+
+      <table>
+        <thead>
+          <tr><th>Warstwa</th><th>Źródło</th><th>Przykłady</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="badge badge-blue">Ogólne</span></td>
+            <td>Stałe, każdy klient</td>
+            <td>Cel strony, grupa docelowa, ton komunikacji, gotowość treści, języki</td>
+          </tr>
+          <tr>
+            <td><span class="badge badge-orange">Techniczne</span></td>
+            <td>Stałe, każdy klient</td>
+            <td>Integracje (formularz, booking, sklep), hosting, panel CMS, GSC/GA4 dostęp</td>
+          </tr>
+          <tr>
+            <td><span class="badge badge-purple">AI kontekstowe</span></td>
+            <td>Generowane per branża</td>
+            <td>Kancelaria: podstrony prawników, RODO. Stomatolog: rezerwacje, galeria przed/po</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="card-grid" style="margin-top:16px">
+        <div class="card">
+          <div class="card-title"><div class="card-icon" style="background:var(--gray-100)">🗄️</div>discovery_question_templates</div>
+          <div class="card-body">
+            <code>layer: general|technical|ai_generated,<br>
+            category, question, is_active,<br>
+            answer_type: text|select|multiselect|boolean|url|scale,<br>
+            options (JSON), order</code>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title"><div class="card-icon" style="background:var(--gray-100)">📝</div>discovery_answers</div>
+          <div class="card-body">
+            <code>questionnaire_id,<br>
+            question_template_id (nullable — AI pytania),<br>
+            question_text (kopia w momencie odpowiedzi),<br>
+            layer, answer_text, answer_json</code>
+          </div>
+        </div>
+      </div>
+
+      <h3>Makieta (wireframe renderer)</h3>
+      <p>Generowana jako JSON struktury renderowany w React — lekki, interaktywny, bez zewnętrznych narzędzi. Grayscale lo-fi.</p>
+      <pre><code>{
+  "pages": [
+    {
+      "name": "Strona główna",
+      "slug": "/",
+      "sections": [
+        { "type": "hero",         "headline": "...", "cta": true },
+        { "type": "features",     "columns": 3 },
+        { "type": "testimonials"                   },
+        { "type": "cta_banner"                     },
+        { "type": "footer"                         }
+      ]
+    }
+  ]
+}</code></pre>
+      <p style="margin-top:8px; font-size:12px; color:var(--gray-600)">Klient i admin mogą komentować per sekcja. Export: PDF (Browsershot) lub statyczny HTML.</p>
+
+      <h3>Integracje techniczne</h3>
+      <table>
+        <thead>
+          <tr><th>Potrzeba</th><th>Rozwiązanie</th><th>Status w stacku</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Transkrypcja audio</td>
+            <td>OpenAI Whisper API (<code>whisper-1</code>)</td>
+            <td><span class="badge badge-orange">Nowe</span></td>
+          </tr>
+          <tr>
+            <td>Ekstrakcja briefa + pytania AI</td>
+            <td>Claude API (<code>claude-opus-4-6</code>)</td>
+            <td><span class="badge badge-orange">Nowe</span></td>
+          </tr>
+          <tr>
+            <td>Screenshoty referencji + analiza</td>
+            <td>Puppeteer (Browsershot) + Claude Vision</td>
+            <td><span class="badge badge-green">Browsershot już w stacku</span></td>
+          </tr>
+          <tr>
+            <td>Wireframe renderer</td>
+            <td>React + własny komponent (JSON → bloki)</td>
+            <td><span class="badge badge-orange">Nowe</span></td>
+          </tr>
+          <tr>
+            <td>Kolejki + monitoring</td>
+            <td>Laravel Horizon, kolejka <code>ai-processing</code></td>
+            <td><span class="badge badge-green">Już w stacku</span></td>
+          </tr>
+          <tr>
+            <td>Pliki audio / screenshoty</td>
+            <td>Spatie Media Library + S3/MinIO</td>
+            <td><span class="badge badge-green">Już w stacku</span></td>
+          </tr>
+          <tr>
+            <td>PDF briefa i makiety</td>
+            <td>Browsershot (async, kolejka)</td>
+            <td><span class="badge badge-green">Już w stacku</span></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>UI — panel admina</h3>
+      <div class="flow" style="flex-direction:column; align-items:flex-start; gap:6px;">
+        <div style="font-size:12px; color:var(--gray-600); font-weight:600;">Projekt → zakładka "Discovery"</div>
+        <div style="display:flex; gap:8px; flex-wrap:wrap; padding-left:16px;">
+          <div class="flow-step">Nagraj / wgraj sesję</div>
+          <div class="flow-step">Transkrypcja (edytowalna)</div>
+          <div class="flow-step">Brief (sekcje edytowalne)</div>
+          <div class="flow-step">Kwestionariusz</div>
+          <div class="flow-step">Strony referencyjne</div>
+          <div class="flow-step">Makieta + komentarze</div>
+          <div class="flow-step">Eksport PDF</div>
+        </div>
+        <div style="font-size:12px; color:var(--gray-600); font-weight:600; margin-top:8px;">Panel klienta → "Brief &amp; Makieta"</div>
+        <div style="display:flex; gap:8px; flex-wrap:wrap; padding-left:16px;">
+          <div class="flow-step">Wypełnienie kwestionariusza</div>
+          <div class="flow-step">Podgląd briefa</div>
+          <div class="flow-step">Komentarze per sekcja</div>
+          <div class="flow-step">Zatwierdzenie briefa</div>
+        </div>
+      </div>
+
+      <div class="info-box green" style="margin-top:24px">
+        <strong>Faza wdrożenia: 4.5</strong>
+        Po dokumentach (TipTap/PDF), przed powiadomieniami. Pełna integracja SEO ↔ Discovery (tryb redesign) aktywna dopiero w fazie 6. Na starcie Discovery działa samodzielnie bez danych SEO.
+      </div>
+    </div>
+
 <div class="page-footer">
   <span>Maciej Fiałkowski</span>
   <span>ClientOps CRM</span>
