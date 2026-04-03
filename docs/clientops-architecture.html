@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ClientOps CRM — Architektura i Model Danych v2.0.0</title>
+<title>ClientOps CRM — Architektura i Model Danych v2.1.0</title>
 <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
 <script>mermaid.initialize({ startOnLoad: true, theme: 'neutral', er: { diagramPadding: 20, layoutDirection: 'TB', minEntityWidth: 100, minEntityHeight: 75, entityPadding: 15 } });</script>
 <style>
@@ -280,9 +280,9 @@
     Główne źródło prawdy dla developera.
   </div>
   <div class="cover-meta">
-    <div class="cover-meta-item"><div class="cover-meta-label">Wersja</div><div class="cover-meta-value">2.0.0</div></div>
-    <div class="cover-meta-item"><div class="cover-meta-label">Data</div><div class="cover-meta-value">Marzec 2026</div></div>
-    <div class="cover-meta-item"><div class="cover-meta-label">Tabele</div><div class="cover-meta-value">35</div></div>
+    <div class="cover-meta-item"><div class="cover-meta-label">Wersja</div><div class="cover-meta-value">2.1.0</div></div>
+    <div class="cover-meta-item"><div class="cover-meta-label">Data</div><div class="cover-meta-value">Kwiecień 2026</div></div>
+    <div class="cover-meta-item"><div class="cover-meta-label">Tabele</div><div class="cover-meta-value">56</div></div>
     <div class="cover-meta-item"><div class="cover-meta-label">Sekcje</div><div class="cover-meta-value">13</div></div>
   </div>
 </div>
@@ -318,9 +318,15 @@
     </div>
   </div>
 
-  <p>System podzielony na trzy warstwy logiczne. Każda warstwa obsługuje inny obszar biznesowy i zależy od warstwy poprzedniej — nie można mieć projektu bez klienta, klienta bez kontaktu.</p>
+  <p>System podzielony na cztery warstwy logiczne. Organizacja jest top-level SaaS tenant — każda warstwa zależy od warstwy poprzedniej.</p>
 
   <div class="layers">
+    <div class="layer" style="background:var(--purple-light); border-color:var(--purple);">
+      <div class="layer-title" style="color:var(--purple);">Warstwa 0 — Tenant SaaS (1 tabela)</div>
+      <div class="layer-tables">
+        <div class="layer-table" style="background:var(--purple-light); border-color:var(--purple); color:var(--purple);">organizations</div>
+      </div>
+    </div>
     <div class="layer layer-1">
       <div class="layer-title">Warstwa 1 — Tożsamość (3 tabele)</div>
       <div class="layer-tables">
@@ -400,17 +406,27 @@
     Nie skracaj tej ścieżki.
   </div>
 
-  <h3>Multi-tenancy — single database + Global Scopes</h3>
-  <p>Każda tabela w warstwie 2 i 3 zawiera <code>client_id</code>. Middleware identyfikuje tenant po subdomenie i wstrzykuje go do kontenera. Trait <code>BelongsToTenant</code> dodaje Global Scope automatycznie — zapytania są zawsze filtrowane bez potrzeby jawnego <code>where('client_id', ...)</code>.</p>
+  <h3>Multi-tenancy — dwa poziomy izolacji</h3>
+  <p><strong>Poziom 1 — Organizacja</strong> (top-level SaaS tenant): każda tabela biznesowa zawiera <code>organization_id</code>. Trait <code>BelongsToOrganization</code> dodaje Global Scope automatycznie. Middleware <code>IdentifyOrganization</code> identyfikuje organizację z sesji zalogowanego usera.</p>
 
-  <pre><span class="c">// Middleware — identyfikacja tenanta po subdomenie</span>
-$slug   = explode('.', $request->getHost())[0]; <span class="c">// "acme" z acme.clientops.pl</span>
-$tenant = Client::where('slug', $slug)->firstOrFail();
-app()->instance('tenant', $tenant);
+  <pre><span class="c">// IdentifyOrganization — identyfikacja z sesji usera (panel admina)</span>
+$org = Organization::find($request->user()->organization_id);
+app()->instance(<span class="s">'organization'</span>, $org);
 
-<span class="c">// Trait BelongsToTenant — dodaje Global Scope + auto-fill client_id</span>
-<span class="k">static</span>::addGlobalScope(<span class="k">new</span> TenantScope);
-<span class="k">static</span>::creating(<span class="k">fn</span>($model) => $model->client_id = app('tenant')->id);</pre>
+<span class="c">// Trait BelongsToOrganization — Global Scope + auto-fill organization_id</span>
+<span class="k">static</span>::addGlobalScope(<span class="s">'organization'</span>, <span class="k">fn</span>($q) => $q->where(<span class="s">'organization_id'</span>, app(<span class="s">'organization'</span>)->id));
+<span class="k">static</span>::creating(<span class="k">fn</span>($m) => $m->organization_id = app(<span class="s">'organization'</span>)->id);</pre>
+
+  <p><strong>Poziom 2 — Klient</strong> (panel klienta na subdomenach): middleware <code>IdentifyTenant</code> identyfikuje klienta z subdomeny. Obsługuje dwa formaty URL:</p>
+
+  <pre><span class="c">// 3-częściowy (backward compat): acme.clientops.pl</span>
+$tenant = Client::withoutOrganizationScope()->where(<span class="s">'slug'</span>, $parts[0])->first();
+
+<span class="c">// 4-częściowy (z org): acme.kordit.clientops.pl</span>
+$org    = Organization::where(<span class="s">'slug'</span>, $parts[1])->first();
+$tenant = Client::withoutOrganizationScope()
+    ->where(<span class="s">'slug'</span>, $parts[0])
+    ->where(<span class="s">'organization_id'</span>, $org->id)->first();</pre>
 </div>
 
 <!-- SECTION 2: ERD -->
@@ -567,13 +583,37 @@ erDiagram
     <div class="section-num">3</div>
     <div class="section-title-wrap">
       <div class="section-label">Schemas</div>
-      <div class="section-title">Schematy tabel — Warstwa 1: Tożsamość</div>
+      <div class="section-title">Schematy tabel — Warstwa 0 + 1: Organizacja i Tożsamość</div>
     </div>
+  </div>
+
+  <h3>organizations</h3>
+  <pre><span class="t">organizations</span>
+  <span class="pk">id</span>                bigint PK auto_increment
+  <span class="f">name</span>              varchar(255)               <span class="c">-- nazwa agencji / firmy SaaS</span>
+  <span class="f">slug</span>              varchar(100) unique        <span class="c">-- identyfikator w subdomenie: kordit → acme.kordit.clientops.pl</span>
+  <span class="fk">owner_id</span>          bigint nullable FK → users.id  <span class="c">-- właściciel / super-admin</span>
+  <span class="f">email</span>             varchar(255) nullable
+  <span class="f">phone</span>             varchar(20) nullable
+  <span class="f">website</span>           varchar(255) nullable
+  <span class="f">logo_path</span>         varchar(255) nullable
+  <span class="f">settings</span>          JSON nullable              <span class="c">-- dowolne ustawienia: waluta, strefa czasowa, itp.</span>
+  <span class="f">is_active</span>         boolean default true
+  <span class="f">created_at</span>        timestamp
+  <span class="f">updated_at</span>        timestamp
+
+<span class="c">  -- Rejestracja: POST /api/register-organization (publiczny endpoint)</span>
+<span class="c">  -- Identyfikacja: IdentifyOrganization middleware (z sesji usera)</span></pre>
+
+  <div class="info-box" style="background:var(--purple-light); border-color:var(--purple);">
+    <strong style="color:var(--purple);">Organizations — top-level SaaS tenant</strong>
+    Jeden CRM może obsługiwać wiele niezależnych organizacji (agencji, klientów SaaS). Każda organizacja ma własną izolowaną przestrzeń danych: klientów, leady, projekty, dokumenty, tickety. Użytkownicy są przypisani do jednej organizacji przez <code>organization_id</code> w tabeli <code>users</code>.
   </div>
 
   <h3>users</h3>
   <pre><span class="t">users</span>
   <span class="pk">id</span>                bigint PK auto_increment
+  <span class="fk">organization_id</span>   bigint nullable FK → organizations.id
   <span class="f">name</span>              varchar(255)
   <span class="f">email</span>             varchar(255) unique
   <span class="f">email_verified_at</span> timestamp nullable

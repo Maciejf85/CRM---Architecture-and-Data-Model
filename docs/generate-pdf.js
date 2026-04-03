@@ -25,77 +25,77 @@
  *   08 - clientops-infrastructure
  */
 
-const puppeteer = require('puppeteer');
-const path = require('path');
-const fs = require('fs');
+const puppeteer = require("puppeteer");
+const path = require("path");
+const fs = require("fs");
 
 // Mapa plików → numery w serii PDF
 const FILE_ORDER = {
-  'clientops-index':          '00',
-  'clientops-crm-spec':       '01',
-  'clientops-architecture':   '02',
-  'clientops-libraries':      '03',
-  'clientops-structure':      '04',
-  'clientops-implementation': '05',
-  'clientops-seo':            '06',
-  'clientops-audit':          '07',
-  'clientops-infrastructure': '08',
-  'clientops-business':       '09',
-  'clientops-simulation':     '10',
-  'clientops-audit-guide':    '11',
+  "clientops-index": "00",
+  "clientops-crm-spec": "01",
+  "clientops-architecture": "02",
+  "clientops-libraries": "03",
+  "clientops-structure": "04",
+  "clientops-implementation": "05",
+  "clientops-seo": "06",
+  "clientops-audit": "07",
+  "clientops-infrastructure": "08",
+  "clientops-business": "09",
+  "clientops-simulation": "10",
+  "clientops-audit-guide": "11",
 };
 
 // 'all' generuje wszystko oprócz indeksu (indeks generuj osobno)
-const ALL_FILES = Object.keys(FILE_ORDER).filter(f => f !== 'clientops-index');
+const ALL_FILES = Object.keys(FILE_ORDER).filter((f) => f !== "clientops-index");
 
 // Parsuj argumenty: node generate-pdf.js [plik] [wersja]
 // Backward compat: node generate-pdf.js [wersja]  → zakłada clientops-crm-spec
-let fileArg   = process.argv[2] || null;
+let fileArg = process.argv[2] || null;
 let versionArg = process.argv[3] || null;
 
 // Jeśli pierwszy argument wygląda jak wersja (np. "1.5.0") — stary tryb
 if (fileArg && /^\d+\.\d+/.test(fileArg)) {
   versionArg = fileArg;
-  fileArg    = 'clientops-crm-spec';
+  fileArg = "clientops-crm-spec";
 }
 
-const version  = versionArg || 'draft';
-const filesToProcess = (fileArg === 'all') ? ALL_FILES : [fileArg || 'clientops-crm-spec'];
+const version = versionArg || "draft";
+const filesToProcess = fileArg === "all" ? ALL_FILES : [fileArg || "clientops-crm-spec"];
 
-if (!fs.existsSync(path.join(__dirname, 'pdf'))) {
-  fs.mkdirSync(path.join(__dirname, 'pdf'));
+if (!fs.existsSync(path.join(__dirname, "pdf"))) {
+  fs.mkdirSync(path.join(__dirname, "pdf"));
 }
 
 async function generatePdf(fileName, ver) {
   // Preferuj wersję print/ jeśli istnieje
-  const printPath  = path.join(__dirname, 'print', `${fileName}.print.html`);
+  const printPath = path.join(__dirname, "print", `${fileName}.print.html`);
   const defaultPath = path.join(__dirname, `${fileName}.html`);
-  const inputPath  = fs.existsSync(printPath) ? printPath : defaultPath;
-  const isPrint    = inputPath === printPath;
+  const inputPath = fs.existsSync(printPath) ? printPath : defaultPath;
+  const isPrint = inputPath === printPath;
 
   if (!fs.existsSync(inputPath)) {
     console.error(`❌  Plik nie istnieje: ${defaultPath}`);
     return;
   }
 
-  const num    = FILE_ORDER[fileName] || '00';
-  const output = path.join(__dirname, 'pdf', `${num}-${fileName}-v${ver}.pdf`);
+  const num = FILE_ORDER[fileName] || "00";
+  const output = path.join(__dirname, "pdf", `${num}-${fileName}-v${ver}.pdf`);
 
-  console.log(`\n📄 Generowanie: ${fileName} v${ver}${isPrint ? ' [print]' : ''}`);
+  console.log(`\n📄 Generowanie: ${fileName} v${ver}${isPrint ? " [print]" : ""}`);
   console.log(`   Źródło: ${inputPath}`);
   console.log(`   Wyjście: ${output}`);
 
   const browser = await puppeteer.launch({ headless: true });
-  const page    = await browser.newPage();
+  const page = await browser.newPage();
 
   // 300 DPI: deviceScaleFactor = 300 / 96 ≈ 3.125
   await page.setViewport({ width: 794, height: 1123, deviceScaleFactor: 3.125 });
 
-  await page.goto(`file://${inputPath}`, { waitUntil: 'networkidle0' });
+  await page.goto(`file://${inputPath}`, { waitUntil: "networkidle0" });
 
   await page.pdf({
     path: output,
-    format: 'A4',
+    format: "A4",
     printBackground: true,
     margin: { top: 0, right: 0, bottom: 0, left: 0 },
   });
@@ -106,11 +106,11 @@ async function generatePdf(fileName, ver) {
 
 (async () => {
   console.log(`\nClientOps — Generator PDF`);
-  console.log(`Wersja: ${version} | Pliki: ${filesToProcess.join(', ')}\n`);
+  console.log(`Wersja: ${version} | Pliki: ${filesToProcess.join(", ")}\n`);
 
   for (const file of filesToProcess) {
     await generatePdf(file, version);
   }
 
-  console.log('\n✅  Wszystkie PDF wygenerowane.\n');
+  console.log("\n✅  Wszystkie PDF wygenerowane.\n");
 })();

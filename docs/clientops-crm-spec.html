@@ -724,7 +724,7 @@
   <body>
     <!-- COVER -->
     <div class="cover">
-      <div class="cover-badge">Specyfikacja Techniczna v1.0</div>
+      <div class="cover-badge">Specyfikacja Techniczna v1.7</div>
       <div style="position: relative; z-index: 1; margin-bottom: 16px">
         <span
           style="
@@ -752,11 +752,11 @@
       <div class="cover-meta">
         <div class="cover-meta-item">
           <div class="cover-meta-label">Data</div>
-          <div class="cover-meta-value">Marzec 2026</div>
+          <div class="cover-meta-value">Kwiecień 2026</div>
         </div>
         <div class="cover-meta-item">
           <div class="cover-meta-label">Wersja</div>
-          <div class="cover-meta-value">1.6.0</div>
+          <div class="cover-meta-value">1.7.0</div>
         </div>
         <div class="cover-meta-item">
           <div class="cover-meta-label">Stack</div>
@@ -1435,32 +1435,44 @@
             <td>Laravel REST API — obsługuje oba frontendy + potencjalne integracje</td>
           </tr>
           <tr>
-            <td><code>{slug}.clientops.pl</code></td>
+            <td><code>{client}.clientops.pl</code></td>
             <td><span class="badge badge-purple">Client Portal</span></td>
-            <td>Dedykowany panel per klient — projekty, tickety, dokumenty, SEO</td>
+            <td>Panel klienta — backward compat (format 3-częściowy)</td>
+          </tr>
+          <tr>
+            <td><code>{client}.{org}.clientops.pl</code></td>
+            <td><span class="badge badge-purple">Client Portal</span></td>
+            <td>Panel klienta z identyfikacją organizacji (format 4-częściowy)</td>
           </tr>
         </tbody>
       </table>
 
-      <h3>Identyfikacja tenanta</h3>
-      <p>Middleware wyciąga slug z subdomeny i wstrzykuje klienta do IoC container:</p>
+      <h3>Multi-tenancy — dwa poziomy izolacji</h3>
 
-      <pre><span class="comment">// app/Http/Middleware/IdentifyTenant.php</span>
-<span class="keyword">public function</span> handle(Request $request, Closure $next)
-{
-    $host = $request-&gt;getHost();         <span class="comment">// acme.clientops.pl</span>
-    $slug = explode(<span class="string">'.'</span>, $host)[<span class="string">0</span>];    <span class="comment">// acme</span>
+      <div class="info-box green">
+        <strong>Wybór: Single Database z Global Scopes — dwa poziomy</strong>
+        <strong>Poziom 1 (Organizacja):</strong> top-level SaaS tenant — każda tabela biznesowa zawiera <code>organization_id</code>.
+        Trait <code>BelongsToOrganization</code> + middleware <code>IdentifyOrganization</code> (z sesji usera).
+        <br><br>
+        <strong>Poziom 2 (Klient):</strong> panel klienta na subdomenach — middleware <code>IdentifyTenant</code>
+        identyfikuje klienta z subdomeny. Obsługuje oba formaty URL.
+      </div>
 
-    <span class="keyword">if</span> ($slug === <span class="string">'app'</span> || $slug === <span class="string">'api'</span>) {
-        <span class="keyword">return</span> $next($request);            <span class="comment">// admin / api — skip</span>
-    }
+      <pre><span class="comment">// Poziom 1 — IdentifyOrganization (panel admina)</span>
+$org = Organization::find($request->user()->organization_id);
+app()->instance(<span class="string">'organization'</span>, $org);
 
-    $tenant = Client::where(<span class="string">'slug'</span>, $slug)-&gt;firstOrFail();
-    app()-&gt;instance(Client::class, $tenant);
-    app()-&gt;instance(<span class="string">'tenant'</span>, $tenant);
+<span class="comment">// Trait BelongsToOrganization — Global Scope + auto-fill</span>
+<span class="keyword">static</span>::addGlobalScope(<span class="string">'organization'</span>, <span class="keyword">fn</span>($q) => $q->where(<span class="string">'organization_id'</span>, app(<span class="string">'organization'</span>)->id));
+<span class="keyword">static</span>::creating(<span class="keyword">fn</span>($m) => $m->organization_id = app(<span class="string">'organization'</span>)->id);
 
-    <span class="keyword">return</span> $next($request);
-}</pre>
+<span class="comment">// Poziom 2 — IdentifyTenant (panel klienta)</span>
+<span class="comment">// Format 4-częściowy: acme.kordit.clientops.pl</span>
+$org    = Organization::where(<span class="string">'slug'</span>, $parts[1])->first();
+$tenant = Client::withoutOrganizationScope()
+    ->where(<span class="string">'slug'</span>, $parts[0])
+    ->where(<span class="string">'organization_id'</span>, $org->id)->first();
+app()->instance(<span class="string">'tenant'</span>, $tenant);</pre>
 
       <h3>Konfiguracja Sanctum dla wildcard subdomen</h3>
 
@@ -1472,27 +1484,17 @@ SANCTUM_STATEFUL_DOMAINS=app.clientops.pl,*.clientops.pl
 <span class="string">'allowed_origins_patterns'</span> =&gt; [<span class="string">'#^https://[a-z0-9-]+\.clientops\.pl$#'</span>],
 <span class="string">'supports_credentials'</span> =&gt; <span class="keyword">true</span>,</pre>
 
-      <h3>Multi-tenancy — model danych</h3>
+      <h3>Rejestracja organizacji</h3>
+      <p>Publiczny endpoint pozwala założyć nową organizację i konto super-admina bez logowania:</p>
 
-      <div class="info-box green">
-        <strong>Wybór: Single Database z Global Scopes</strong>
-        Dla tego projektu wystarczy jedna baza danych z <code>client_id</code> na każdej tabeli oraz
-        automatycznym Global Scope. Prostsze w utrzymaniu i wystarczające na start. DB per tenant to
-        nadmiarowa złożoność bez wymiernych korzyści na tym etapie.
-      </div>
-
-      <pre><span class="comment">// Trait dla wszystkich modeli powiązanych z klientem</span>
-<span class="keyword">trait</span> BelongsToTenant
+      <pre><span class="comment">// POST /api/register-organization</span>
 {
-    <span class="keyword">protected static function</span> booted(): void
-    {
-        <span class="keyword">static</span>::addGlobalScope(<span class="keyword">new</span> TenantScope);
-
-        <span class="keyword">static</span>::creating(<span class="keyword">function</span> ($model) {
-            $model->client_id ??= app(<span class="string">'tenant'</span>)?->id;
-        });
-    }
-}</pre>
+    <span class="string">"org_name"</span>: <span class="string">"Moja Agencja"</span>,
+    <span class="string">"name"</span>:     <span class="string">"Jan Kowalski"</span>,
+    <span class="string">"email"</span>:    <span class="string">"jan@agencja.pl"</span>,
+    <span class="string">"password"</span>: <span class="string">"haslo123"</span>
+}
+<span class="comment">// Tworzy: Organization + User(super-admin) + przypisuje organization_id</span></pre>
 
       <h3>Slug — identyfikator zamiast ID w URL</h3>
 
@@ -2683,16 +2685,17 @@ activity_log
           font-size: 11px;
         "
       >
-        ClientOps CRM — Specyfikacja Techniczna v2.0 &nbsp;·&nbsp; Marzec 2026 &nbsp;·&nbsp; Laravel
+        ClientOps CRM — Specyfikacja Techniczna v1.7 &nbsp;·&nbsp; Kwiecień 2026 &nbsp;·&nbsp; Laravel
         12 + React 19 + TypeScript + pgvector
       </div>
 
       <!-- CROSS-DOCUMENT NAV — updated version -->
       <div style="margin-top:12px; padding:10px 14px; background:#f5f3ff; border:1px solid #ddd6fe; border-radius:8px; font-size:11px; color:#4c1d95;">
-        <strong>v2.0.0</strong> — dodano pgvector, Ahrefs/Semrush API, axe-core, WP REST API, Claude API do stacku;
-        nowe moduły: Discovery Workshop (AI agent "Kasia"), Baza Wiedzy, AI Visibility Score, SEO Workshop (WP deploy),
-        Audyty rozszerzone (UX/Security/Raporty PDF), Work Log + Planer; rozszerzono roadmapę do 10 faz.
-        Poprzednia: v1.6.0 — Discovery &amp; Brief AI (sekcja 11), faza 4.5.
+        <strong>v1.7.0</strong> — multi-tenant organizations layer: tabela <code>organizations</code> jako top-level SaaS tenant,
+        trait <code>BelongsToOrganization</code>, middleware <code>IdentifyOrganization</code>, rejestracja organizacji
+        (<code>POST /api/register-organization</code>), wsparcie dla 4-częściowych subdomen
+        (<code>{client}.{org}.clientops.pl</code>). Zaktualizowana sekcja subdomen i multi-tenancy.
+        Poprzednia: v2.0.0 (spec) — pgvector, Ahrefs/Semrush API, axe-core, WP REST API, Claude API, Discovery Workshop, Baza Wiedzy.
       </div>
 
       <!-- CROSS-DOCUMENT NAV -->
@@ -2701,13 +2704,13 @@ activity_log
         <div style="display:flex; gap:16px; flex-wrap:wrap;">
           <div style="background:#eff6ff; border:1px solid #bfdbfe; border-radius:6px; padding:8px 14px;">
             <div style="font-weight:700; color:#1e40af; margin-bottom:2px;">📋 Ten dokument</div>
-            <div style="color:#475569;">Specyfikacja Techniczna v1.6</div>
+            <div style="color:#475569;">Specyfikacja Techniczna v1.7</div>
             <div style="color:#94a3b8; font-size:10px; margin-top:2px;">Stack, moduły, decyzje techniczne</div>
           </div>
           <div style="background:#f0fdfa; border:1px solid #99f6e4; border-radius:6px; padding:8px 14px;">
-            <div style="font-weight:700; color:#0d9488; margin-bottom:2px;">🏗️ Architektura i Model Danych v2.0.0</div>
+            <div style="font-weight:700; color:#0d9488; margin-bottom:2px;">🏗️ Architektura i Model Danych v2.1.0</div>
             <div style="color:#475569;">clientops-architecture.html</div>
-            <div style="color:#94a3b8; font-size:10px; margin-top:2px;">ERD, schematy tabel, przepływy, 27 tabel</div>
+            <div style="color:#94a3b8; font-size:10px; margin-top:2px;">ERD, schematy tabel, przepływy, organizations</div>
           </div>
           <div style="background:#f5f3ff; border:1px solid #ddd6fe; border-radius:6px; padding:8px 14px;">
             <div style="font-weight:700; color:#7c3aed; margin-bottom:2px;">🎨 Design System — Biblioteki v1.0</div>
